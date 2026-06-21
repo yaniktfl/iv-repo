@@ -1,0 +1,204 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em}
+\setlength{\emergencystretch}{2em}
+
+\begin{document}
+
+\begin{center}
+    {\Large Informationsvisualisierung -- Übung 9: Explizite Baumdarstellungen}
+\end{center}
+
+\section*{Lauffähiger Code}
+
+\href{https://github.com/yaniktfl/iv-repo}{https://github.com/yaniktfl/iv-repo}
+
+\section*{Ausführung}
+
+\begin{verbatim}
+cd 9
+elm reactor
+\end{verbatim}
+
+Anschließend im Browser \texttt{http://localhost:8000} öffnen und dort
+\texttt{Main.elm} auswählen.
+
+\section*{Datenstruktur und Layout}
+
+Jeder Knoten wird einheitlich als \texttt{Node} modelliert; eine eindeutige
+ID wird nach dem Aufbau über \texttt{Tree.indexedMap} vergeben (für das
+Hervorheben beim Hovern):
+
+\begin{verbatim}
+type alias Node =
+    { id : Int, label : String, value : Maybe Int }
+
+assignIds : Tree Node -> Tree Node
+assignIds =
+    Tree.indexedMap (\id node -> { node | id = id })
+\end{verbatim}
+
+Das Layout berechnet \texttt{Hierarchy.tidy}. Es liefert für jeden Knoten die
+Koordinaten \texttt{x}/\texttt{y} sowie \texttt{width}/\texttt{height} zurück.
+Die eigentliche Zeichenaufgabe -- Knoten als \texttt{circle}, Kanten als
+\texttt{line} -- wird selbst implementiert:
+
+\begin{verbatim}
+positionedTree = Hierarchy.tidy layoutAttrs sourceTree
+positionedNodes = Tree.toList positionedTree
+links           = Tree.links positionedTree
+
+linkElement ( parent, child ) =
+    line [ x1 parent.x, y1 parent.y, x2 child.x, y2 child.y ] []
+\end{verbatim}
+
+\section*{Aufgabe 9.1: Binärer und geordneter Baum}
+
+Beide Bäume werden mit \texttt{Tree.tree} bzw. dem Helfer \texttt{leaf}
+(für Blätter) direkt im Code aufgebaut. Der binäre Baum bildet Folie~405 nach,
+der geordnete Baum Folie~412:
+
+\begin{verbatim}
+orderedTree =
+    assignIds
+        (Tree.tree (mkNode "root" Nothing)
+            [ Tree.tree (mkNode "group-a" Nothing)
+                [ leaf "a1", leaf "a2", ... ]
+            , leaf "single-b"
+            , ...
+            ] )
+\end{verbatim}
+
+Für diese kleinen Bäume wird das Layout über
+\texttt{Hierarchy.size 1320 520} fest auf die Zeichenfläche skaliert. Knoten
+erhalten den Radius~20, Labels werden hier nicht angezeigt (nur beim Hovern).
+
+\section*{Aufgabe 9.2: flare.json laden und darstellen}
+
+Die Datei wird beim Start per \texttt{Http.get} geladen und über
+\texttt{Cmd.batch} parallel zur Länderdatei angefordert. Ein rekursiver
+Decoder überführt das geschachtelte JSON in einen \texttt{Tree Node}. Ein
+Knoten hat entweder \texttt{children} (innerer Knoten) oder einen
+\texttt{value} (Blatt):
+
+\begin{verbatim}
+flareDecoder : Decoder (Tree Node)
+flareDecoder =
+    Decode.map3
+        (\name value children ->
+            Tree.tree (mkNode name value) (Maybe.withDefault [] children))
+        (Decode.field "name" Decode.string)
+        (Decode.maybe (Decode.field "value" Decode.int))
+        (Decode.maybe
+            (Decode.field "children"
+                (Decode.list (Decode.lazy (\_ -> flareDecoder)))))
+\end{verbatim}
+
+\texttt{Decode.lazy} ist nötig, da der Decoder sich für die Kinder selbst
+aufruft. \texttt{Decode.maybe} fängt fehlende Felder ab, sodass derselbe
+Decoder für innere Knoten und Blätter funktioniert.
+
+\subsection*{Labels um 90 Grad drehen}
+
+Da der Baum sehr breit ist, würden waagerechte Labels überlappen. Sie werden
+deshalb wie gefordert um 90$^\circ$ um ihren eigenen Ankerpunkt gedreht,
+sodass sie senkrecht und gut lesbar stehen:
+
+\begin{verbatim}
+rotation =
+    if config.rotateNodeLabels then
+        [ transform [ Rotate 90 labelX labelY ] ]
+    else
+        []
+\end{verbatim}
+
+\section*{Aufgabe 9.3: Eigener Decoder für die Länderhierarchie}
+
+\texttt{countryHierarchy.json} hat ein anderes Format: Der Name steht
+verschachtelt unter \texttt{data.id}, und es gibt keine Werte an den Blättern.
+Dafür wird ein eigener Decoder geschrieben, der den Namen über
+\texttt{Decode.at} aus dem geschachtelten Feld liest:
+
+\begin{verbatim}
+countryDecoder : Decoder (Tree Node)
+countryDecoder =
+    Decode.map2
+        (\name children ->
+            Tree.tree (mkNode name Nothing) (Maybe.withDefault [] children))
+        (Decode.at [ "data", "id" ] Decode.string)
+        (Decode.maybe
+            (Decode.field "children"
+                (Decode.list (Decode.lazy (\_ -> countryDecoder)))))
+\end{verbatim}
+
+Der resultierende Baum (World $\to$ Kontinent $\to$ Subregion $\to$ Land) wird
+mit demselben \texttt{treeView} dargestellt wie flare.
+
+\section*{Lesbarkeit großer Bäume}
+
+flare ($\approx$250 Knoten) und die Länderhierarchie (261 Knoten) sind deutlich
+größer als die Bäume aus 9.1. Zunächst wurden alle vier Bäume gleich behandelt
+und mit \texttt{Hierarchy.size 1700 850} gezeichnet. Bei den großen Bäumen
+funktioniert das nicht, weil die rund 220 Blätter von flare auf eine feste
+Breite von 1700\,px gequetscht werden und Knoten wie Label dadurch übereinander
+liegen. Zusätzlich verkleinerte das SVG über \texttt{width:\,100\%} alles noch
+auf die Seitenbreite.
+
+Der Grund liegt darin, dass \texttt{Hierarchy.size} und
+\texttt{Hierarchy.nodeSize} unterschiedlich arbeiten. \texttt{size} skaliert
+das fertige Layout in eine feste Box, was bei kleinen Bäumen passt, deren
+Größe man kennt. \texttt{nodeSize} dagegen gibt jedem Knoten einen festen Platz
+und lässt das Layout entsprechend wachsen. Für hunderte Knoten ist nur das
+Zweite sinnvoll. Die Knoten oder die Schrift einfach kleiner zu machen, hätte
+das Überlappen nur verschoben, denn die Ursache ist das Einpassen in eine feste
+Fläche.
+
+Deshalb werden die beiden Fälle über das Feld
+\texttt{fixedSize : Maybe (Float, Float)} getrennt. Kleine Bäume behalten ihre
+feste Fläche, große Bäume lassen \texttt{Hierarchy.size} weg und wachsen über
+\texttt{nodeSize} und die Abstände natürlich.
+
+\begin{verbatim}
+layoutAttrs =
+    (case config.fixedSize of
+        Just ( w, h ) -> [ Hierarchy.size w h ]
+        Nothing       -> [])
+    ++ [ Hierarchy.nodeSize (\_ -> ( r * 2, r * 2 ))
+       , Hierarchy.parentChildMargin config.parentChildMargin
+       , Hierarchy.peerMargin config.peerMargin
+       , Hierarchy.layered ]
+\end{verbatim}
+
+Die \texttt{viewBox} wird anschließend aus den tatsächlichen Knoten-Grenzen
+(Minimum/Maximum von \texttt{x}/\texttt{y}) berechnet, mit zusätzlichem Platz
+unten für die gedrehten Labels. Das SVG wird in seiner echten Pixelgröße in
+einem scrollbaren Container gerendert, statt auf Seitenbreite herunterskaliert
+zu werden -- so bleiben die Label lesbar und man scrollt durch den breiten Baum.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Baum & \texttt{Hierarchy.size} & Darstellung \\
+\midrule
+9.1 binär / geordnet & $1320 \times 520$ (fest) & skaliert in feste Fläche \\
+9.2 flare / 9.3 Länder & -- (natürlich) & echte Größe, scrollbar, Labels 90$^\circ$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}

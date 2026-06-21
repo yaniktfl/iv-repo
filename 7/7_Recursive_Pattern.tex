@@ -1,0 +1,215 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em}
+\setlength{\emergencystretch}{2em}
+
+\begin{document}
+
+\begin{center}
+    {\Large Informationsvisualisierung -- Übung 7: Recursive-Pattern-Technik}
+\end{center}
+
+\section*{Kurzbeschreibung}
+
+Die fünf Börsenindizes Dow Jones (DJ), Nikkei, Hangseng, DAX und Bovespa
+werden mit der Recursive-Pattern-Technik visualisiert. Die Zeitreihen laufen
+über verschiedene Zeiträume und werden einheitlich auf den Gesamtzeitraum
+\textbf{1980-12-23 bis 2011-06-09} aufgefüllt. Die Implementierung umfasst
+interaktive Indexauswahl sowie einen Umschalter zur Filterung der Wochenenden
+(Aufgabe~7.7).
+
+\section*{Lauffähiger Code}
+
+\href{https://github.com/yaniktfl/iv-repo}{https://github.com/yaniktfl/iv-repo}
+
+\section*{Ausführung}
+
+Da Elm HTTP-Anfragen für lokale CSV-Dateien einen laufenden Webserver
+benötigen, wird die Anwendung lokal betrieben:
+
+\begin{verbatim}
+elm make Main.elm --output=index.html
+python3 -m http.server 9000
+\end{verbatim}
+
+Anschließend im Browser: \texttt{http://localhost:9000}
+
+\section*{Aufgabe 7.1: CSV-Dateien laden}
+
+Alle fünf CSV-Dateien werden beim Start der Anwendung parallel über HTTP
+geladen. Dazu wird in \texttt{init} mit \texttt{Cmd.batch} eine Liste von
+Commands erzeugt:
+
+\begin{verbatim}
+init _ =
+    ( { selected = "DJ", weekendMode = WithWeekends
+      , loaded = Dict.empty, failed = [] }
+    , files |> List.map loadSeries |> Cmd.batch
+    )
+\end{verbatim}
+
+Die Dateinamen werden als Liste von \texttt{(Name, Datei)}-Tupeln verwaltet.
+Jedes Tupel erzeugt via \texttt{Http.get} ein eigenes Command. Die
+\texttt{update}-Funktion empfängt die Antworten über die Message
+\texttt{GotCsv String (Result Http.Error String)}.
+
+\section*{Aufgabe 7.2: CSV-Parsing}
+
+Aus jeder CSV-Datei werden die Felder \texttt{Date} und \texttt{Open}
+extrahiert. Der Datentyp einer Tageszeile ist:
+
+\begin{verbatim}
+type alias StockDay = ( String, Maybe Float )
+\end{verbatim}
+
+Das Parsing nutzt \texttt{lovasoa/elm-csv} zum Tokenisieren und
+\texttt{ericgj/elm-csv-decode} zum Dekodieren:
+
+\begin{verbatim}
+csvStringToData : String -> List StockDay
+csvStringToData csvRaw =
+    Csv.parse csvRaw
+        |> Csv.Decode.decodeCsv decodeStockDay
+        |> Result.toMaybe
+        |> Maybe.withDefault []
+\end{verbatim}
+
+Fehlende oder nicht parsbare Kurswerte werden als \texttt{Nothing} gespeichert.
+
+\section*{Aufgabe 7.3: Fehlende Tage auffüllen}
+
+Da die Indizes unterschiedliche Startdaten haben und an Feiertagen keine Daten
+liefern, werden alle Zeitreihen auf den gemeinsamen Zeitraum erweitert. Dazu
+werden drei Schritte ausgeführt:
+
+\begin{enumerate}
+    \item Alle Kalendertage von 1980-12-23 bis 2011-06-09 werden mit
+          \texttt{Date.range} erzeugt und als \texttt{Dict} mit
+          \texttt{Nothing}-Werten initialisiert (\emph{Feiertagsgerüst}).
+    \item Die tatsächlichen Börsendaten werden ebenfalls in ein \texttt{Dict}
+          umgewandelt, gefiltert auf Tage die im Zielzeitraum liegen.
+    \item \texttt{Dict.union actualDays emptyDays} liefert das Ergebnis:
+          vorhandene Kurswerte bleiben erhalten, fehlende Tage erhalten
+          \texttt{Nothing}.
+\end{enumerate}
+
+\begin{verbatim}
+fillMissingDays : List String -> List StockDay -> List StockDay
+fillMissingDays targetDays data =
+    let
+        emptyDays = targetDays
+            |> List.map (\date -> ( date, Nothing ))
+            |> Dict.fromList
+        actualDays = data
+            |> List.filter (\( date, _ ) -> Dict.member date emptyDays)
+            |> Dict.fromList
+    in
+    Dict.union actualDays emptyDays |> Dict.toList
+\end{verbatim}
+
+\section*{Aufgaben 7.4 und 7.5: Recursive-Pattern zeichnen}
+
+\subsection*{Pixelreihenfolge}
+
+Anstelle des externen Pakets \texttt{elm-recursive-pattern} wurde
+\texttt{createPixelMap} direkt implementiert. Die Funktion nimmt eine Liste
+von Leveln und berechnet rekursiv die Pixel\-positionen:
+
+\begin{verbatim}
+type alias Level = { width : Int, height : Int }
+type alias PixelPosition = { x : Int, y : Int }
+
+createPixelMap : List Level -> List PixelPosition
+\end{verbatim}
+
+Jedes Level kachelt die inneren Positionen \texttt{(width $\times$ height)}-fach
+nebeneinander. Die Level werden von außen nach innen definiert; die innersten
+Level stehen am Ende der Liste.
+
+\subsection*{Level-Konfiguration}
+
+\begin{verbatim}
+levels =
+    [ Level 5 1,  Level 1 12
+    , Level 4 1,  Level 2 3
+    , Level 3 3,  Level 1 1  ]
+\end{verbatim}
+
+Das ergibt eine Gesamtgröße von
+$5 \times 1 \times 4 \times 2 \times 3 \times 1 = 120$ Spalten und
+$1 \times 12 \times 1 \times 3 \times 3 \times 1 = 108$ Zeilen,
+also $12\,960$ Pixel -- genug für den gesamten Zeitraum mit Wochenenden.
+
+\subsection*{Darstellung}
+
+Die Pixelpositionen werden mit \texttt{List.map2} mit den Börsendaten
+verknüpft. Jeder Datenpunkt wird als \texttt{rect} mit der berechneten
+Position und einer aus dem Kurswert abgeleiteten Farbe gezeichnet:
+
+\begin{verbatim}
+drawCell : List Float -> RecordedData -> Svg Msg
+\end{verbatim}
+
+Die Farbskala ist \texttt{Scale.Color.viridisInterpolator} mit linearer
+Normierung auf $[\min, \max]$ der vorhandenen Kurswerte. Fehlende Tage
+erhalten ein neutrales Grau (\texttt{rgb 188 198 190}).
+
+\section*{Aufgabe 7.6: Verschiedene Indizes}
+
+Über eine Toolbar können alle fünf Indizes per Klick ausgewählt werden. Der
+aktive Index wird schwarz hervorgehoben. Die Farbskala Viridis wurde gewählt,
+weil sie perceptually uniform ist und auch für Farbenblinde gut unterscheidbar
+bleibt.
+
+\section*{Aufgabe 7.7: Wochenenden entfernen}
+
+Ein Umschaltknopf wechselt zwischen Kalender- und Handelstag-Modus. Im
+Handelstag-Modus werden Samstage und Sonntage aus der Zieldatumsreihe
+gefiltert:
+
+\begin{verbatim}
+isTradingWeekday : Date.Date -> Bool
+isTradingWeekday date =
+    case Date.weekday date of
+        Sat -> False
+        Sun -> False
+        _   -> True
+\end{verbatim}
+
+Dadurch reduziert sich die Pixelanzahl von $12\,960$ auf rund $9\,288$.
+Die Level-Konfiguration wird entsprechend angepasst (\texttt{weekdayLevels}),
+sodass die Gesamtgröße zur neuen Datenmenge passt.
+
+\section*{Aufgabe 7.8: Level-Anpassung}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Modus & Level-Liste & Bedeutung \\
+\midrule
+Mit Wochenenden    & $5\times1,\;1\times12,\;4\times1,\;2\times3,\;3\times3,\;1\times1$ & Monate, Wochen, Tage \\
+Ohne Wochenenden   & $5\times1,\;1\times9,\;4\times1,\;2\times3,\;3\times3,\;1\times1$  & 5 Handelstage/Woche \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Im Handelstag-Modus gruppiert das zweite Level 9 statt 12 Wochen pro Block,
+was die Aufteilung in Quartale erleichtert und die grauen Feiertags-Pixel
+eliminiert.
+
+\end{document}
