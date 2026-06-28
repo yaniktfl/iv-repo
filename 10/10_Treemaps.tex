@@ -1,0 +1,192 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em}
+\setlength{\emergencystretch}{2em}
+
+\begin{document}
+
+\begin{center}
+    {\Large Informationsvisualisierung -- Übung 10: Implizite Baumdarstellungen (Treemaps)}
+\end{center}
+
+\section*{Lauffähiger Code}
+
+\href{https://github.com/yaniktfl/iv-repo}{https://github.com/yaniktfl/iv-repo}
+
+\section*{Ausführung}
+
+\begin{verbatim}
+cd 10
+elm reactor
+\end{verbatim}
+
+Anschließend im Browser \texttt{http://localhost:8000} öffnen und dort
+\texttt{Main.elm} auswählen.
+
+\section*{Datenstruktur und Laden}
+
+Als Datenstruktur wird wie vorgegeben die Baum-Implementierung
+\texttt{zwilias/elm-rosetree} (\texttt{Tree}) genutzt. Jeder Knoten trägt ein
+Paar \texttt{( String, Int )} aus Name und Wert. Die Datei \texttt{flare.json}
+wird beim Start per \texttt{Http.get} geladen; ein rekursiver Decoder überführt
+das geschachtelte JSON in einen \texttt{Tree ( String, Maybe Int )}:
+
+\begin{verbatim}
+treeDecoder : Decoder (Tree ( String, Maybe Int ))
+treeDecoder =
+    Decode.map3
+        (\name value children ->
+            Tree.tree ( name, value ) (Maybe.withDefault [] children))
+        (Decode.field "name" Decode.string)
+        (Decode.maybe (Decode.field "value" Decode.int))
+        (Decode.maybe
+            (Decode.field "children"
+                (Decode.list (Decode.lazy (\_ -> treeDecoder)))))
+\end{verbatim}
+
+\texttt{Decode.lazy} ist nötig, da der Decoder sich für die Kinder selbst
+aufruft. Nach dem Laden wird der Wert der Blätter über \texttt{computeSums}
+rekursiv in die inneren Knoten aufaddiert, sodass jeder innere Knoten die
+Summe seiner Kinder als Fläche kennt:
+
+\begin{verbatim}
+computeSums : Tree ( String, Int ) -> Tree ( String, Int )
+computeSums tree =
+    let
+        children = Tree.children tree |> List.map computeSums
+        ownValue = Tree.label tree |> Tuple.second
+        childSum =
+            children
+                |> List.map (Tree.label >> Tuple.second)
+                |> List.sum
+    in
+    Tree.tree ( Tree.label tree |> Tuple.first, ownValue + childSum ) children
+\end{verbatim}
+
+\section*{Aufgabe 10.1: Einfache Treemap (selbst implementiert)}
+
+Die einfache Treemap wird vollständig selbst gezeichnet. Die Achsen werden
+abwechselnd als Split-Achse genutzt, beginnend mit der x-Achse. Um die
+Aufteilung der Kinder eines Knotens zu berechnen, wird der verfügbare Platz
+entlang der Split-Achse linear auf die Summe der Kinder-Werte skaliert. Jedes
+Kind erhält dadurch einen Anteil \texttt{childValue / childTotal} der Länge,
+wird als Rechteck eingezeichnet und \texttt{drawTreeNode} ruft sich für dessen
+Kinder rekursiv mit umgekehrter Split-Achse (\texttt{not splitX}) auf:
+
+\begin{verbatim}
+drawTreeNode : Bool -> Float -> Float -> Float -> Float
+            -> Tree ( String, Int ) -> List (Svg Msg)
+drawTreeNode splitX x y width height tree =
+    ... children
+        |> List.foldl
+            (\child ( offset, acc ) ->
+                let
+                    childSize  = childValue / childTotal
+                    nextWidth  = if splitX then width * childSize else width
+                    nextHeight = if splitX then height else height * childSize
+                    nextX      = if splitX then offset else x
+                    nextY      = if splitX then y else offset
+                    nextOffset =
+                        if splitX then offset + nextWidth
+                        else offset + nextHeight
+                in
+                ( nextOffset
+                , acc ++ drawTreeNode (not splitX)
+                            nextX nextY nextWidth nextHeight child ))
+            ( if splitX then x else y, [] )
+\end{verbatim}
+
+Über die \texttt{foldl}-Akkumulation wandert der \texttt{offset} entlang der
+aktuellen Split-Achse weiter, sodass die Kinder lückenlos nebeneinander (bzw.
+übereinander) liegen. Die Treemap wird zunächst für den kleinen
+\texttt{testTree} und anschließend für die Flare-Daten gezeichnet.
+
+\section*{Aufgabe 10.2: Squarified Treemap (Hierarchy.treemap)}
+
+Für die Squarified Treemap wird die Funktion \texttt{Hierarchy.treemap} aus dem
+Modul \texttt{Hierarchy} der Bibliothek \texttt{gampleman/elm-visualization}
+genutzt. Über \texttt{Hierarchy.tile Hierarchy.squarify} entstehen möglichst
+quadratische Kacheln; \texttt{Hierarchy.size} legt die Zeichenfläche fest und
+der Zugriffsfunktion \texttt{(Tuple.second >> toFloat)} entnimmt sie den
+Flächenwert je Knoten:
+
+\begin{verbatim}
+positionedTree =
+    Hierarchy.treemap
+        [ Hierarchy.size canvasWidth canvasHeight
+        , Hierarchy.paddingInner (\_ -> 1)
+        , Hierarchy.paddingOuter (\_ -> 0)
+        , Hierarchy.tile Hierarchy.squarify
+        ]
+        (Tuple.second >> toFloat)
+        tree
+\end{verbatim}
+
+Der so positionierte Baum (\texttt{Tree PositionedNode} mit
+\texttt{x}/\texttt{y}/\texttt{width}/\texttt{height}) wird mit
+\texttt{Tree.depthFirstFold} in SVG-Rechtecke übersetzt. Labels werden nur
+gezeichnet, wenn die Kachel groß genug ist (\texttt{labelIfRoom}).
+
+\subsection*{Färbung ab Ebene 1 und ab Ebene 2}
+
+Im Beispiel sind Teilbäume ab einer Ebene unter der Wurzel verschieden
+gefärbt. Zusätzlich wird gefordert, Teilbäume ab der \emph{zweiten} Ebene unter
+der Wurzel verschieden zu färben. Beide Modi werden über einen Typ
+\texttt{ColorMode} getrennt. Die Farbe ergibt sich aus dem Pfad-Element auf der
+gewählten Ebene: Bei \texttt{ColorByLevel1} entscheidet das Element an Index~1
+(direktes Kind der Wurzel), bei \texttt{ColorByLevel2} das an Index~2 -- alle
+Knoten innerhalb desselben Teilbaums teilen sich dadurch eine Farbe:
+
+\begin{verbatim}
+type ColorMode = ColorByLevel1 | ColorByLevel2
+
+colorClassForNode mode ancestors node =
+    let
+        path = List.reverse (node :: ancestors)
+                   |> List.map (.node >> Tuple.first)
+        key =
+            case mode of
+                ColorByLevel1 ->
+                    itemAt 1 path |> Maybe.withDefault "root"
+                ColorByLevel2 ->
+                    itemAt 2 path
+                        |> Maybe.withDefault
+                            (itemAt 1 path |> Maybe.withDefault "root")
+    in
+    "color-" ++ String.fromInt (paletteIndex key)
+\end{verbatim}
+
+Der \texttt{key} wird über \texttt{hashString} stabil auf einen von zwölf
+Palettenplätzen (\texttt{modBy 12}) abgebildet, sodass gleiche Teilbäume
+reproduzierbar dieselbe Farbe erhalten. Bei \texttt{ColorByLevel2} fällt ein
+Knoten, der noch keine zweite Ebene besitzt, auf seine Ebene-1-Farbe zurück.
+
+\section*{Überblick}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Aufgabe & Verfahren & Layout \\
+\midrule
+10.1 einfache Treemap & selbst, x/y alternierend & lineare Skalierung \\
+10.2 squarified Treemap & \texttt{Hierarchy.treemap} & \texttt{squarify}, Farben Ebene 1 \& 2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}
