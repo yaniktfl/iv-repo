@@ -1,0 +1,157 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em}
+\setlength{\emergencystretch}{2em}
+
+\begin{document}
+
+\begin{center}
+    {\Large Informationsvisualisierung -- Übung 11: Sugiyama-Methode}
+\end{center}
+
+\section*{Lauffähiger Code}
+
+\href{https://github.com/yaniktfl/iv-repo}{https://github.com/yaniktfl/iv-repo},
+Ordner \texttt{11/}.
+
+\section*{Ausführung}
+
+Anders als in den vorigen Übungen reicht \texttt{elm reactor} hier nicht:
+\texttt{elm reactor} kompiliert nur die \texttt{.elm}-Datei und liefert dafür
+eine eigene, generierte HTML-Seite aus -- unser \texttt{index.html} mit dem
+Dagre-Script-Tag und dem Ports-Glue-Code wird dabei komplett ignoriert. Ohne
+diesen JS-Code läuft \texttt{dagre.layout} nie, und es erscheinen nur die
+Überschriften, aber keine Graphen.
+
+Stattdessen \texttt{Main.elm} bauen und den Ordner mit einem einfachen
+HTTP-Server ausliefern:
+
+\begin{verbatim}
+cd 11
+elm make Main.elm --output=main.js
+python3 -m http.server 8731
+\end{verbatim}
+
+Anschließend im Browser \texttt{http://localhost:8731/index.html} öffnen.
+
+\section*{Zusammenspiel Elm / JavaScript (Ports)}
+
+Elm kennt Dagre nicht direkt; die Layout-Berechnung läuft über zwei Ports,
+wie im Elm-Guide-Kapitel zu Ports beschrieben und in
+\texttt{madsflensted/elm-dagre-example} vorgeführt:
+
+\begin{verbatim}
+port graphs : (Value -> msg) -> Sub msg
+port layout : String -> Cmd msg
+\end{verbatim}
+
+Elm schickt über \texttt{layout} eine JSON-Beschreibung des Graphen
+(Knoten/Kanten inkl. geschätzter Breite/Höhe) an JavaScript. In
+\texttt{index.html} liest das Dagre selbst ein, berechnet das Layout und
+schickt das Ergebnis (jetzt mit \texttt{x}/\texttt{y}-Positionen und
+Kanten-Punkten) über \texttt{graphs} zurück an Elm:
+
+\begin{verbatim}
+app.ports.layout.subscribe(function (data) {
+  var parsed = JSON.parse(data);
+  var g = dagre.graphlib.json.read(parsed);
+  dagre.layout(g);
+  var graph = dagre.graphlib.json.write(g);
+  graph.key = parsed.key;
+  app.ports.graphs.send(graph);
+});
+\end{verbatim}
+
+Da mehrere Layout-Anfragen gleichzeitig unterwegs sein können (Satz-Graph
+plus drei Ranker-Varianten für Aufgabe 11.3), bekommt jede Anfrage ein
+\texttt{key}-Feld, das JavaScript unverändert zurückspiegelt. Elm ordnet die
+Antwort darüber wieder der richtigen Anfrage zu (\texttt{sentenceGraph} bzw.
+\texttt{Dict String GraphData} für die Ranker-Varianten).
+
+Ausgangspunkt war das erweiterte Minimal-Beispielprogramm (TypedSvg statt
+Svg) aus der Vorlesung; die Knotengröße wird nicht mehr fest vorgegeben,
+sondern vor dem Senden an Dagre aus der Label-Länge geschätzt
+(\texttt{estimateNodeSize}), damit z.\,B. \texttt{"sentence"} eine breitere
+Box bekommt als \texttt{"is"}.
+
+\section*{Aufgabe 11.1: Sentence Tokenization (ohne CSS-Klassen)}
+
+Die Kantenrichtung wird über einen SVG-\texttt{marker} sichtbar gemacht: Ein
+\texttt{defs}-Block definiert einen Pfeilkopf, der jeder \texttt{polyline}
+per \texttt{markerEnd "url(\#arrowhead)"} angehängt wird.
+
+\begin{verbatim}
+TypedSvg.marker
+    [ SA.id "arrowhead"
+    , SA.markerWidth (Px 8)
+    , SA.markerHeight (Px 8)
+    , SA.refX "6"
+    , SA.refY "3"
+    , SA.orient "auto"
+    ]
+    [ TypedSvg.path [ SA.d "M0,0 L6,3 L0,6 Z", SA.fill (Paint Color.black) ] [] ]
+\end{verbatim}
+
+CSS-Klassen der Knoten werden hier laut Aufgabenstellung noch nicht
+berücksichtigt -- alle Knoten werden einheitlich (weißer Hintergrund, blauer
+Rahmen) gezeichnet.
+
+\section*{Aufgabe 11.2: Sentence Tokenization (mit CSS-Klassen)}
+
+Derselbe Graph wird ein zweites Mal gezeichnet, jetzt mit den Original-CSS-Klassen
+aus der Demo (\texttt{type-TOP}, \texttt{type-S}, \ldots, \texttt{type-TK} für
+die Token-Blätter). Jeder Knoten trägt seine Klasse als \texttt{class}-Attribut
+auf der \texttt{g}-Gruppe; ein per \texttt{TypedSvg.style} eingebettetes
+\texttt{<style>}-Element im SVG übernimmt die Original-Regel der Demo:
+
+\begin{verbatim}
+g.type-TK > rect { fill: #00ffd0; }
+\end{verbatim}
+
+Dadurch werden die Token-Blätter ("This", "is", "an", "example",
+"sentence") türkis eingefärbt, alle anderen Knoten bleiben weiß --
+exakt wie im Original-Dagre-D3-Demo, nur dass Elm über CSS-Klassen und nicht
+über eine eigene Fallunterscheidung im Elm-Code färbt.
+
+\section*{Aufgabe 11.3: Folie 456 -- drei Ranker-Varianten}
+
+Für diese Aufgabe wird der Graph von Folie~456 (15 Knoten, 0--14, 26
+gerichtete Kanten) dreimal mit unterschiedlicher Dagre-\texttt{ranker}-Konfiguration
+(\texttt{network-simplex}, \texttt{tight-tree}, \texttt{longest-path}) im
+\texttt{value}-Feld der Layout-Anfrage an Dagre geschickt und untereinander
+ausgegeben:
+
+\begin{verbatim}
+jsonGraphValues rankdir ranker =
+    object
+        [ ...
+        , ( "ranker", Encode.string ranker )
+        ]
+\end{verbatim}
+
+Der Graph wird dabei unverändert (im Ausgangszustand von Folie~456, vor der
+händischen Kreisentfernung/Schichtung, die auf der Folie nur zur Illustration
+gezeigt wird) an Dagre übergeben -- Kreisentfernung, Rangzuweisung, Ordnen
+innerhalb der Ränge und Koordinatenzuweisung übernimmt \texttt{dagre.layout}
+vollständig selbst. Genau das macht den Unterschied zwischen den drei
+Ranker-Varianten sichtbar: Knoten~12 (eine Senke ohne ausgehende Kanten) landet
+bei \texttt{network-simplex} und \texttt{tight-tree} in einem mittleren Rang,
+bei \texttt{longest-path} dagegen ganz unten, weil dieser Ranker jeden Knoten
+so spät wie möglich einordnet.
+
+\end{document}
