@@ -69,6 +69,11 @@ view config hourly =
         ]
         [ text_ [ SvgAttr.class [ "chart-label" ], Px.x 14, Px.y 18 ] [ SvgCore.text "Stundenraster: EE-Anteil je Tag und Stunde" ]
         , g [] (hourLabels left top cellH)
+
+        -- Zuerst ein vollstaendiges Raster grauer Zellen, darueber die
+        -- Datenzellen. Wo Daten fehlen, bleibt Grau stehen -- ohne
+        -- Sonderfallbehandlung und ohne dass die Tagesspalten zusammenruecken.
+        , g [] (missingCells minDay dayCount left top cellW cellH)
         , g [] (List.map (cell config minDay left top cellW cellH) hourly)
         , legend left (top + 24 * cellH + 16)
         ]
@@ -133,6 +138,30 @@ renewableColor value =
     Color.rgb r g b
 
 
+{-| Hintergrundraster fuer den gesamten sichtbaren Zeitraum. Die Luecken der
+Quelle werden bewusst nicht interpoliert: Interpolierte Werte waeren in einer
+pixelorientierten Darstellung nicht von Messwerten zu unterscheiden.
+-}
+missingCells : Int -> Int -> Float -> Float -> Float -> Float -> List (Svg msg)
+missingCells minDay dayCount left top cellW cellH =
+    List.range minDay (minDay + dayCount - 1)
+        |> List.concatMap
+            (\dayOfYear ->
+                List.map
+                    (\hour ->
+                        rect
+                            [ SvgAttr.class [ "heat-missing" ]
+                            , Px.x (left + toFloat (dayOfYear - minDay) * cellW)
+                            , Px.y (top + toFloat hour * cellH)
+                            , Px.width (max 1.4 (cellW - 0.3))
+                            , Px.height (cellH - 0.5)
+                            ]
+                            []
+                    )
+                    (List.range 0 23)
+            )
+
+
 hourLabels : Float -> Float -> Float -> List (Svg msg)
 hourLabels left top cellH =
     [ 0, 6, 12, 18, 23 ]
@@ -179,8 +208,14 @@ legend x0 y0 =
                         )
                     ]
                 ]
+
+        missingX =
+            x0 + 70 + 5 * 36 + 24
     in
     g []
         (text_ [ SvgAttr.class [ "tick-label" ], Px.x x0, Px.y (y0 + 9) ] [ SvgCore.text "EE-Anteil:" ]
             :: List.indexedMap swatch stops
+            ++ [ rect [ SvgAttr.class [ "heat-missing" ], Px.x missingX, Px.y y0, Px.width 14, Px.height 10 ] []
+               , text_ [ SvgAttr.class [ "tick-label" ], Px.x (missingX + 20), Px.y (y0 + 9) ] [ SvgCore.text "keine Daten (Lücke in der Quelle)" ]
+               ]
         )
