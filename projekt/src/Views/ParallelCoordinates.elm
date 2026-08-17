@@ -66,6 +66,7 @@ type alias Dimension =
     }
 
 
+
 -- Feste Pixelgroesse statt responsiver Skalierung: Nur so entspricht das
 -- offsetY eines Mausereignisses direkt der SVG-y-Koordinate. Der Alternativweg
 -- ueber getBoundingClientRect braeuchte Ports oder Browser.Dom-Tasks.
@@ -340,7 +341,8 @@ positionDecoder toMsg =
         (Decode.field "pageY" Decode.float)
 
 
-{-| Alle sieben Dimensionswerte des ueberfahrenen Tages im Klartext. -}
+{-| Alle sieben Dimensionswerte des ueberfahrenen Tages im Klartext.
+-}
 lineTooltip : Daily -> Float -> Float -> Tooltip
 lineTooltip day x y =
     { x = x

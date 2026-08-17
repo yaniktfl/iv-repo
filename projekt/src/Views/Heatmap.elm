@@ -154,6 +154,7 @@ erzeugt kuenstliche Grenzen und verschleiert die Ordnung der Werte.
 Die Begrenzung liegt bei 120 % und nicht bei 100 %, damit die Stunden mit
 Ueberschuss sichtbar bleiben, ohne den Kontrast des Hauptbereichs
 aufzubrauchen.
+
 -}
 renewableColor : Float -> Color.Color
 renewableColor value =

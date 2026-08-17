@@ -327,7 +327,8 @@ monthFullName month =
             "Alle Monate"
 
 
-{-| Zahl mit fester Nachkommastellenzahl und deutschem Dezimalkomma. -}
+{-| Zahl mit fester Nachkommastellenzahl und deutschem Dezimalkomma.
+-}
 formatFloat : Int -> Float -> String
 formatFloat digits value =
     let
