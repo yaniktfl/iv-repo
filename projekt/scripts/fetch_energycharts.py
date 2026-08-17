@@ -177,6 +177,46 @@ def build_hourly(power_by_hour, price_by_hour):
     return hourly
 
 
+def build_daily(hourly):
+    """Tagesprofile aus den Stundenwerten bilden.
+
+    Die Tagesebene ist die Analyseeinheit fuer den mehrdimensionalen Vergleich:
+    Eine einzelne extreme Stunde sagt wenig, ein Tagesprofil charakterisiert
+    eine Wetterlage. Solar- und Windanteil beziehen sich auf die mittlere Last
+    des Tages, damit sie mit dem Erneuerbarenanteil vergleichbar bleiben.
+    """
+    parts = defaultdict(list)
+    for point in hourly:
+        parts[point["date"]].append(point)
+
+    daily = []
+    for date_key, rows in sorted(parts.items()):
+        avg_price = mean([row["priceEurMwh"] for row in rows])
+        load = mean([row["loadGw"] for row in rows]) or 0.0
+        solar = mean([row["solarGw"] for row in rows]) or 0.0
+        wind = mean([row["windOnshoreGw"] + row["windOffshoreGw"] for row in rows]) or 0.0
+        daily.append(
+            {
+                "date": date_key,
+                "month": rows[0]["month"],
+                "dayOfYear": rows[0]["dayOfYear"],
+                "meanLoadGw": round(load, 3),
+                "maxLoadGw": round(max(row["loadGw"] for row in rows), 3),
+                "meanSolarGw": round(solar, 3),
+                "meanWindGw": round(wind, 3),
+                "meanRenewableShare": round(mean([row["renewableShare"] for row in rows]) or 0.0, 2),
+                "solarShare": round(pct(solar, load), 2),
+                "windShare": round(pct(wind, load), 2),
+                "meanNetImportGw": round(mean([row["netImportGw"] for row in rows]) or 0.0, 3),
+                "meanPriceEurMwh": None if avg_price is None else round(avg_price, 2),
+                "negativePriceHours": len(
+                    [row for row in rows if row["priceEurMwh"] is not None and row["priceEurMwh"] < 0]
+                ),
+            }
+        )
+    return daily
+
+
 def main():
     out_path = pathlib.Path(__file__).resolve().parents[1] / "data" / f"energycharts_de_{YEAR}.json"
     token = get_token()
@@ -207,6 +247,7 @@ def main():
             power_by_hour[instant.replace(minute=0, second=0, microsecond=0)].append(row)
 
     hourly = build_hourly(power_by_hour, price_by_hour)
+    daily = build_daily(hourly)
 
     payload = {
         "meta": {
@@ -214,12 +255,24 @@ def main():
             "countryId": "de",
             "priceMarket": "DE-LU",
             "year": YEAR,
+            "source": "University Halle ScienceData PostgREST mirror of EnergyCharts",
+            "generatedAt": dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z"),
+            "notes": [
+                "Stundenwerte sind Mittel ueber die 15-Minuten-Zeilen von totalpower.",
+                "Leistungswerte der Quelle liegen in MW-Skala vor und werden nach GW normiert.",
+                "Die Last ist als solar + wind_onshore + wind_offshore + residual_load "
+                "rekonstruiert, weil load_in_gw in totalpower fuer Deutschland leer ist.",
+                "cross_border_electricity_trading_in_gw wird als vorzeichenbehafteter "
+                "Nettohandelswert der Quelle uebernommen.",
+                "Fehlende Stunden der Quelle werden nicht interpoliert.",
+            ],
         },
         "hourly": hourly,
+        "daily": daily,
     }
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    print(f"{len(hourly)} Stundenwerte nach {out_path} geschrieben")
+    print(f"{len(hourly)} Stundenwerte und {len(daily)} Tagesprofile nach {out_path} geschrieben")
 
 
 if __name__ == "__main__":
