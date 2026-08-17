@@ -1,0 +1,155 @@
+\documentclass[usegeometry=true]{scrartcl}
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{amssymb}
+% Dimensionen bitte nicht ändern. 
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm, bindingoffset=1cm, includeheadfoot]{geometry}
+%Zeilenabstand bitte nicht ändern
+\usepackage[onehalfspacing]{setspace}
+
+\usepackage[backend=biber,style=numeric,]{biblatex}\addbibresource{literatur.bib}
+
+\begin{document}
+% ----------------------------------------------------------------------------
+\subject{Projektbericht zum Modul Information Visualisierung Sommersemester 2026}
+\title{Titel des Dokuments}
+%\subtitle{Untertitel}% optional
+\author{\textit{Das bin ich}\footnote{Alle kursiv geschriebenen Textteile sind Hinweise, die in Ihrer nicht erscheinen sollen. }}% obligatorisch
+%\date{10.9.2022}
+\maketitle% verwendet die zuvor gemachte Angaben zur Gestaltung eines Titels
+% ----------------------------------------------------------------------------
+% Inhaltsverzeichnis:
+%\tableofcontents
+% ----------------------------------------------------------------------------
+% Gliederung und Text:
+
+\section{Einleitung}
+\textit{Die Gliederung des Berichts ist vorgegeben und darf nicht verändert werden.}
+\textit{Tipps zu Latex und Koma-Script für Hausarbeiten sind im \href{http://mirrors.ctan.org/info/latex-refsheet/LaTeX_RefSheet.pdf}{LaTeX Reference Sheet for a thesis with KOMA-Script} von Marion Lammarsch und Elke Schubert zusammengefasst. 
+ Der Bericht fällt in die Kategorie von InfoVis-Paper, die Tamara Munzner Design Study nennt \cite{Munzner2008}: In der Einleitung sollen sie zuerst das Zielproblem beschrieben. Daraus sollen sie Fragestellungen motivieren, die mittels Techniken der Informationsvisualisierung beantwortet werden können. In dem Abschnitt direkt unter der Überschrift Einleitung sollen Sie nach einer kurzen Einleitung Fragestellungen und das Zielproblem motivieren und beschreiben. 
+}
+
+\subsection{Anwendungshintergrund}
+\textit{Sie müssen genug Hintergrund bereitstellen, so dass die Lesenden sich ein Urteil bilden können, ob ihre Lösung funktioniert. Sie sollen die Lesenden jedoch nicht mit Anwendungsdetails so überschütten, dass der Fokus auf die Fragen zur Informationsvisualisierung untergehen. 
+Mit Hintergrund ist der Anwendungshintergrund gemeint. Damit soll die Grundlage gebildet werden, um die Informationsbedürfnisse der Zielgruppen im nächsten Unterkapitel zu verstehen. Es geht nicht um den technischen Hintergrund der verwendeten Visualisierungen. Vor allem sollen die konkreten Techniken erst später herausgearbeitet werden. 
+}
+\subsection{Zielgruppen}
+\textit{Beschreiben sie die Personengruppe oder Personengruppen, die das von ihnen benannte Anwendungsproblem lösen möchte. Auf welches Vorwissen können sie in dieser Gruppen von Anwenderinnen aufbauen? Welche Informations"-bedürf"-nisse werden durch die Visualisierungen adressiert?
+}
+
+\textit{
+Mit Vorwissen sind auf der einen Seite Aspekte der Anwendung gemeint. Wenn jedoch schon bestimmte Visualisierungen, Farben, Symbole schon in der Zielgruppe bekannt sind, sollte dies hier auch beschrieben werden.
+}
+
+\subsection{Überblick und Beiträge}
+\textit{In diesem Abschnitt geben sie einen kurzen Überblick über die Daten und verwendeten Visualisierungen. Dann benennen sie die Beiträge ihres Projekts. Diese Beiträge müssen sie in den hinteren Teilen des Berichts genauer ausführen und belegen.
+}
+
+\section{Daten}
+\textit{Beschreiben Sie vorhandenen Daten. Gehen sie kritisch darauf ein, in wie weit sich die Daten für die Bearbeitung der Fragestellungen und dem Erreichen von Lösungen für die oben beschriebene Zielgruppen eignen. Haben sie die Daten sinnvoll mit weiteren Datenquellen ergänzt? Wenn ja, wie?
+Erklären sie die technische Bereitstellung der Daten.
+Wie sind die Daten zugänglich? Welche Formate werden genutzt. Gibt es Besonderheiten beim Lesen der Formate?
+Beschreiben sie die Datenvorverarbeitung.
+Welche Datenvorverarbeitungsschritte sind notwendig? Beschreiben Sie die einzelnen Schritte und begründen sie sie, z.B. warum werden manche Daten weggelassen, über welche Mengen werden Durchschnitte berechnet, warum sind die so berechneten Werte aussagekräftiger als andere Werte. Wenn möglich sollen sie die Datenvorverarbeitung in Elm programmieren, so dass ihre Anwendung auf eine Änderung der Rohdaten reagieren kan. 
+}
+
+\section{Visualisierungen}
+\textit{Hier kommt ein kurzer Überblick über das Kapitel zu den Visualisierungen hin.}
+
+\subsection{Analyse der Anwendungsaufgaben}
+\textit{Analysieren sie die konkreten Anwendungsaufgaben, die für die Lösung des Zielproblems durch die Anwender:innen bearbeitet werden müssen. 
+Welche sinnvollen mentale Modelle helfen den Personen bei der Bearbeitung. 
+Sind diese mentalen Modelle für sie notwendig, um die Aufgaben lösen zu können? Gehen sie bei ihrer Argumentation von den Anwendungsaufgaben aus und kommen sie dann zu den mentalen Modellen, deren Aufbau durch Visualisierungen unterstützt wird. 
+}
+
+\subsection{Anforderungen an die Visualisierungen}
+\textit{Leiten sie Anforderungen an das Design der Visualisierungen ab, die sich durch ihre Analyse des Zielproblems ergeben.
+}
+
+\subsection{Präsentation der Visualisierungen}
+\textit{Präsentieren sie die visuelle Abbildungen und Kodierungen der Daten und Interaktionsmöglichkeiten. 
+Sie müssen  begründen, warum und wie gut ihre Designentscheidungen die erstellten Anforderungen erfüllen. 
+Weiterhin müssen sie begründen, warum die gewählte visuelle Kodierung der Daten für das zulösenden Problem passend ist.
+Typische Argumente würden hier auf Wahrnehmungsprinzipien und Theorie über Informationsvisualisierung verweisen. 
+Die besten Begründungen diskutieren explizit die konkrete Auswahl der Visualisierungen im Kontext von mehreren verschiedenen Alternativen. 
+Machen sie hier nicht den Fehler, einfach nur Visualisierungen aus den vorgegebenen Bereichen für das Projekt zu diskutieren, weil das in der Regel nicht sinnvoll ist.
+}
+
+\textit{Z.B. wenn sie sich für einen Scatterplot entschieden haben, ist ein Zeitreihendiagramm in der Regel keine Alternative.
+Diskutieren sie also nicht einfach Zeitreihendiagramme, weil sie in den Anforderungenen an das Projekt neben Scatterplots stehen, sondern suchen sie nach echten alternativen Visualisierungen, die zum Aufbau eines vergleichbaren mentalen Modells führen. 
+Diskutieren sie die Expressivität und die Effektivität der einzelnen Visualisierungen. 
+}
+
+\textit{Die eben beschriebenen Präsentationen und Begründungen sollen für jede der drei folgenden Visualisierungen durchgeführt werden. 
+}
+
+\subsubsection{Visualisierung Eins}
+\subsubsection{Visualisierung Zwei}
+\subsubsection{Visualisierung Drei}
+
+\subsection{Interaktion}
+\textit{Die präsentierten Visualisierungstechniken müssen interaktiv zu einer Anwendung verknüpft werden.
+Die Interaktionen mit einer Visualisierung soll in den anderen Visualisierungen zu einer Änderung führen. 
+Erklären sie die möglichen Interaktionen mit den einzelnen Visualisierungen und die möglichen Verknüpfungen zwischen ihnen. Begründen Sie warum die konkreten Interaktionen umgesetzt wurden und welche Zwecke für die Anwenderinnen mit ihnen unterstützt werden. Begründen sie ebenfalls warum sie andere Interaktionsmöglichkeiten nicht umgesetzt haben. Wenn sie keine der geforderten Interaktionen umsetzen, erhalten Sie im gesamten Projekt deutlichen Punktabzug. 
+}
+
+
+\section{Implementierung}
+\textit{Beschreiben Sie die Implementierung ihrer Visualisierungsanwendung in Elm. Stellen die Gliederung ihres Quellcodes vor. Haben Sie verschiedene Elm-Module erstellt. Was war aufwändig umzusetzen, was ließ sich mit dem vorhanden Code aus den Übungen relativ einfach umsetzen? 
+}
+
+\textit{Wie sieht die Elm-Datenstruktur für das Model aus, in dem die verschiedenen Zustände der Interaktion gespeichert werden können.
+}
+\textit{Sie können dieses Kapitel frei gestalten. Bitte addressieren sie jedoch alle Punkte, die im Protokoll auftauchen. 
+\begin{itemize}
+    \item Beschreibung des Gesamtaufbaus der Implementierung im Bericht
+    \item Beschreibung der wichtigsten Elm-Datenstrukturen im Bericht
+    \item Beschreibung des Implementierungsaufwandes im Bericht
+\end{itemize}
+}
+\textit{Wenn Sie KI-Modelle zur Erstellung des Codes genutzt haben, beschrieben Sie wie Sie vorgegangen sind, welche Teile des Codes Sie selbst erstellt haben, wie Sie KI-erstellen Code überprüft und angepasst haben. Bitte geben Sie die Prompts im Anhang in folgenden Form an. Das Ziel ist es, eine Grundlage zu haben, die Nutzung von KI zu reflektieren und sinnvolle wiederverwendbare Verwendungsmuster zu identifizieren. 
+\begin{itemize}
+    \item Starten Sie einen Chat zur Erstellung eines Programmteils mit einem neuen Anhang, z.B. Anhang A Visualisierung 1, B  Visualisierung 2, ...
+    \item Geben Sie Ihre Eingaben ein, d.h. wie Sie den Chat beginnen und welche Eingaben Sie machen, um die Ausgaben zu korrigieren. Wenn Sie eigenen Code eingeben, beschreiben Sie kurz den Code. Der Code selbst braucht nicht in den Anhang aufgenommen zu werden. Die Ausgaben der KI brauchen Sie ebenso nicht mit den Anhang aufzunehmen. Wenn eine der Ausgaben besonders interessant ist, können Sie sie kurz beschreiben.
+    \item Ein Beispiel zur Chat zur Erstellung eines Scatter-Plots wäre:
+    \begin{enumerate}
+        \item Erstelle ein Scatterplot mit der Bibliothek gampelman/elm-visualiszation in Elm. Nutze dafür folgende Vorlage: hier habe ich Elm-Code mit festen Daten als Liste von Elm-Records eingegeben.
+        \item Erstellter Elm-Code 
+        \item Der erzeugte Elm-Code stellt die Achsenbeschriftung für die y-Achse mittig dar. Bitte ändere die Position der Beschriftung so, dass sie oberhalb der Achse plaziert wird. 
+        \item Erstellter Elm-Code 
+        \item ...
+    \end{enumerate}
+\end{itemize} 
+}
+
+
+
+\section{Anwendungsfälle}
+\textit{Präsentieren sie für jede der drei Visualisierungen einen sinnvollen Anwendungsfall in dem ein bestimmter Fakt, ein Muster oder die Abwesenheit eines Musters visuell festgestellt wird. Begründen sie warum dieser Anwendungsfall wichtig für die Zielgruppe der Anwenderinnen ist. Diskutieren sie weiterhin, ob die oben beschriebene Information auch mit anderen Visualisierungstechniken hätte gefunden werden können. Falls dies möglich wäre, vergleichen sie die den Aufwand und die Schwierigkeiten ihres Ansatzes und der Alternativen. 
+}
+\textit{Die eben beschriebenen Präsentationen von Anwendungen sollen für jede der drei Visualisierungen durchgeführt werden. 
+}
+
+\subsection{Anwendung Visualisierung Eins}
+\subsection{Anwendung Visualisierung Zwei}
+\subsection{Anwendung Visualisierung Drei}
+
+\section{Verwandte Arbeiten}
+\textit{Führen sie eine kurze Literatursuche in der wissenschaftlichen Literatur zu Informationsvisualisierung und Visual Analytics nach ähnlichen Anwendungen durch. Diskutieren sie mindestens zwei Artikel. Stellen sie Gemeinsamkeiten und Unterschiede dar.
+}
+
+\section{Zusammenfassung und Ausblick}
+\textit{Fassen sie die Beiträge ihre Visualisierungsanwendung zusammen. Wo bietet sie für die Personen der Zielgruppe einen echten Mehrwert.
+}
+\textit{Was wären mögliche sinnvolle Erweiterungen, entweder auf der Ebene der Visualisierungen und/oder auf der Datenebene?
+}    
+
+\section*{Anhang: Git-Historie}
+
+\printbibliography
+
+\end{document}
+
