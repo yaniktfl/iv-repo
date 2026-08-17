@@ -17,6 +17,7 @@ import Data exposing (Dataset)
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
+import Views.Heatmap as Heatmap
 import Views.Layout as Layout
 import Views.TimeSeries as TimeSeries
 
@@ -24,11 +25,16 @@ import Views.TimeSeries as TimeSeries
 type alias Model =
     { dataset : Result String Dataset
     , selectedMonth : Maybe Int
+    , hoveredDay : Maybe String
+    , selectedDay : Maybe String
     }
 
 
 type Msg
     = SelectMonth (Maybe Int)
+    | HoverDay String
+    | LeaveDay
+    | SelectDay String
 
 
 main : Program Decode.Value Model Msg
@@ -47,6 +53,8 @@ init flags =
             Decode.decodeValue Data.datasetDecoder flags
                 |> Result.mapError Decode.errorToString
       , selectedMonth = Nothing
+      , hoveredDay = Nothing
+      , selectedDay = Nothing
       }
     , Cmd.none
     )
@@ -57,6 +65,15 @@ update msg model =
     case msg of
         SelectMonth month ->
             ( { model | selectedMonth = month }, Cmd.none )
+
+        HoverDay date ->
+            ( { model | hoveredDay = Just date }, Cmd.none )
+
+        LeaveDay ->
+            ( { model | hoveredDay = Nothing }, Cmd.none )
+
+        SelectDay date ->
+            ( { model | selectedDay = Just date }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -107,6 +124,16 @@ viewApp model dataset =
                     , onSelectMonth = \month -> SelectMonth (Just month)
                     }
                     dataset.daily
+                )
+            , Layout.section "Stunden-Heatmap (pixelorientiert)"
+                (Heatmap.view
+                    { hoveredDay = model.hoveredDay
+                    , selectedDay = model.selectedDay
+                    , onHoverDay = HoverDay
+                    , onLeave = LeaveDay
+                    , onSelectDay = SelectDay
+                    }
+                    filteredHourly
                 )
             ]
         ]

@@ -125,6 +125,8 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .legend-swatch { opacity: 0.9; }
 .price-line { fill: none; stroke: #c04f3f; stroke-width: 2.5px; }
 .price-dot { fill: #c04f3f; cursor: pointer; }
+.heat-cell { stroke: none; cursor: pointer; }
+.heat-cell:hover, .heat-cell.active { stroke: #111111; stroke-width: 1.2px; }
 @media (max-width: 900px) {
   .metrics { grid-template-columns: 1fr; }
   .content { padding: 12px; }
