@@ -168,6 +168,24 @@ viewApp model dataset =
 
         filteredDaily =
             Data.filterDaily model.selectedMonth dataset.daily
+
+        -- Hover hat Vorrang vor der Auswahl: Das Detailpanel folgt dem
+        -- Mauszeiger, ohne dass die Auswahl dabei verloren geht.
+        focusDate =
+            case model.hoveredDay of
+                Just date ->
+                    Just date
+
+                Nothing ->
+                    model.selectedDay
+
+        maybeFocusDay =
+            focusDate |> Maybe.andThen (\date -> Data.findDaily date dataset.daily)
+
+        focusHourly =
+            focusDate
+                |> Maybe.map (\date -> Data.findHourlyForDate date dataset.hourly)
+                |> Maybe.withDefault []
     in
     div []
         [ div [ class "topbar" ]
@@ -186,43 +204,51 @@ viewApp model dataset =
         , div [ class "content" ]
             [ Layout.monthControls model.selectedMonth SelectMonth
             , Layout.metricCards filteredHourly filteredDaily
-            , Layout.section "Zeitreihen-Übersicht"
-                (TimeSeries.view
-                    { selectedMonth = model.selectedMonth
-                    , onSelectMonth = \month -> SelectMonth (Just month)
-                    , onShowTooltip = ShowTooltip
-                    , onMove = TooltipMove
-                    , onLeave = LeaveDay
+            , div [ class "grid" ]
+                [ div []
+                    [ Layout.section "Zeitreihen-Übersicht"
+                        (TimeSeries.view
+                            { selectedMonth = model.selectedMonth
+                            , onSelectMonth = \month -> SelectMonth (Just month)
+                            , onShowTooltip = ShowTooltip
+                            , onMove = TooltipMove
+                            , onLeave = LeaveDay
+                            }
+                            dataset.daily
+                        )
+                    , Layout.section "Stunden-Heatmap (pixelorientiert)"
+                        (Heatmap.view
+                            { hoveredDay = model.hoveredDay
+                            , selectedDay = model.selectedDay
+                            , onHoverDay = HoverDay
+                            , onMove = TooltipMove
+                            , onLeave = LeaveDay
+                            , onSelectDay = SelectDay
+                            }
+                            filteredHourly
+                        )
+                    , Layout.section "Mehrdimensionaler Tagesvergleich (parallele Koordinaten)"
+                        (ParallelCoordinates.view
+                            { hoveredDay = model.hoveredDay
+                            , selectedDay = model.selectedDay
+                            , brushes = model.brushes
+                            , dragging = model.dragging
+                            , onHoverDay = HoverDay
+                            , onMove = TooltipMove
+                            , onLeave = LeaveDay
+                            , onSelectDay = SelectDay
+                            , onBrushStart = BrushStart
+                            , onBrushMove = BrushMove
+                            , onBrushEnd = BrushEnd
+                            , onClearBrushes = ClearBrushes
+                            }
+                            filteredDaily
+                        )
+                    ]
+                , Layout.detailPanel
+                    { focus = maybeFocusDay
+                    , focusHourly = focusHourly
                     }
-                    dataset.daily
-                )
-            , Layout.section "Stunden-Heatmap (pixelorientiert)"
-                (Heatmap.view
-                    { hoveredDay = model.hoveredDay
-                    , selectedDay = model.selectedDay
-                    , onHoverDay = HoverDay
-                    , onMove = TooltipMove
-                    , onLeave = LeaveDay
-                    , onSelectDay = SelectDay
-                    }
-                    filteredHourly
-                )
-            , Layout.section "Mehrdimensionaler Tagesvergleich (parallele Koordinaten)"
-                (ParallelCoordinates.view
-                    { hoveredDay = model.hoveredDay
-                    , selectedDay = model.selectedDay
-                    , brushes = model.brushes
-                    , dragging = model.dragging
-                    , onHoverDay = HoverDay
-                    , onMove = TooltipMove
-                    , onLeave = LeaveDay
-                    , onSelectDay = SelectDay
-                    , onBrushStart = BrushStart
-                    , onBrushMove = BrushMove
-                    , onBrushEnd = BrushEnd
-                    , onClearBrushes = ClearBrushes
-                    }
-                    filteredDaily
-                )
+                ]
             ]
         ]

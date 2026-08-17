@@ -1,4 +1,4 @@
-module Views.Layout exposing (metricCards, monthControls, section, stylesheet, tooltipView)
+module Views.Layout exposing (detailPanel, metricCards, monthControls, section, stylesheet, tooltipView)
 
 {-| Rahmen der Anwendung: Monatsfilter, Kennzahlenkarten, Abschnittsueberschriften
 und das Stylesheet.
@@ -9,12 +9,13 @@ gehaengt, damit die Anwendung ohne weitere Dateien ausgeliefert werden kann.
 -}
 
 import Data exposing (Daily, Hourly, Tooltip)
-import Html exposing (Html, button, div, h2, span, text)
+import Html exposing (Html, button, div, h2, p, span, text)
 import Html.Attributes as HtmlAttr exposing (class)
 import Html.Events exposing (onClick)
 
 
-{-| Schaltflaechenleiste fuer den Monatsfilter. `Nothing` steht fuer "Alle". -}
+{-| Schaltflaechenleiste fuer den Monatsfilter. `Nothing` steht fuer "Alle".
+-}
 monthControls : Maybe Int -> (Maybe Int -> msg) -> Html msg
 monthControls selectedMonth selectMonth =
     div [ class "month-controls" ]
@@ -35,7 +36,8 @@ monthControls selectedMonth selectMonth =
         )
 
 
-{-| Kennzahlen zum aktuell gefilterten Ausschnitt. -}
+{-| Kennzahlen zum aktuell gefilterten Ausschnitt.
+-}
 metricCards : List Hourly -> List Daily -> Html msg
 metricCards hourly daily =
     let
@@ -59,6 +61,66 @@ metricCards hourly daily =
         , card "Ø Preis" (Data.formatFloat 1 avgPrice ++ " €/MWh")
         , card "Neg. Preisstunden" (String.fromInt negHours)
         ]
+
+
+type alias DetailConfig =
+    { focus : Maybe Daily
+    , focusHourly : List Hourly
+    }
+
+
+{-| Details on demand: Kennzahlen und Stundenprofil des Tages, der gerade
+ueberfahren oder ausgewaehlt ist.
+-}
+detailPanel : DetailConfig -> Html msg
+detailPanel config =
+    div [ class "detail" ]
+        (h2 [] [ text "Tagesdetails" ] :: focusBlock config)
+
+
+focusBlock : DetailConfig -> List (Html msg)
+focusBlock config =
+    case config.focus of
+        Nothing ->
+            [ p [ class "empty" ]
+                [ text "Zelle in der Heatmap oder Linie in den parallelen Koordinaten überfahren bzw. anklicken, um einen Tag zu inspizieren." ]
+            ]
+
+        Just day ->
+            [ p [ class "detail-hint" ] [ text day.date ]
+            , div [ class "detail-grid" ]
+                [ detail "EE-Anteil" (Data.formatFloat 1 day.meanRenewableShare ++ " %")
+                , detail "Solaranteil" (Data.formatFloat 1 day.solarShare ++ " %")
+                , detail "Windanteil" (Data.formatFloat 1 day.windShare ++ " %")
+                , detail "Ø Last" (Data.formatFloat 1 day.meanLoadGw ++ " GW")
+                , detail "Nettohandel" (Data.formatFloat 1 day.meanNetImportGw ++ " GW")
+                , detail "Ø Preis"
+                    (day.meanPriceEurMwh
+                        |> Maybe.map (\price -> Data.formatFloat 1 price ++ " €/MWh")
+                        |> Maybe.withDefault "–"
+                    )
+                ]
+            , p [ class "detail-hint" ] [ text "EE-Anteil je Stunde" ]
+            , div [ class "spark" ] (List.map hourBar config.focusHourly)
+            ]
+
+
+detail : String -> String -> Html msg
+detail label value =
+    div [ class "detail-item" ]
+        [ span [ class "detail-label" ] [ text label ]
+        , span [ class "detail-value" ] [ text value ]
+        ]
+
+
+hourBar : Hourly -> Html msg
+hourBar point =
+    div
+        [ class "spark-bar"
+        , HtmlAttr.style "height" (String.fromFloat (max 5 (point.renewableShare / 1.4)) ++ "px")
+        , HtmlAttr.title (String.fromInt point.hour ++ " Uhr: " ++ Data.formatFloat 1 point.renewableShare ++ " %")
+        ]
+        []
 
 
 {-| Ein einziger Tooltip fuer die gesamte Anwendung, absolut positioniert an
@@ -140,7 +202,8 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .metric { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 10px 12px; min-width: 0; }
 .metric-value { display: block; font-size: 20px; font-weight: 700; color: #173b42; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .metric-label { display: block; margin-top: 4px; font-size: 12px; color: #65727a; }
-.section { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 14px; margin-bottom: 16px; overflow: hidden; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.section, .detail { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 14px; margin-bottom: 16px; overflow: hidden; }
 .chart { display: block; width: 100%; height: auto; }
 .chart-fixed { display: block; }
 .pc-scroll { overflow-x: auto; }
@@ -170,8 +233,16 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .tooltip-title { font-weight: 700; margin-bottom: 6px; color: #173b42; }
 .tooltip-row { display: flex; justify-content: space-between; gap: 14px; color: #51606b; }
 .tooltip-row span:last-child { font-weight: 600; color: #26343c; }
+.detail-hint { font-size: 12px; font-weight: 700; color: #26343c; margin: 0 0 8px; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.detail-item { border-bottom: 1px solid #edf0ed; padding-bottom: 6px; }
+.detail-label { display: block; font-size: 11px; color: #66747c; }
+.detail-value { display: block; font-size: 16px; font-weight: 700; color: #26343c; }
+.spark { height: 110px; display: flex; align-items: end; gap: 2px; padding-top: 10px; border-top: 1px solid #edf0ed; }
+.spark-bar { flex: 1 1 0; min-width: 3px; background: #76b6a2; border-radius: 2px 2px 0 0; }
+.empty { color: #65727a; }
 @media (max-width: 900px) {
-  .metrics { grid-template-columns: 1fr; }
+  .grid, .metrics { grid-template-columns: 1fr; }
   .content { padding: 12px; }
 }
 """
