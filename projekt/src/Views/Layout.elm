@@ -1,4 +1,4 @@
-module Views.Layout exposing (metricCards, monthControls, section, stylesheet)
+module Views.Layout exposing (metricCards, monthControls, section, stylesheet, tooltipView)
 
 {-| Rahmen der Anwendung: Monatsfilter, Kennzahlenkarten, Abschnittsueberschriften
 und das Stylesheet.
@@ -8,9 +8,9 @@ gehaengt, damit die Anwendung ohne weitere Dateien ausgeliefert werden kann.
 
 -}
 
-import Data exposing (Daily, Hourly)
+import Data exposing (Daily, Hourly, Tooltip)
 import Html exposing (Html, button, div, h2, span, text)
-import Html.Attributes exposing (class)
+import Html.Attributes as HtmlAttr exposing (class)
 import Html.Events exposing (onClick)
 
 
@@ -59,6 +59,32 @@ metricCards hourly daily =
         , card "Ø Preis" (Data.formatFloat 1 avgPrice ++ " €/MWh")
         , card "Neg. Preisstunden" (String.fromInt negHours)
         ]
+
+
+{-| Ein einziger Tooltip fuer die gesamte Anwendung, absolut positioniert an
+der Mausposition. pointer-events sind aus, damit er die Interaktion mit der
+darunterliegenden Markierung nicht unterbricht.
+-}
+tooltipView : Maybe Tooltip -> Html msg
+tooltipView maybeTooltip =
+    case maybeTooltip of
+        Nothing ->
+            text ""
+
+        Just tooltip ->
+            div
+                [ class "tooltip"
+                , HtmlAttr.style "left" (String.fromFloat (tooltip.x + 14) ++ "px")
+                , HtmlAttr.style "top" (String.fromFloat (tooltip.y + 14) ++ "px")
+                ]
+                (div [ class "tooltip-title" ] [ text tooltip.title ]
+                    :: List.map
+                        (\( label, value ) ->
+                            div [ class "tooltip-row" ]
+                                [ span [] [ text label ], span [] [ text value ] ]
+                        )
+                        tooltip.rows
+                )
 
 
 section : String -> Html msg -> Html msg
@@ -140,6 +166,10 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .brush-rect { fill: #214e57; fill-opacity: 0.16; stroke: #214e57; stroke-width: 1px; pointer-events: none; }
 .pc-controls { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; color: #65727a; }
 .pc-controls button { padding: 4px 8px; font-size: 12px; }
+.tooltip { position: absolute; z-index: 10; background: #ffffff; border: 1px solid #c9d2cc; border-radius: 6px; padding: 8px 10px; pointer-events: none; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14); font-size: 12px; min-width: 180px; }
+.tooltip-title { font-weight: 700; margin-bottom: 6px; color: #173b42; }
+.tooltip-row { display: flex; justify-content: space-between; gap: 14px; color: #51606b; }
+.tooltip-row span:last-child { font-weight: 600; color: #26343c; }
 @media (max-width: 900px) {
   .metrics { grid-template-columns: 1fr; }
   .content { padding: 12px; }

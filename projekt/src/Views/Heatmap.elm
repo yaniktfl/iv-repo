@@ -12,8 +12,10 @@ horizontales Band. Beides ist ohne Rechnung an der Form unterscheidbar.
 -}
 
 import Color
-import Data exposing (Hourly)
+import Data exposing (Hourly, Tooltip)
 import Html exposing (Html)
+import Html.Events
+import Json.Decode as Decode
 import TypedSvg exposing (g, rect, svg, text_)
 import TypedSvg.Attributes as SvgAttr
 import TypedSvg.Attributes.InPx as Px
@@ -25,7 +27,8 @@ import TypedSvg.Types exposing (AnchorAlignment(..), Paint(..))
 type alias Config msg =
     { hoveredDay : Maybe String
     , selectedDay : Maybe String
-    , onHoverDay : String -> msg
+    , onHoverDay : String -> Tooltip -> msg
+    , onMove : Float -> Float -> msg
     , onLeave : msg
     , onSelectDay : String -> msg
     }
@@ -105,11 +108,43 @@ cell config minDay left top cellW cellH point =
         , Px.y y0
         , Px.width (max 1.4 (cellW - 0.3))
         , Px.height (cellH - 0.5)
-        , SvgEvents.onMouseOver (config.onHoverDay point.date)
+        , Html.Events.on "mouseover"
+            (positionDecoder (\x y -> config.onHoverDay point.date (cellTooltip point x y)))
+        , Html.Events.on "mousemove" (positionDecoder config.onMove)
         , SvgEvents.onMouseOut config.onLeave
         , SvgEvents.onClick (config.onSelectDay point.date)
         ]
         []
+
+
+positionDecoder : (Float -> Float -> msg) -> Decode.Decoder msg
+positionDecoder toMsg =
+    Decode.map2 toMsg
+        (Decode.field "pageX" Decode.float)
+        (Decode.field "pageY" Decode.float)
+
+
+{-| Aus einer Farbe laesst sich kein Zahlenwert ablesen. Der Tooltip liefert
+deshalb die Werte der ueberfahrenen Stunde im Klartext.
+-}
+cellTooltip : Hourly -> Float -> Float -> Tooltip
+cellTooltip point x y =
+    { x = x
+    , y = y
+    , title = point.date ++ ", " ++ String.fromInt point.hour ++ ":00 Uhr"
+    , rows =
+        [ ( "EE-Anteil", Data.formatFloat 1 point.renewableShare ++ " %" )
+        , ( "Preis"
+          , point.priceEurMwh
+                |> Maybe.map (\price -> Data.formatFloat 2 price ++ " €/MWh")
+                |> Maybe.withDefault "–"
+          )
+        , ( "Last", Data.formatFloat 1 point.loadGw ++ " GW" )
+        , ( "Solar", Data.formatFloat 1 point.solarGw ++ " GW" )
+        , ( "Wind", Data.formatFloat 1 (point.windOnshoreGw + point.windOffshoreGw) ++ " GW" )
+        , ( "Nettohandel", Data.formatFloat 1 point.netImportGw ++ " GW" )
+        ]
+    }
 
 
 {-| Sequentielle Rampe von dunklem Blau nach hellem Gruen mit steigender

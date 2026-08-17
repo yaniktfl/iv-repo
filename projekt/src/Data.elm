@@ -3,6 +3,7 @@ module Data exposing
     , Dataset
     , Hourly
     , Meta
+    , Tooltip
     , datasetDecoder
     , filterDaily
     , filterHourly
@@ -24,6 +25,17 @@ Interaktion gruppieren muss.
 -}
 
 import Json.Decode as Decode exposing (Decoder)
+
+
+{-| Inhalt und Position eines Tooltips. Die Ansichten liefern nur Titel und
+Beschriftung-Wert-Paare; gerendert wird der Tooltip einmal zentral in `Main`.
+-}
+type alias Tooltip =
+    { x : Float
+    , y : Float
+    , title : String
+    , rows : List ( String, String )
+    }
 
 
 type alias Dataset =

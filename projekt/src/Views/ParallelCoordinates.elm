@@ -18,7 +18,7 @@ Stunden.
 
 -}
 
-import Data exposing (Daily)
+import Data exposing (Daily, Tooltip)
 import Dict exposing (Dict)
 import Html exposing (Html, button, div, span, text)
 import Html.Attributes as HtmlAttr
@@ -47,7 +47,8 @@ type alias Config msg =
     , selectedDay : Maybe String
     , brushes : Dict Int ( Float, Float )
     , dragging : Maybe Drag
-    , onHoverDay : String -> msg
+    , onHoverDay : String -> Tooltip -> msg
+    , onMove : Float -> Float -> msg
     , onLeave : msg
     , onSelectDay : String -> msg
     , onBrushStart : Int -> Float -> msg
@@ -323,11 +324,42 @@ polyline config dims passes day =
     path
         [ SvgAttr.class className
         , SvgAttr.d (linePath dims day)
-        , SvgEvents.onMouseOver (config.onHoverDay day.date)
+        , Html.Events.on "mouseover"
+            (positionDecoder (\x y -> config.onHoverDay day.date (lineTooltip day x y)))
+        , Html.Events.on "mousemove" (positionDecoder config.onMove)
         , SvgEvents.onMouseOut config.onLeave
         , SvgEvents.onClick (config.onSelectDay day.date)
         ]
         []
+
+
+positionDecoder : (Float -> Float -> msg) -> Decode.Decoder msg
+positionDecoder toMsg =
+    Decode.map2 toMsg
+        (Decode.field "pageX" Decode.float)
+        (Decode.field "pageY" Decode.float)
+
+
+{-| Alle sieben Dimensionswerte des ueberfahrenen Tages im Klartext. -}
+lineTooltip : Daily -> Float -> Float -> Tooltip
+lineTooltip day x y =
+    { x = x
+    , y = y
+    , title = day.date
+    , rows =
+        [ ( "Ø Last", Data.formatFloat 1 day.meanLoadGw ++ " GW" )
+        , ( "Solaranteil", Data.formatFloat 1 day.solarShare ++ " %" )
+        , ( "Windanteil", Data.formatFloat 1 day.windShare ++ " %" )
+        , ( "EE-Anteil", Data.formatFloat 1 day.meanRenewableShare ++ " %" )
+        , ( "Nettohandel", Data.formatFloat 1 day.meanNetImportGw ++ " GW" )
+        , ( "Ø Preis"
+          , day.meanPriceEurMwh
+                |> Maybe.map (\price -> Data.formatFloat 1 price ++ " €/MWh")
+                |> Maybe.withDefault "–"
+          )
+        , ( "Neg. Preisstunden", String.fromInt day.negativePriceHours )
+        ]
+    }
 
 
 axis : Int -> Int -> Dimension -> Svg msg

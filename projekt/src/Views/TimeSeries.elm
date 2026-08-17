@@ -15,8 +15,10 @@ eindeutige Klickflaeche laesst sich nicht ersetzen.
 
 -}
 
-import Data exposing (Daily)
+import Data exposing (Daily, Tooltip)
 import Html exposing (Html)
+import Html.Events
+import Json.Decode as Decode
 import TypedSvg exposing (g, line, path, rect, svg, text_)
 import TypedSvg.Attributes as SvgAttr
 import TypedSvg.Attributes.InPx as Px
@@ -28,6 +30,9 @@ import TypedSvg.Types exposing (AnchorAlignment(..))
 type alias Config msg =
     { selectedMonth : Maybe Int
     , onSelectMonth : Int -> msg
+    , onShowTooltip : Tooltip -> msg
+    , onMove : Float -> Float -> msg
+    , onLeave : msg
     }
 
 
@@ -171,6 +176,9 @@ monthBar config left top chartH xStep yRenewable summary =
             , Px.y y0
             , Px.width barW
             , Px.height (top + chartH - y0)
+            , onTooltipOver config summary
+            , onTooltipMove config
+            , SvgEvents.onMouseOut config.onLeave
             ]
             []
         , text_
@@ -196,8 +204,44 @@ priceDot config left xStep yPrice summary =
         , Px.width 8
         , Px.height 8
         , SvgEvents.onClick (config.onSelectMonth summary.month)
+        , onTooltipOver config summary
+        , onTooltipMove config
+        , SvgEvents.onMouseOut config.onLeave
         ]
         []
+
+
+onTooltipOver : Config msg -> MonthSummary -> SvgCore.Attribute msg
+onTooltipOver config summary =
+    Html.Events.on "mouseover"
+        (positionDecoder (\x y -> config.onShowTooltip (monthTooltip summary x y)))
+
+
+onTooltipMove : Config msg -> SvgCore.Attribute msg
+onTooltipMove config =
+    Html.Events.on "mousemove" (positionDecoder config.onMove)
+
+
+positionDecoder : (Float -> Float -> msg) -> Decode.Decoder msg
+positionDecoder toMsg =
+    Decode.map2 toMsg
+        (Decode.field "pageX" Decode.float)
+        (Decode.field "pageY" Decode.float)
+
+
+monthTooltip : MonthSummary -> Float -> Float -> Tooltip
+monthTooltip summary x y =
+    { x = x
+    , y = y
+    , title = Data.monthFullName summary.month ++ " 2024"
+    , rows =
+        [ ( "Ø EE-Anteil", Data.formatFloat 1 summary.renewable ++ " %" )
+        , ( "Ø Preis", Data.formatFloat 1 summary.price ++ " €/MWh" )
+        , ( "Ø Solaranteil", Data.formatFloat 1 summary.solar ++ " %" )
+        , ( "Ø Windanteil", Data.formatFloat 1 summary.wind ++ " %" )
+        , ( "Neg. Preisstunden", String.fromInt summary.negativeHours )
+        ]
+    }
 
 
 {-| Tagesprofile zu zwoelf Monatswerten falten. Monate ohne Daten werden

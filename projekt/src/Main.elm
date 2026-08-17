@@ -13,7 +13,7 @@ Kopplung strukturell erzwungen und nicht nur Konvention.
 -}
 
 import Browser
-import Data exposing (Dataset)
+import Data exposing (Dataset, Tooltip)
 import Dict exposing (Dict)
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
@@ -29,6 +29,7 @@ type alias Model =
     , selectedMonth : Maybe Int
     , hoveredDay : Maybe String
     , selectedDay : Maybe String
+    , tooltip : Maybe Tooltip
     , brushes : Dict Int ( Float, Float )
     , dragging : Maybe ParallelCoordinates.Drag
     }
@@ -36,7 +37,9 @@ type alias Model =
 
 type Msg
     = SelectMonth (Maybe Int)
-    | HoverDay String
+    | HoverDay String Tooltip
+    | ShowTooltip Tooltip
+    | TooltipMove Float Float
     | LeaveDay
     | SelectDay String
     | BrushStart Int Float
@@ -63,6 +66,7 @@ init flags =
       , selectedMonth = Nothing
       , hoveredDay = Nothing
       , selectedDay = Nothing
+      , tooltip = Nothing
       , brushes = Dict.empty
       , dragging = Nothing
       }
@@ -76,17 +80,31 @@ update msg model =
         SelectMonth month ->
             ( { model | selectedMonth = month }, Cmd.none )
 
-        HoverDay date ->
-            ( { model | hoveredDay = Just date }, Cmd.none )
+        HoverDay date tooltip ->
+            ( { model | hoveredDay = Just date, tooltip = Just tooltip }, Cmd.none )
+
+        ShowTooltip tooltip ->
+            ( { model | tooltip = Just tooltip }, Cmd.none )
+
+        TooltipMove x y ->
+            case model.tooltip of
+                Just tooltip ->
+                    ( { model | tooltip = Just { tooltip | x = x, y = y } }, Cmd.none )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         LeaveDay ->
-            ( { model | hoveredDay = Nothing }, Cmd.none )
+            ( { model | hoveredDay = Nothing, tooltip = Nothing }, Cmd.none )
 
         SelectDay date ->
             ( { model | selectedDay = Just date }, Cmd.none )
 
         BrushStart axis fraction ->
-            ( { model | dragging = Just { axis = axis, start = fraction, current = fraction } }
+            ( { model
+                | dragging = Just { axis = axis, start = fraction, current = fraction }
+                , tooltip = Nothing
+              }
             , Cmd.none
             )
 
@@ -138,6 +156,7 @@ view model =
 
             Ok dataset ->
                 viewApp model dataset
+        , Layout.tooltipView model.tooltip
         ]
 
 
@@ -171,6 +190,9 @@ viewApp model dataset =
                 (TimeSeries.view
                     { selectedMonth = model.selectedMonth
                     , onSelectMonth = \month -> SelectMonth (Just month)
+                    , onShowTooltip = ShowTooltip
+                    , onMove = TooltipMove
+                    , onLeave = LeaveDay
                     }
                     dataset.daily
                 )
@@ -179,6 +201,7 @@ viewApp model dataset =
                     { hoveredDay = model.hoveredDay
                     , selectedDay = model.selectedDay
                     , onHoverDay = HoverDay
+                    , onMove = TooltipMove
                     , onLeave = LeaveDay
                     , onSelectDay = SelectDay
                     }
@@ -191,6 +214,7 @@ viewApp model dataset =
                     , brushes = model.brushes
                     , dragging = model.dragging
                     , onHoverDay = HoverDay
+                    , onMove = TooltipMove
                     , onLeave = LeaveDay
                     , onSelectDay = SelectDay
                     , onBrushStart = BrushStart
