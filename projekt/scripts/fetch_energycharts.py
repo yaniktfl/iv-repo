@@ -1,14 +1,18 @@
 """Abruf der EnergyCharts-Tabellen ueber den PostgREST-Endpunkt der Universitaet Halle.
 
 Der Endpunkt ist tokengeschuetzt, deshalb wird der Abruf einmalig offline
-ausgefuehrt und nicht aus der Elm-Anwendung heraus.
+ausgefuehrt und nicht aus der Elm-Anwendung heraus. Das Ergebnis ist eine
+statische JSON-Datei, die die Anwendung zur Laufzeit per HTTP nachlaedt.
 """
 
 import base64
 import datetime as dt
 import json
+import math
+import pathlib
 import urllib.error
 import urllib.request
+from collections import defaultdict
 
 
 BASE_URL = "https://dbs.informatik.uni-halle.de/sciencedata"
@@ -77,7 +81,104 @@ def get_table(token, table_name, filters=None, where_=None):
         offset += PAGE_SIZE
 
 
+def utc_date(timestamp):
+    return dt.datetime.fromtimestamp(timestamp, tz=dt.timezone.utc)
+
+
+def value(row, key):
+    """Einen Leistungswert lesen und nach GW normieren.
+
+    Die Quellspalten heissen "..._in_gw", fuehren die deutschen Werte aber in
+    MW-Skala (Solar-Mittagswerte um 43000). Ohne die Division durch 1000 waeren
+    saemtliche Achsen um drei Groessenordnungen falsch beschriftet.
+    """
+    raw = row.get(key)
+    if raw is None:
+        return 0.0
+    return float(raw) / 1000.0
+
+
+def mean(values):
+    clean = [x for x in values if x is not None and math.isfinite(x)]
+    if not clean:
+        return None
+    return sum(clean) / len(clean)
+
+
+def pct(numerator, denominator):
+    if denominator == 0:
+        return 0.0
+    return 100.0 * numerator / denominator
+
+
+def build_hourly(power_by_hour, price_by_hour):
+    """Viertelstundenwerte zu Stundenmitteln verdichten.
+
+    Die Stunde ist die feinste Aufloesung, in der Erzeugung (Viertelstunden)
+    und Boersenpreis (Stundenprodukt) gemeinsam definiert sind. Eine Kopplung
+    auf Viertelstundenebene wuerde den Preis dreimal wiederholen und
+    Scheingenauigkeit erzeugen.
+    """
+    hourly = []
+    for hour_key in sorted(power_by_hour):
+        rows = power_by_hour[hour_key]
+        solar = mean([value(row, "solar_in_gw") for row in rows]) or 0.0
+        wind_onshore = mean([value(row, "wind_onshore_in_gw") for row in rows]) or 0.0
+        wind_offshore = mean([value(row, "wind_offshore_in_gw") for row in rows]) or 0.0
+        fossil = sum(
+            mean([value(row, key) for row in rows]) or 0.0
+            for key in [
+                "fossil_brown_coal_lignite_in_gw",
+                "fossil_hard_coal_in_gw",
+                "fossil_oil_in_gw",
+                "fossil_coal_derived_gas_in_gw",
+                "fossil_gas_in_gw",
+            ]
+        )
+        renewable = (
+            solar
+            + wind_onshore
+            + wind_offshore
+            + (mean([value(row, "biomass_in_gw") for row in rows]) or 0.0)
+            + (mean([value(row, "hydro_run_of_river_in_gw") for row in rows]) or 0.0)
+            + (mean([value(row, "hydro_water_reservoir_in_gw") for row in rows]) or 0.0)
+            + (mean([value(row, "geothermal_in_gw") for row in rows]) or 0.0)
+        )
+        residual = mean([value(row, "residual_load_in_gw") for row in rows]) or 0.0
+
+        # load_in_gw ist in der totalpower-Sicht fuer Deutschland durchgehend
+        # leer. Die Last wird daher aus der Definition der Residuallast
+        # rekonstruiert: Residuallast = Last minus dargebotsabhaengige
+        # Einspeisung. Das ist eine Naeherung, weil Biomasse, Wasserkraft und
+        # Geothermie dort nicht abgezogen werden.
+        load = solar + wind_onshore + wind_offshore + residual
+
+        trade = mean([value(row, "cross_border_electricity_trading_in_gw") for row in rows]) or 0.0
+        price = mean(price_by_hour.get(hour_key, []))
+
+        hourly.append(
+            {
+                "timestamp": hour_key.isoformat().replace("+00:00", "Z"),
+                "date": hour_key.date().isoformat(),
+                "month": hour_key.month,
+                "dayOfYear": int(hour_key.strftime("%j")),
+                "hour": hour_key.hour,
+                "loadGw": round(load, 3),
+                "solarGw": round(solar, 3),
+                "windOnshoreGw": round(wind_onshore, 3),
+                "windOffshoreGw": round(wind_offshore, 3),
+                "fossilGw": round(fossil, 3),
+                "renewableGw": round(renewable, 3),
+                "renewableShare": round(pct(renewable, load), 2),
+                "netImportGw": round(trade, 3),
+                "priceEurMwh": None if price is None else round(price, 2),
+            }
+        )
+    return hourly
+
+
 def main():
+    out_path = pathlib.Path(__file__).resolve().parents[1] / "data" / f"energycharts_de_{YEAR}.json"
     token = get_token()
 
     start = dt.datetime(YEAR, 1, 1, tzinfo=dt.timezone.utc)
@@ -93,8 +194,32 @@ def main():
     )
     price_rows = get_table(token, "energycharts_price", {"market_id": "DE-LU"})
 
-    print(f"totalpower: {len(power_rows)} Zeilen")
-    print(f"price: {len(price_rows)} Zeilen")
+    price_by_hour = defaultdict(list)
+    for row in price_rows:
+        instant = utc_date(int(row["unix_seconds"]))
+        if start <= instant < end:
+            price_by_hour[instant.replace(minute=0, second=0, microsecond=0)].append(row.get("price"))
+
+    power_by_hour = defaultdict(list)
+    for row in power_rows:
+        instant = utc_date(int(row["unix_seconds"]))
+        if start <= instant < end:
+            power_by_hour[instant.replace(minute=0, second=0, microsecond=0)].append(row)
+
+    hourly = build_hourly(power_by_hour, price_by_hour)
+
+    payload = {
+        "meta": {
+            "country": "Germany",
+            "countryId": "de",
+            "priceMarket": "DE-LU",
+            "year": YEAR,
+        },
+        "hourly": hourly,
+    }
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    print(f"{len(hourly)} Stundenwerte nach {out_path} geschrieben")
 
 
 if __name__ == "__main__":
