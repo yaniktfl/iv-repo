@@ -6,21 +6,28 @@ Der Datensatz kommt als Flag aus `index.html`. Das Dekodieren kann
 fehlschlagen, deshalb liegt im Model ein `Result` und nicht der nackte
 Datensatz: Die view-Funktion muss den Fehlerfall damit behandeln.
 
+Der gesamte Interaktionszustand liegt hier zentral. Die Ansichten halten
+keinen eigenen Zustand, sondern lesen aus diesem Model -- damit ist ihre
+Kopplung strukturell erzwungen und nicht nur Konvention.
+
 -}
 
 import Browser
 import Data exposing (Dataset)
-import Html exposing (Html, div, h1, p, text)
+import Html exposing (Html, div, h1, node, p, text)
+import Html.Attributes exposing (class)
 import Json.Decode as Decode
+import Views.Layout as Layout
 
 
 type alias Model =
     { dataset : Result String Dataset
+    , selectedMonth : Maybe Int
     }
 
 
 type Msg
-    = NoOp
+    = SelectMonth (Maybe Int)
 
 
 main : Program Decode.Value Model Msg
@@ -38,36 +45,60 @@ init flags =
     ( { dataset =
             Decode.decodeValue Data.datasetDecoder flags
                 |> Result.mapError Decode.errorToString
+      , selectedMonth = Nothing
       }
     , Cmd.none
     )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update _ model =
-    ( model, Cmd.none )
+update msg model =
+    case msg of
+        SelectMonth month ->
+            ( { model | selectedMonth = month }, Cmd.none )
 
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ h1 [] [ text "EnergyCharts Visual Analytics" ]
+    div [ class "page" ]
+        [ node "style" [] [ text Layout.stylesheet ]
         , case model.dataset of
             Err error ->
-                p [] [ text ("Der Datensatz konnte nicht dekodiert werden: " ++ error) ]
+                div [ class "content" ]
+                    [ h1 [] [ text "EnergyCharts Visual Analytics" ]
+                    , p [] [ text ("Der Datensatz konnte nicht dekodiert werden: " ++ error) ]
+                    ]
 
             Ok dataset ->
-                p []
-                    [ text
-                        ("Deutschland "
-                            ++ String.fromInt dataset.meta.year
-                            ++ ", Strommarkt "
-                            ++ dataset.meta.priceMarket
-                            ++ ": "
-                            ++ String.fromInt (List.length dataset.hourly)
-                            ++ " Stundenwerte, "
-                            ++ String.fromInt (List.length dataset.daily)
-                            ++ " Tagesprofile."
-                        )
-                    ]
+                viewApp model dataset
+        ]
+
+
+viewApp : Model -> Dataset -> Html Msg
+viewApp model dataset =
+    let
+        filteredHourly =
+            Data.filterHourly model.selectedMonth dataset.hourly
+
+        filteredDaily =
+            Data.filterDaily model.selectedMonth dataset.daily
+    in
+    div []
+        [ div [ class "topbar" ]
+            [ h1 [] [ text "EnergyCharts Visual Analytics" ]
+            , p []
+                [ text
+                    ("Deutschland "
+                        ++ String.fromInt dataset.meta.year
+                        ++ ", Strommarkt "
+                        ++ dataset.meta.priceMarket
+                        ++ ". Wie hängen Solar- und Windmuster mit der Deckung durch "
+                        ++ "erneuerbare Energien (EE), Preisen und Nettohandel zusammen?"
+                    )
+                ]
+            ]
+        , div [ class "content" ]
+            [ Layout.monthControls model.selectedMonth SelectMonth
+            , Layout.metricCards filteredHourly filteredDaily
+            ]
         ]
