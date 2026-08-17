@@ -74,12 +74,12 @@ type alias Dimension =
 
 chartWidth : Float
 chartWidth =
-    780
+    1280
 
 
 chartHeight : Float
 chartHeight =
-    330
+    450
 
 
 marginLeft : Float

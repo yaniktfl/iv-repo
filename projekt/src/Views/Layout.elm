@@ -237,7 +237,7 @@ body { margin: 0; font-family: Inter, Segoe UI, Arial, sans-serif; color: #1d252
 h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: 0; }
 h2 { margin: 0 0 12px; font-size: 17px; letter-spacing: 0; }
 p { margin: 0; color: #51606b; line-height: 1.45; }
-.content { max-width: 1180px; margin: 0 auto; padding: 18px; }
+.content { max-width: 1900px; margin: 0 auto; padding: 18px; }
 .month-controls { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px; }
 button { border: 1px solid #b9c3bd; background: #ffffff; color: #23313a; padding: 7px 10px; border-radius: 6px; cursor: pointer; }
 button:hover, button.active { background: #214e57; border-color: #214e57; color: #ffffff; }
@@ -245,7 +245,10 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .metric { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 10px 12px; min-width: 0; }
 .metric-value { display: block; font-size: 20px; font-weight: 700; color: #173b42; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .metric-label { display: block; margin-top: 4px; font-size: 12px; color: #65727a; }
-.grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
+/* Das Panel bleibt beim Scrollen sichtbar, damit es auch beim Arbeiten in
+   der Heatmap weiter unten im Blick ist. */
+.detail { position: sticky; top: 12px; }
 .section, .detail { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 14px; margin-bottom: 16px; overflow: hidden; }
 .chart { display: block; width: 100%; height: auto; }
 .chart-fixed { display: block; }

@@ -46,13 +46,18 @@ view config hourly =
         dayCount =
             max 1 (maxDay - minDay + 1)
 
-        -- Bei ungefiltertem Jahr eine Pixelspalte je Tag, bei Monatsfilterung
+        -- Bei ungefiltertem Jahr eine schmale Spalte je Tag, bei Monatsfilterung
         -- breitere Kacheln. Die Semantik bleibt dieselbe.
+        --
+        -- Die Obergrenze begrenzt zugleich die Bildhoehe: Das SVG skaliert
+        -- ueber die viewBox auf die Containerbreite, ein zu kleiner Deckel
+        -- wuerde bei wenigen Tagen also nicht kleinere, sondern hoehere
+        -- Kacheln erzeugen.
         cellW =
-            min 8 (840 / toFloat dayCount)
+            min 30 (1500 / toFloat dayCount)
 
         cellH =
-            10
+            17
 
         left =
             58
