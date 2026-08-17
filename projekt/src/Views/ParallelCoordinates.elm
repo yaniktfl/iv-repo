@@ -65,6 +65,11 @@ type alias Dimension =
     }
 
 
+-- Feste Pixelgroesse statt responsiver Skalierung: Nur so entspricht das
+-- offsetY eines Mausereignisses direkt der SVG-y-Koordinate. Der Alternativweg
+-- ueber getBoundingClientRect braeuchte Ports oder Browser.Dom-Tasks.
+
+
 chartWidth : Float
 chartWidth =
     780
@@ -122,15 +127,19 @@ view config daily =
     in
     div []
         [ controls config (List.length daily) visibleCount
-        , svg
-            [ SvgAttr.viewBox 0 0 chartWidth chartHeight
-            , SvgAttr.class [ "chart", "parallel" ]
-            ]
-            [ text_ [ SvgAttr.class [ "chart-label" ], Px.x 14, Px.y 20 ] [ SvgCore.text "Parallele Koordinaten: Tagesprofile" ]
-            , g [] (List.map (polyline config dims passes) daily)
-            , g [] (List.indexedMap (axis (List.length dims)) dims)
-            , g [] (brushRects effective (List.length dims))
-            , g [] (List.indexedMap (\index _ -> axisHit config (List.length dims) index) dims)
+        , div [ HtmlAttr.class "pc-scroll" ]
+            [ svg
+                [ SvgAttr.viewBox 0 0 chartWidth chartHeight
+                , Px.width chartWidth
+                , Px.height chartHeight
+                , SvgAttr.class [ "chart-fixed", "parallel" ]
+                ]
+                [ text_ [ SvgAttr.class [ "chart-label" ], Px.x 14, Px.y 20 ] [ SvgCore.text "Parallele Koordinaten: Tagesprofile" ]
+                , g [] (List.map (polyline config dims passes) daily)
+                , g [] (List.indexedMap (axis (List.length dims)) dims)
+                , g [] (brushRects effective (List.length dims))
+                , g [] (List.indexedMap (\index _ -> axisHit config (List.length dims) index) dims)
+                ]
             ]
         ]
 

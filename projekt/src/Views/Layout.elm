@@ -116,6 +116,8 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .metric-label { display: block; margin-top: 4px; font-size: 12px; color: #65727a; }
 .section { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 14px; margin-bottom: 16px; overflow: hidden; }
 .chart { display: block; width: 100%; height: auto; }
+.chart-fixed { display: block; }
+.pc-scroll { overflow-x: auto; }
 .chart-label { font-size: 13px; font-weight: 700; fill: #26343c; }
 .tick-label, .month-label, .dimension-label { font-size: 11px; fill: #64717a; }
 .dimension-label { font-weight: 700; }
