@@ -19,6 +19,7 @@ import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Views.Heatmap as Heatmap
 import Views.Layout as Layout
+import Views.ParallelCoordinates as ParallelCoordinates
 import Views.TimeSeries as TimeSeries
 
 
@@ -134,6 +135,16 @@ viewApp model dataset =
                     , onSelectDay = SelectDay
                     }
                     filteredHourly
+                )
+            , Layout.section "Mehrdimensionaler Tagesvergleich (parallele Koordinaten)"
+                (ParallelCoordinates.view
+                    { hoveredDay = model.hoveredDay
+                    , selectedDay = model.selectedDay
+                    , onHoverDay = HoverDay
+                    , onLeave = LeaveDay
+                    , onSelectDay = SelectDay
+                    }
+                    filteredDaily
                 )
             ]
         ]

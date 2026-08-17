@@ -117,7 +117,8 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .section { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 14px; margin-bottom: 16px; overflow: hidden; }
 .chart { display: block; width: 100%; height: auto; }
 .chart-label { font-size: 13px; font-weight: 700; fill: #26343c; }
-.tick-label, .month-label { font-size: 11px; fill: #64717a; }
+.tick-label, .month-label, .dimension-label { font-size: 11px; fill: #64717a; }
+.dimension-label { font-weight: 700; }
 .grid-line { stroke: #e3e7e3; stroke-width: 1px; }
 .axis-line { stroke: #9aa59f; stroke-width: 1px; }
 .month-bar { fill: #76b6a2; opacity: 0.78; cursor: pointer; }
@@ -128,6 +129,9 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .heat-missing { fill: #dfe5e1; stroke: #ffffff; stroke-width: 0.25px; }
 .heat-cell { stroke: none; cursor: pointer; }
 .heat-cell:hover, .heat-cell.active { stroke: #111111; stroke-width: 1.2px; }
+.pc-line { fill: none; stroke: #45646e; stroke-width: 1px; stroke-opacity: 0.16; cursor: pointer; }
+.pc-line:hover, .pc-line.hovered { stroke: #c04f3f; stroke-width: 2px; stroke-opacity: 0.95; }
+.pc-line.selected { stroke: #111111; stroke-width: 2.4px; stroke-opacity: 1; }
 @media (max-width: 900px) {
   .metrics { grid-template-columns: 1fr; }
   .content { padding: 12px; }
