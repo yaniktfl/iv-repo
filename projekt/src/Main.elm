@@ -14,6 +14,7 @@ Kopplung strukturell erzwungen und nicht nur Konvention.
 
 import Browser
 import Data exposing (Dataset)
+import Dict exposing (Dict)
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
@@ -28,6 +29,8 @@ type alias Model =
     , selectedMonth : Maybe Int
     , hoveredDay : Maybe String
     , selectedDay : Maybe String
+    , brushes : Dict Int ( Float, Float )
+    , dragging : Maybe ParallelCoordinates.Drag
     }
 
 
@@ -36,6 +39,10 @@ type Msg
     | HoverDay String
     | LeaveDay
     | SelectDay String
+    | BrushStart Int Float
+    | BrushMove Float
+    | BrushEnd
+    | ClearBrushes
 
 
 main : Program Decode.Value Model Msg
@@ -56,6 +63,8 @@ init flags =
       , selectedMonth = Nothing
       , hoveredDay = Nothing
       , selectedDay = Nothing
+      , brushes = Dict.empty
+      , dragging = Nothing
       }
     , Cmd.none
     )
@@ -75,6 +84,45 @@ update msg model =
 
         SelectDay date ->
             ( { model | selectedDay = Just date }, Cmd.none )
+
+        BrushStart axis fraction ->
+            ( { model | dragging = Just { axis = axis, start = fraction, current = fraction } }
+            , Cmd.none
+            )
+
+        BrushMove fraction ->
+            case model.dragging of
+                Just drag ->
+                    ( { model | dragging = Just { drag | current = fraction } }, Cmd.none )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        BrushEnd ->
+            case model.dragging of
+                Just drag ->
+                    let
+                        lo =
+                            min drag.start drag.current
+
+                        hi =
+                            max drag.start drag.current
+
+                        brushes =
+                            -- Ein Klick ohne Ziehen loescht den Filter der Achse.
+                            if hi - lo < 0.01 then
+                                Dict.remove drag.axis model.brushes
+
+                            else
+                                Dict.insert drag.axis ( lo, hi ) model.brushes
+                    in
+                    ( { model | brushes = brushes, dragging = Nothing }, Cmd.none )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        ClearBrushes ->
+            ( { model | brushes = Dict.empty, dragging = Nothing }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -140,9 +188,15 @@ viewApp model dataset =
                 (ParallelCoordinates.view
                     { hoveredDay = model.hoveredDay
                     , selectedDay = model.selectedDay
+                    , brushes = model.brushes
+                    , dragging = model.dragging
                     , onHoverDay = HoverDay
                     , onLeave = LeaveDay
                     , onSelectDay = SelectDay
+                    , onBrushStart = BrushStart
+                    , onBrushMove = BrushMove
+                    , onBrushEnd = BrushEnd
+                    , onClearBrushes = ClearBrushes
                     }
                     filteredDaily
                 )

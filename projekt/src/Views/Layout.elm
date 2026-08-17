@@ -132,6 +132,11 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .pc-line { fill: none; stroke: #45646e; stroke-width: 1px; stroke-opacity: 0.16; cursor: pointer; }
 .pc-line:hover, .pc-line.hovered { stroke: #c04f3f; stroke-width: 2px; stroke-opacity: 0.95; }
 .pc-line.selected { stroke: #111111; stroke-width: 2.4px; stroke-opacity: 1; }
+.pc-line.dimmed { stroke-opacity: 0.03; pointer-events: none; }
+.pc-axis-hit { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }
+.brush-rect { fill: #214e57; fill-opacity: 0.16; stroke: #214e57; stroke-width: 1px; pointer-events: none; }
+.pc-controls { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; color: #65727a; }
+.pc-controls button { padding: 4px 8px; font-size: 12px; }
 @media (max-width: 900px) {
   .metrics { grid-template-columns: 1fr; }
   .content { padding: 12px; }
