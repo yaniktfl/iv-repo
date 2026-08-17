@@ -1,0 +1,19 @@
+# Elm
+elm-stuff/
+
+# Kompilat der Elm-Anwendung (wird von der CI erzeugt, siehe .gitlab-ci.yml)
+projekt/main.js
+
+# LaTeX
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.out
+*.run.xml
+*.toc
+*.synctex.gz
+
+# Betriebssystem
+.DS_Store
