@@ -19,6 +19,7 @@ import Data exposing (Daily, Tooltip)
 import Html exposing (Html)
 import Html.Events
 import Json.Decode as Decode
+import Set exposing (Set)
 import TypedSvg exposing (g, line, path, rect, svg, text_)
 import TypedSvg.Attributes as SvgAttr
 import TypedSvg.Attributes.InPx as Px
@@ -28,8 +29,8 @@ import TypedSvg.Types exposing (AnchorAlignment(..))
 
 
 type alias Config msg =
-    { selectedMonth : Maybe Int
-    , onSelectMonth : Int -> msg
+    { selectedMonths : Set Int
+    , onToggleMonth : Int -> msg
     , onShowTooltip : Tooltip -> msg
     , onMove : Float -> Float -> msg
     , onLeave : msg
@@ -113,7 +114,7 @@ view config daily =
         , path [ SvgAttr.class [ "price-line" ], SvgAttr.d pricePath ] []
         , g [] (List.map (priceDot config left xStep yPrice) summaries)
         , axisLabel 14 18 "Monatliche Tagesprofile 2024"
-        , axisLabel 14 (h - 16) "Klick auf einen Balken filtert den Monat."
+        , axisLabel 14 (h - 16) "Klick auf einen Balken filtert den Monat (Mehrfachauswahl möglich)."
         , legend (left + chartW - 400) 8
         ]
 
@@ -162,14 +163,14 @@ monthBar config left top chartH xStep yRenewable summary =
             yRenewable summary.renewable
 
         className =
-            if config.selectedMonth == Just summary.month then
+            if Set.member summary.month config.selectedMonths then
                 [ "month-bar", "active" ]
 
             else
                 [ "month-bar" ]
     in
     g
-        [ SvgEvents.onClick (config.onSelectMonth summary.month) ]
+        [ SvgEvents.onClick (config.onToggleMonth summary.month) ]
         [ rect
             [ SvgAttr.class className
             , Px.x x0
@@ -203,7 +204,7 @@ priceDot config left xStep yPrice summary =
         , Px.y (yPrice summary.price - 4)
         , Px.width 8
         , Px.height 8
-        , SvgEvents.onClick (config.onSelectMonth summary.month)
+        , SvgEvents.onClick (config.onToggleMonth summary.month)
         , onTooltipOver config summary
         , onTooltipMove config
         , SvgEvents.onMouseOut config.onLeave

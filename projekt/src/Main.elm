@@ -18,6 +18,7 @@ import Dict exposing (Dict)
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
+import Set exposing (Set)
 import Views.Heatmap as Heatmap
 import Views.Layout as Layout
 import Views.ParallelCoordinates as ParallelCoordinates
@@ -26,9 +27,9 @@ import Views.TimeSeries as TimeSeries
 
 type alias Model =
     { dataset : Result String Dataset
-    , selectedMonth : Maybe Int
+    , selectedMonths : Set Int
     , hoveredDay : Maybe String
-    , selectedDay : Maybe String
+    , selectedDays : List String
     , tooltip : Maybe Tooltip
     , brushes : Dict Int ( Float, Float )
     , dragging : Maybe ParallelCoordinates.Drag
@@ -36,12 +37,14 @@ type alias Model =
 
 
 type Msg
-    = SelectMonth (Maybe Int)
+    = ToggleMonth (Maybe Int)
     | HoverDay String Tooltip
     | ShowTooltip Tooltip
     | TooltipMove Float Float
     | LeaveDay
-    | SelectDay String
+    | ToggleDay String
+    | RemoveDay String
+    | ClearDays
     | BrushStart Int Float
     | BrushMove Float
     | BrushEnd
@@ -63,9 +66,9 @@ init flags =
     ( { dataset =
             Decode.decodeValue Data.datasetDecoder flags
                 |> Result.mapError Decode.errorToString
-      , selectedMonth = Nothing
+      , selectedMonths = Set.empty
       , hoveredDay = Nothing
-      , selectedDay = Nothing
+      , selectedDays = []
       , tooltip = Nothing
       , brushes = Dict.empty
       , dragging = Nothing
@@ -77,8 +80,19 @@ init flags =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        SelectMonth month ->
-            ( { model | selectedMonth = month }, Cmd.none )
+        ToggleMonth Nothing ->
+            ( { model | selectedMonths = Set.empty }, Cmd.none )
+
+        ToggleMonth (Just month) ->
+            let
+                months =
+                    if Set.member month model.selectedMonths then
+                        Set.remove month model.selectedMonths
+
+                    else
+                        Set.insert month model.selectedMonths
+            in
+            ( { model | selectedMonths = months }, Cmd.none )
 
         HoverDay date tooltip ->
             ( { model | hoveredDay = Just date, tooltip = Just tooltip }, Cmd.none )
@@ -97,8 +111,22 @@ update msg model =
         LeaveDay ->
             ( { model | hoveredDay = Nothing, tooltip = Nothing }, Cmd.none )
 
-        SelectDay date ->
-            ( { model | selectedDay = Just date }, Cmd.none )
+        ToggleDay date ->
+            let
+                days =
+                    if List.member date model.selectedDays then
+                        List.filter (\d -> d /= date) model.selectedDays
+
+                    else
+                        model.selectedDays ++ [ date ]
+            in
+            ( { model | selectedDays = days }, Cmd.none )
+
+        RemoveDay date ->
+            ( { model | selectedDays = List.filter (\d -> d /= date) model.selectedDays }, Cmd.none )
+
+        ClearDays ->
+            ( { model | selectedDays = [] }, Cmd.none )
 
         BrushStart axis fraction ->
             ( { model
@@ -164,10 +192,10 @@ viewApp : Model -> Dataset -> Html Msg
 viewApp model dataset =
     let
         filteredHourly =
-            Data.filterHourly model.selectedMonth dataset.hourly
+            Data.filterHourly model.selectedMonths dataset.hourly
 
         filteredDaily =
-            Data.filterDaily model.selectedMonth dataset.daily
+            Data.filterDaily model.selectedMonths dataset.daily
 
         -- Hover hat Vorrang vor der Auswahl: Das Detailpanel folgt dem
         -- Mauszeiger, ohne dass die Auswahl dabei verloren geht.
@@ -177,10 +205,14 @@ viewApp model dataset =
                     Just date
 
                 Nothing ->
-                    model.selectedDay
+                    -- der zuletzt gewaehlte Tag
+                    List.head (List.reverse model.selectedDays)
 
         maybeFocusDay =
             focusDate |> Maybe.andThen (\date -> Data.findDaily date dataset.daily)
+
+        selectedDailies =
+            List.filterMap (\date -> Data.findDaily date dataset.daily) model.selectedDays
 
         focusHourly =
             focusDate
@@ -202,14 +234,14 @@ viewApp model dataset =
                 ]
             ]
         , div [ class "content" ]
-            [ Layout.monthControls model.selectedMonth SelectMonth
+            [ Layout.monthControls model.selectedMonths ToggleMonth
             , Layout.metricCards filteredHourly filteredDaily
             , div [ class "grid" ]
                 [ div []
                     [ Layout.section "Zeitreihen-Übersicht"
                         (TimeSeries.view
-                            { selectedMonth = model.selectedMonth
-                            , onSelectMonth = \month -> SelectMonth (Just month)
+                            { selectedMonths = model.selectedMonths
+                            , onToggleMonth = \month -> ToggleMonth (Just month)
                             , onShowTooltip = ShowTooltip
                             , onMove = TooltipMove
                             , onLeave = LeaveDay
@@ -219,24 +251,24 @@ viewApp model dataset =
                     , Layout.section "Stunden-Heatmap (pixelorientiert)"
                         (Heatmap.view
                             { hoveredDay = model.hoveredDay
-                            , selectedDay = model.selectedDay
+                            , selectedDays = model.selectedDays
                             , onHoverDay = HoverDay
                             , onMove = TooltipMove
                             , onLeave = LeaveDay
-                            , onSelectDay = SelectDay
+                            , onToggleDay = ToggleDay
                             }
                             filteredHourly
                         )
                     , Layout.section "Mehrdimensionaler Tagesvergleich (parallele Koordinaten)"
                         (ParallelCoordinates.view
                             { hoveredDay = model.hoveredDay
-                            , selectedDay = model.selectedDay
+                            , selectedDays = model.selectedDays
                             , brushes = model.brushes
                             , dragging = model.dragging
                             , onHoverDay = HoverDay
                             , onMove = TooltipMove
                             , onLeave = LeaveDay
-                            , onSelectDay = SelectDay
+                            , onToggleDay = ToggleDay
                             , onBrushStart = BrushStart
                             , onBrushMove = BrushMove
                             , onBrushEnd = BrushEnd
@@ -248,6 +280,9 @@ viewApp model dataset =
                 , Layout.detailPanel
                     { focus = maybeFocusDay
                     , focusHourly = focusHourly
+                    , selected = selectedDailies
+                    , onRemoveDay = RemoveDay
+                    , onClearDays = ClearDays
                     }
                 ]
             ]

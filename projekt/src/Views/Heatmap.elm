@@ -26,11 +26,11 @@ import TypedSvg.Types exposing (AnchorAlignment(..), Paint(..))
 
 type alias Config msg =
     { hoveredDay : Maybe String
-    , selectedDay : Maybe String
+    , selectedDays : List String
     , onHoverDay : String -> Tooltip -> msg
     , onMove : Float -> Float -> msg
     , onLeave : msg
-    , onSelectDay : String -> msg
+    , onToggleDay : String -> msg
     }
 
 
@@ -92,7 +92,7 @@ cell config minDay left top cellW cellH point =
             top + toFloat point.hour * cellH
 
         isActive =
-            config.selectedDay == Just point.date || config.hoveredDay == Just point.date
+            List.member point.date config.selectedDays || config.hoveredDay == Just point.date
 
         className =
             if isActive then
@@ -112,7 +112,7 @@ cell config minDay left top cellW cellH point =
             (positionDecoder (\x y -> config.onHoverDay point.date (cellTooltip point x y)))
         , Html.Events.on "mousemove" (positionDecoder config.onMove)
         , SvgEvents.onMouseOut config.onLeave
-        , SvgEvents.onClick (config.onSelectDay point.date)
+        , SvgEvents.onClick (config.onToggleDay point.date)
         ]
         []
 

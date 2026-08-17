@@ -12,23 +12,24 @@ import Data exposing (Daily, Hourly, Tooltip)
 import Html exposing (Html, button, div, h2, p, span, text)
 import Html.Attributes as HtmlAttr exposing (class)
 import Html.Events exposing (onClick)
+import Set exposing (Set)
 
 
 {-| Schaltflaechenleiste fuer den Monatsfilter. `Nothing` steht fuer "Alle".
 -}
-monthControls : Maybe Int -> (Maybe Int -> msg) -> Html msg
-monthControls selectedMonth selectMonth =
+monthControls : Set Int -> (Maybe Int -> msg) -> Html msg
+monthControls selectedMonths toggleMonth =
     div [ class "month-controls" ]
         (button
-            [ classList [ ( "active", selectedMonth == Nothing ) ]
-            , onClick (selectMonth Nothing)
+            [ classList [ ( "active", Set.isEmpty selectedMonths ) ]
+            , onClick (toggleMonth Nothing)
             ]
             [ text "Alle" ]
             :: List.map
                 (\month ->
                     button
-                        [ classList [ ( "active", selectedMonth == Just month ) ]
-                        , onClick (selectMonth (Just month))
+                        [ classList [ ( "active", Set.member month selectedMonths ) ]
+                        , onClick (toggleMonth (Just month))
                         ]
                         [ text (Data.monthName month) ]
                 )
@@ -63,27 +64,69 @@ metricCards hourly daily =
         ]
 
 
-type alias DetailConfig =
+type alias DetailConfig msg =
     { focus : Maybe Daily
     , focusHourly : List Hourly
+    , selected : List Daily
+    , onRemoveDay : String -> msg
+    , onClearDays : msg
     }
 
 
 {-| Details on demand: Kennzahlen und Stundenprofil des Tages, der gerade
 ueberfahren oder ausgewaehlt ist.
 -}
-detailPanel : DetailConfig -> Html msg
+detailPanel : DetailConfig msg -> Html msg
 detailPanel config =
     div [ class "detail" ]
-        (h2 [] [ text "Tagesdetails" ] :: focusBlock config)
+        (h2 [] [ text "Tagesdetails" ]
+            :: selectedBlock config
+            ++ focusBlock config
+        )
 
 
-focusBlock : DetailConfig -> List (Html msg)
+{-| Liste der dauerhaft ausgewaehlten Tage; jeder einzeln abwaehlbar.
+-}
+selectedBlock : DetailConfig msg -> List (Html msg)
+selectedBlock config =
+    if List.isEmpty config.selected then
+        []
+
+    else
+        [ p [ class "detail-hint" ]
+            [ text ("Ausgewählte Tage (" ++ String.fromInt (List.length config.selected) ++ ")") ]
+        , div [ class "chips" ] (List.map (chip config.onRemoveDay) config.selected)
+        , button [ class "clear-days", onClick config.onClearDays ] [ text "Auswahl aufheben" ]
+        ]
+
+
+chip : (String -> msg) -> Daily -> Html msg
+chip onRemove day =
+    div [ class "chip" ]
+        [ span []
+            [ text
+                (day.date
+                    ++ " · EE "
+                    ++ Data.formatFloat 0 day.meanRenewableShare
+                    ++ " % · "
+                    ++ (day.meanPriceEurMwh
+                            |> Maybe.map (\price -> Data.formatFloat 0 price ++ " €/MWh")
+                            |> Maybe.withDefault "–"
+                       )
+                )
+            ]
+        , button
+            [ onClick (onRemove day.date), HtmlAttr.title "Tag abwählen" ]
+            [ text "×" ]
+        ]
+
+
+focusBlock : DetailConfig msg -> List (Html msg)
 focusBlock config =
     case config.focus of
         Nothing ->
             [ p [ class "empty" ]
-                [ text "Zelle in der Heatmap oder Linie in den parallelen Koordinaten überfahren bzw. anklicken, um einen Tag zu inspizieren." ]
+                [ text "Zelle in der Heatmap oder Linie in den parallelen Koordinaten überfahren bzw. anklicken (Mehrfachauswahl möglich), um einen Tag zu inspizieren." ]
             ]
 
         Just day ->
@@ -240,6 +283,11 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .detail-value { display: block; font-size: 16px; font-weight: 700; color: #26343c; }
 .spark { height: 110px; display: flex; align-items: end; gap: 2px; padding-top: 10px; border-top: 1px solid #edf0ed; }
 .spark-bar { flex: 1 1 0; min-width: 3px; background: #76b6a2; border-radius: 2px 2px 0 0; }
+.chips { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.chip { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #eef3ee; border: 1px solid #d5ded6; border-radius: 6px; padding: 5px 8px; font-size: 12px; color: #26343c; }
+.chip button { padding: 0 6px; border: none; background: transparent; color: #65727a; font-size: 15px; line-height: 1; }
+.chip button:hover { color: #c04f3f; background: transparent; border: none; }
+.clear-days { margin-bottom: 14px; font-size: 12px; padding: 5px 9px; }
 .empty { color: #65727a; }
 @media (max-width: 900px) {
   .grid, .metrics { grid-template-columns: 1fr; }

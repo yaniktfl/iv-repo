@@ -25,6 +25,7 @@ Interaktion gruppieren muss.
 -}
 
 import Json.Decode as Decode exposing (Decoder)
+import Set exposing (Set)
 
 
 {-| Inhalt und Position eines Tooltips. Die Ansichten liefern nur Titel und
@@ -207,24 +208,24 @@ andMap valueDecoder functionDecoder =
 -- FILTER UND SUCHE
 
 
-filterHourly : Maybe Int -> List Hourly -> List Hourly
-filterHourly selectedMonth hourly =
-    case selectedMonth of
-        Nothing ->
-            hourly
+{-| Leere Menge heisst "kein Filter" und nicht "nichts anzeigen".
+-}
+filterHourly : Set Int -> List Hourly -> List Hourly
+filterHourly selectedMonths hourly =
+    if Set.isEmpty selectedMonths then
+        hourly
 
-        Just month ->
-            List.filter (\point -> point.month == month) hourly
+    else
+        List.filter (\point -> Set.member point.month selectedMonths) hourly
 
 
-filterDaily : Maybe Int -> List Daily -> List Daily
-filterDaily selectedMonth daily =
-    case selectedMonth of
-        Nothing ->
-            daily
+filterDaily : Set Int -> List Daily -> List Daily
+filterDaily selectedMonths daily =
+    if Set.isEmpty selectedMonths then
+        daily
 
-        Just month ->
-            List.filter (\day -> day.month == month) daily
+    else
+        List.filter (\day -> Set.member day.month selectedMonths) daily
 
 
 findDaily : String -> List Daily -> Maybe Daily

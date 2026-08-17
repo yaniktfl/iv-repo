@@ -44,13 +44,13 @@ type alias Drag =
 
 type alias Config msg =
     { hoveredDay : Maybe String
-    , selectedDay : Maybe String
+    , selectedDays : List String
     , brushes : Dict Int ( Float, Float )
     , dragging : Maybe Drag
     , onHoverDay : String -> Tooltip -> msg
     , onMove : Float -> Float -> msg
     , onLeave : msg
-    , onSelectDay : String -> msg
+    , onToggleDay : String -> msg
     , onBrushStart : Int -> Float -> msg
     , onBrushMove : Float -> msg
     , onBrushEnd : msg
@@ -313,7 +313,7 @@ polyline config dims passes day =
             if not (passes day) then
                 [ "pc-line", "dimmed" ]
 
-            else if config.selectedDay == Just day.date then
+            else if List.member day.date config.selectedDays then
                 [ "pc-line", "selected" ]
 
             else if config.hoveredDay == Just day.date then
@@ -329,7 +329,7 @@ polyline config dims passes day =
             (positionDecoder (\x y -> config.onHoverDay day.date (lineTooltip day x y)))
         , Html.Events.on "mousemove" (positionDecoder config.onMove)
         , SvgEvents.onMouseOut config.onLeave
-        , SvgEvents.onClick (config.onSelectDay day.date)
+        , SvgEvents.onClick (config.onToggleDay day.date)
         ]
         []
 
