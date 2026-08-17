@@ -18,6 +18,7 @@ import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
 import Json.Decode as Decode
 import Views.Layout as Layout
+import Views.TimeSeries as TimeSeries
 
 
 type alias Model =
@@ -100,5 +101,12 @@ viewApp model dataset =
         , div [ class "content" ]
             [ Layout.monthControls model.selectedMonth SelectMonth
             , Layout.metricCards filteredHourly filteredDaily
+            , Layout.section "Zeitreihen-Übersicht"
+                (TimeSeries.view
+                    { selectedMonth = model.selectedMonth
+                    , onSelectMonth = \month -> SelectMonth (Just month)
+                    }
+                    dataset.daily
+                )
             ]
         ]

@@ -120,6 +120,11 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .tick-label, .month-label { font-size: 11px; fill: #64717a; }
 .grid-line { stroke: #e3e7e3; stroke-width: 1px; }
 .axis-line { stroke: #9aa59f; stroke-width: 1px; }
+.month-bar { fill: #76b6a2; opacity: 0.78; cursor: pointer; }
+.month-bar:hover, .month-bar.active { fill: #214e57; opacity: 1; }
+.legend-swatch { opacity: 0.9; }
+.price-line { fill: none; stroke: #c04f3f; stroke-width: 2.5px; }
+.price-dot { fill: #c04f3f; cursor: pointer; }
 @media (max-width: 900px) {
   .metrics { grid-template-columns: 1fr; }
   .content { padding: 12px; }
