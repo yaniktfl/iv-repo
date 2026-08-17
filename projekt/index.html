@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EnergyCharts Visual Analytics</title>
+  <link rel="icon" href="data:,">
+  <style>
+    body { padding: 0; margin: 0; }
+    .startup-error {
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      max-width: 40rem; margin: 4rem auto; padding: 1rem 1.25rem;
+      border: 1px solid #d9ded8; border-radius: 8px; color: #1d252c;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="main.js"></script>
+  <script>
+    // Der Datensatz wird zur Laufzeit per HTTP nachgeladen und als Flag an Elm
+    // uebergeben. Die Seite muss deshalb ueber einen Webserver ausgeliefert
+    // werden; ein Aufruf ueber file:// blockiert das fetch().
+    fetch("data/energycharts_de_2024.json")
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status + " für " + response.url);
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        Elm.Main.init({ node: document.getElementById("app"), flags: data });
+      })
+      .catch(function (error) {
+        document.getElementById("app").innerHTML =
+          '<div class="startup-error"><h1>Datensatz nicht ladbar</h1>' +
+          "<p>" + error + "</p>" +
+          "<p>Die Seite muss über einen Webserver ausgeliefert werden, damit " +
+          "der Browser das Nachladen der JSON-Datei zulässt.</p></div>";
+      });
+  </script>
+</body>
+</html>
