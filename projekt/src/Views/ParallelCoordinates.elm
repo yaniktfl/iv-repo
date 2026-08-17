@@ -134,12 +134,14 @@ view config daily =
                 , Px.height chartHeight
                 , SvgAttr.class [ "chart-fixed", "parallel" ]
                 ]
-                [ text_ [ SvgAttr.class [ "chart-label" ], Px.x 14, Px.y 20 ] [ SvgCore.text "Parallele Koordinaten: Tagesprofile" ]
-                , g [] (List.map (polyline config dims passes) daily)
-                , g [] (List.indexedMap (axis (List.length dims)) dims)
-                , g [] (brushRects effective (List.length dims))
-                , g [] (List.indexedMap (\index _ -> axisHit config (List.length dims) index) dims)
-                ]
+                ([ text_ [ SvgAttr.class [ "chart-label" ], Px.x 14, Px.y 20 ] [ SvgCore.text "Parallele Koordinaten: Tagesprofile" ]
+                 , g [] (List.map (polyline config dims passes) daily)
+                 , g [] (List.indexedMap (axis (List.length dims)) dims)
+                 , g [] (brushRects effective (List.length dims))
+                 , g [] (List.indexedMap (\index _ -> axisHit config (List.length dims) index) dims)
+                 ]
+                    ++ overlay config
+                )
             ]
         ]
 
@@ -219,26 +221,53 @@ brushRects brushes count =
             )
 
 
-{-| Unsichtbare Trefferflaeche je Achse, auf der der Brush aufgezogen wird. -}
+{-| Unsichtbare Trefferflaeche je Achse. Sie beginnt bei y = 0 und nicht erst
+am Achsenanfang, damit offsetY in allen Browsern der SVG-y-Koordinate
+entspricht -- manche beziehen offsetY auf die Oberkante des getroffenen
+Elements.
+-}
 axisHit : Config msg -> Int -> Int -> Svg msg
 axisHit config count index =
     rect
         [ SvgAttr.class [ "pc-axis-hit" ]
         , Px.x (axisX count index - 9)
-        , Px.y marginTop
+        , Px.y 0
         , Px.width 18
-        , Px.height innerH
+        , Px.height (marginTop + innerH)
         , Html.Events.preventDefaultOn "mousedown"
             (Decode.field "offsetY" Decode.float
                 |> Decode.map (\offsetY -> ( config.onBrushStart index (yToFraction offsetY), True ))
             )
-        , Html.Events.on "mousemove"
-            (Decode.field "offsetY" Decode.float
-                |> Decode.map (yToFraction >> config.onBrushMove)
-            )
-        , Html.Events.on "mouseup" (Decode.succeed config.onBrushEnd)
         ]
         []
+
+
+{-| Waehrend des Ziehens faengt ein transparentes Rechteck ueber der gesamten
+Zeichenflaeche die Mausereignisse ab. Ohne das bricht der Brush ab, sobald
+der Zeiger die schmale Achsenspur verlaesst.
+-}
+overlay : Config msg -> List (Svg msg)
+overlay config =
+    case config.dragging of
+        Nothing ->
+            []
+
+        Just _ ->
+            [ rect
+                [ SvgAttr.class [ "pc-overlay" ]
+                , Px.x 0
+                , Px.y 0
+                , Px.width chartWidth
+                , Px.height chartHeight
+                , Html.Events.on "mousemove"
+                    (Decode.field "offsetY" Decode.float
+                        |> Decode.map (yToFraction >> config.onBrushMove)
+                    )
+                , Html.Events.on "mouseup" (Decode.succeed config.onBrushEnd)
+                , Html.Events.on "mouseleave" (Decode.succeed config.onBrushEnd)
+                ]
+                []
+            ]
 
 
 yToFraction : Float -> Float
