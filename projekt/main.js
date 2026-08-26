@@ -8039,8 +8039,8 @@ var $author$project$Views$TimeSeries$axisLabel = F3(
 					$elm_community$typed_svg$TypedSvg$Core$text(label)
 				]));
 	});
-var $author$project$Views$TimeSeries$grid = F5(
-	function (left, top, chartW, chartH, yRenewable) {
+var $author$project$Views$TimeSeries$grid = F6(
+	function (left, top, chartW, chartH, ticks, yRenewable) {
 		return _Utils_ap(
 			_List_fromArray(
 				[
@@ -8111,8 +8111,7 @@ var $author$project$Views$TimeSeries$grid = F5(
 									]))
 							]));
 				},
-				_List_fromArray(
-					[0, 25, 50, 75, 100, 125])));
+				ticks));
 	});
 var $author$project$Views$TimeSeries$legend = F2(
 	function (x0, y0) {
@@ -8400,25 +8399,75 @@ var $author$project$Views$TimeSeries$monthly = function (daily) {
 		},
 		A2($elm$core$List$range, 1, 12));
 };
-var $author$project$Views$TimeSeries$priceAxis = F7(
-	function (left, top, chartW, chartH, minPrice, maxPrice, yPrice) {
+var $author$project$Views$TimeSeries$niceStep = function (raw) {
+	var magnitude = A2(
+		$elm$core$Basics$pow,
+		10,
+		$elm$core$Basics$floor(
+			A2(
+				$elm$core$Basics$logBase,
+				10,
+				A2($elm$core$Basics$max, 1.0e-6, raw))));
+	var normalized = raw / magnitude;
+	var factor = (normalized <= 1) ? 1 : ((normalized <= 2) ? 2 : ((normalized <= 5) ? 5 : 10));
+	return factor * magnitude;
+};
+var $author$project$Views$TimeSeries$tickCount = 4;
+var $author$project$Views$TimeSeries$niceCeiling = function (value) {
+	var step = $author$project$Views$TimeSeries$niceStep(
+		A2($elm$core$Basics$max, 1, value) / $author$project$Views$TimeSeries$tickCount);
+	return $elm$core$Basics$ceiling(value / step) * step;
+};
+var $author$project$Views$TimeSeries$niceScale = F2(
+	function (lowest, highest) {
+		var span = A2($elm$core$Basics$max, 1, highest - lowest);
+		var step = $author$project$Views$TimeSeries$niceStep(span / ($author$project$Views$TimeSeries$tickCount - 1));
+		var slack = (step * $author$project$Views$TimeSeries$tickCount) - span;
+		var low = $elm$core$Basics$floor((lowest - (slack / 2)) / step) * step;
+		var high = A2(
+			$elm$core$Basics$max,
+			low + (step * $author$project$Views$TimeSeries$tickCount),
+			$elm$core$Basics$ceiling(highest / step) * step);
+		return {high: high, low: low, step: step};
+	});
+var $author$project$Views$TimeSeries$priceAxis = F6(
+	function (left, top, chartW, chartH, ticks, yPrice) {
 		var axisX = left + chartW;
 		var tick = function (value) {
+			var y0 = yPrice(value);
 			return A2(
-				$elm_community$typed_svg$TypedSvg$text_,
+				$elm_community$typed_svg$TypedSvg$g,
+				_List_Nil,
 				_List_fromArray(
 					[
-						$elm_community$typed_svg$TypedSvg$Attributes$class(
+						A2(
+						$elm_community$typed_svg$TypedSvg$line,
 						_List_fromArray(
-							['tick-label'])),
-						$elm_community$typed_svg$TypedSvg$Attributes$InPx$x(axisX + 8),
-						$elm_community$typed_svg$TypedSvg$Attributes$InPx$y(
-						yPrice(value) + 4)
-					]),
-				_List_fromArray(
-					[
-						$elm_community$typed_svg$TypedSvg$Core$text(
-						A2($author$project$Data$formatFloat, 0, value))
+							[
+								$elm_community$typed_svg$TypedSvg$Attributes$class(
+								_List_fromArray(
+									['axis-line'])),
+								$elm_community$typed_svg$TypedSvg$Attributes$InPx$x1(axisX),
+								$elm_community$typed_svg$TypedSvg$Attributes$InPx$y1(y0),
+								$elm_community$typed_svg$TypedSvg$Attributes$InPx$x2(axisX + 4),
+								$elm_community$typed_svg$TypedSvg$Attributes$InPx$y2(y0)
+							]),
+						_List_Nil),
+						A2(
+						$elm_community$typed_svg$TypedSvg$text_,
+						_List_fromArray(
+							[
+								$elm_community$typed_svg$TypedSvg$Attributes$class(
+								_List_fromArray(
+									['tick-label'])),
+								$elm_community$typed_svg$TypedSvg$Attributes$InPx$x(axisX + 8),
+								$elm_community$typed_svg$TypedSvg$Attributes$InPx$y(y0 + 4)
+							]),
+						_List_fromArray(
+							[
+								$elm_community$typed_svg$TypedSvg$Core$text(
+								A2($author$project$Data$formatFloat, 0, value))
+							]))
 					]));
 		};
 		return _Utils_ap(
@@ -8452,11 +8501,7 @@ var $author$project$Views$TimeSeries$priceAxis = F7(
 							$elm_community$typed_svg$TypedSvg$Core$text('€/MWh')
 						]))
 				]),
-			A2(
-				$elm$core$List$map,
-				tick,
-				_List_fromArray(
-					[minPrice, (minPrice + maxPrice) / 2, maxPrice])));
+			A2($elm$core$List$map, tick, ticks));
 	});
 var $author$project$Views$TimeSeries$priceDot = F5(
 	function (config, left, xStep, yPrice, summary) {
@@ -8487,20 +8532,48 @@ var $author$project$Views$TimeSeries$view = F2(
 		var top = 24;
 		var summaries = $author$project$Views$TimeSeries$monthly(daily);
 		var right = 60;
+		var renewableMax = $author$project$Views$TimeSeries$niceCeiling(
+			A2(
+				$elm$core$Maybe$withDefault,
+				100,
+				$elm$core$List$maximum(
+					A2(
+						$elm$core$List$map,
+						function ($) {
+							return $.renewable;
+						},
+						summaries))));
+		var renewableTicks = A2(
+			$elm$core$List$map,
+			function (i) {
+				return (renewableMax * i) / $author$project$Views$TimeSeries$tickCount;
+			},
+			A2($elm$core$List$range, 0, $author$project$Views$TimeSeries$tickCount));
 		var priceValues = A2(
 			$elm$core$List$map,
 			function ($) {
 				return $.price;
 			},
 			summaries);
-		var minPrice = A2(
-			$elm$core$Maybe$withDefault,
-			0,
-			$elm$core$List$minimum(priceValues));
-		var maxPrice = A2(
-			$elm$core$Maybe$withDefault,
-			100,
-			$elm$core$List$maximum(priceValues));
+		var priceScale = A2(
+			$author$project$Views$TimeSeries$niceScale,
+			A2(
+				$elm$core$Maybe$withDefault,
+				0,
+				$elm$core$List$minimum(priceValues)),
+			A2(
+				$elm$core$Maybe$withDefault,
+				100,
+				$elm$core$List$maximum(priceValues)));
+		var priceTicks = A2(
+			$elm$core$List$map,
+			function (i) {
+				return priceScale.low + (priceScale.step * i);
+			},
+			A2(
+				$elm$core$List$range,
+				0,
+				$elm$core$Basics$round((priceScale.high - priceScale.low) / priceScale.step)));
 		var left = 54;
 		var h = 250;
 		var chartW = (w - left) - right;
@@ -8508,8 +8581,7 @@ var $author$project$Views$TimeSeries$view = F2(
 		var bottom = 44;
 		var chartH = (h - top) - bottom;
 		var yPrice = function (value) {
-			var span = A2($elm$core$Basics$max, 1, maxPrice - minPrice);
-			return (top + chartH) - (((value - minPrice) / span) * chartH);
+			return (top + chartH) - (((value - priceScale.low) / (priceScale.high - priceScale.low)) * chartH);
 		};
 		var pricePath = $author$project$Views$TimeSeries$linePath(
 			A2(
@@ -8521,7 +8593,7 @@ var $author$project$Views$TimeSeries$view = F2(
 				},
 				summaries));
 		var yRenewable = function (value) {
-			return (top + chartH) - ((A3($elm$core$Basics$clamp, 0, 130, value) / 130) * chartH);
+			return (top + chartH) - ((A3($elm$core$Basics$clamp, 0, renewableMax, value) / renewableMax) * chartH);
 		};
 		return A2(
 			$elm_community$typed_svg$TypedSvg$svg,
@@ -8537,11 +8609,11 @@ var $author$project$Views$TimeSeries$view = F2(
 					A2(
 					$elm_community$typed_svg$TypedSvg$g,
 					_List_Nil,
-					A5($author$project$Views$TimeSeries$grid, left, top, chartW, chartH, yRenewable)),
+					A6($author$project$Views$TimeSeries$grid, left, top, chartW, chartH, renewableTicks, yRenewable)),
 					A2(
 					$elm_community$typed_svg$TypedSvg$g,
 					_List_Nil,
-					A7($author$project$Views$TimeSeries$priceAxis, left, top, chartW, chartH, minPrice, maxPrice, yPrice)),
+					A6($author$project$Views$TimeSeries$priceAxis, left, top, chartW, chartH, priceTicks, yPrice)),
 					A2(
 					$elm_community$typed_svg$TypedSvg$g,
 					_List_Nil,
