@@ -144,7 +144,7 @@ focusBlock config =
                     )
                 ]
             , p [ class "detail-hint" ] [ text "EE-Anteil je Stunde" ]
-            , div [ class "spark" ] (List.map hourBar config.focusHourly)
+            , sparkline config.focusHourly
             ]
 
 
@@ -153,6 +153,48 @@ detail label value =
     div [ class "detail-item" ]
         [ span [ class "detail-label" ] [ text label ]
         , span [ class "detail-value" ] [ text value ]
+        ]
+
+
+{-| Stundenprofil des fokussierten Tages. Die Sparkline zeigt vor allem die
+*Form* des Tages. Damit die Balken trotzdem einzuordnen sind, liegen zwei
+Bezugslinien darueber; die 100er-Linie ist die inhaltlich wichtige, denn
+oberhalb davon uebersteigt die erneuerbare Einspeisung die Last.
+-}
+sparkline : List Hourly -> Html msg
+sparkline points =
+    div []
+        [ div [ class "spark" ]
+            (gridLine True 100 :: gridLine False 50 :: List.map hourBar points)
+        , div [ class "spark-hours" ] (List.map hourTick (List.range 0 23))
+        ]
+
+
+{-| Waagerechte Bezugslinie. Der Faktor 1.4 ist derselbe wie bei den Balken,
+damit Linie und Balkenhoehe dieselbe Skala benutzen.
+-}
+gridLine : Bool -> Int -> Html msg
+gridLine major percent =
+    div
+        [ classList [ ( "spark-grid", True ), ( "major", major ) ]
+        , HtmlAttr.style "bottom" (String.fromFloat (toFloat percent / 1.4) ++ "px")
+        ]
+        [ span [] [ text (String.fromInt percent ++ " %") ] ]
+
+
+{-| Stundenmarke unter den Balken. Beschriftet wird nur alle sechs Stunden,
+damit die Achse bei 24 Werten lesbar bleibt.
+-}
+hourTick : Int -> Html msg
+hourTick hour =
+    div [ class "spark-hour" ]
+        [ text
+            (if modBy 6 hour == 0 then
+                String.fromInt hour
+
+             else
+                ""
+            )
         ]
 
 
@@ -284,7 +326,12 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .detail-item { border-bottom: 1px solid #edf0ed; padding-bottom: 6px; }
 .detail-label { display: block; font-size: 11px; color: #66747c; }
 .detail-value { display: block; font-size: 16px; font-weight: 700; color: #26343c; }
-.spark { height: 110px; display: flex; align-items: end; gap: 2px; padding-top: 10px; border-top: 1px solid #edf0ed; }
+.spark { position: relative; height: 110px; display: flex; align-items: end; gap: 2px; padding-top: 10px; border-top: 1px solid #edf0ed; }
+.spark-grid { position: absolute; left: 0; right: 0; border-top: 1px dashed #c9d4cd; pointer-events: none; }
+.spark-grid.major { border-top: 1px solid #9db0a5; }
+.spark-grid span { position: absolute; right: 0; top: -6px; font-size: 9px; line-height: 1; color: #66747c; background: #ffffff; padding: 0 2px; }
+.spark-hours { display: flex; gap: 2px; margin-top: 3px; }
+.spark-hour { flex: 1 1 0; min-width: 3px; font-size: 9px; line-height: 1; color: #66747c; text-align: center; white-space: nowrap; }
 .spark-bar { flex: 1 1 0; min-width: 3px; background: #76b6a2; border-radius: 2px 2px 0 0; }
 .chips { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 .chip { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #eef3ee; border: 1px solid #d5ded6; border-radius: 6px; padding: 5px 8px; font-size: 12px; color: #26343c; }

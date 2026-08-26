@@ -6090,7 +6090,7 @@ var $elm$virtual_dom$VirtualDom$node = function (tag) {
 };
 var $elm$html$Html$node = $elm$virtual_dom$VirtualDom$node;
 var $elm$html$Html$p = _VirtualDom_node('p');
-var $author$project$Views$Layout$stylesheet = '\u000A* { box-sizing: border-box; }\u000Abody { margin: 0; font-family: Inter, Segoe UI, Arial, sans-serif; color: #1d252c; background: #f4f6f2; }\u000A.page { min-height: 100vh; }\u000A.topbar { padding: 22px 28px 16px; background: #ffffff; border-bottom: 1px solid #d9ded8; }\u000Ah1 { margin: 0 0 6px; font-size: 28px; letter-spacing: 0; }\u000Ah2 { margin: 0 0 12px; font-size: 17px; letter-spacing: 0; }\u000Ap { margin: 0; color: #51606b; line-height: 1.45; }\u000A.content { max-width: 1900px; margin: 0 auto; padding: 18px; }\u000A.month-controls { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px; }\u000Abutton { border: 1px solid #b9c3bd; background: #ffffff; color: #23313a; padding: 7px 10px; border-radius: 6px; cursor: pointer; }\u000Abutton:hover, button.active { background: #214e57; border-color: #214e57; color: #ffffff; }\u000A.metrics { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }\u000A.metric { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 10px 12px; min-width: 0; }\u000A.metric-value { display: block; font-size: 20px; font-weight: 700; color: #173b42; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\u000A.metric-label { display: block; margin-top: 4px; font-size: 12px; color: #65727a; }\u000A.grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }\u000A/* Das Panel bleibt beim Scrollen sichtbar, damit es auch beim Arbeiten in\u000A   der Heatmap weiter unten im Blick ist. */\u000A.detail { position: sticky; top: 12px; }\u000A.section, .detail { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 14px; margin-bottom: 16px; overflow: hidden; }\u000A.chart { display: block; width: 100%; height: auto; }\u000A.chart-fixed { display: block; }\u000A.pc-scroll { overflow-x: auto; }\u000A.chart-label { font-size: 13px; font-weight: 700; fill: #26343c; }\u000A.tick-label, .month-label, .dimension-label { font-size: 11px; fill: #64717a; }\u000A.dimension-label { font-weight: 700; }\u000A.grid-line { stroke: #e3e7e3; stroke-width: 1px; }\u000A.axis-line { stroke: #9aa59f; stroke-width: 1px; }\u000A.month-bar { fill: #76b6a2; opacity: 0.78; cursor: pointer; }\u000A.month-bar:hover, .month-bar.active { fill: #214e57; opacity: 1; }\u000A.legend-swatch { opacity: 0.9; }\u000A.price-line { fill: none; stroke: #c04f3f; stroke-width: 2.5px; }\u000A.price-dot { fill: #c04f3f; cursor: pointer; }\u000A.heat-missing { fill: #dfe5e1; stroke: #ffffff; stroke-width: 0.25px; }\u000A.heat-cell { stroke: none; cursor: pointer; }\u000A.heat-cell:hover, .heat-cell.active { stroke: #111111; stroke-width: 1.2px; }\u000A.pc-line { fill: none; stroke: #45646e; stroke-width: 1px; stroke-opacity: 0.16; cursor: pointer; }\u000A.pc-line:hover, .pc-line.hovered { stroke: #c04f3f; stroke-width: 2px; stroke-opacity: 0.95; }\u000A.pc-line.selected { stroke: #111111; stroke-width: 2.4px; stroke-opacity: 1; }\u000A.pc-line.dimmed { stroke-opacity: 0.03; pointer-events: none; }\u000A.pc-axis-hit { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }\u000A.pc-overlay { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }\u000A.brush-rect { fill: #214e57; fill-opacity: 0.16; stroke: #214e57; stroke-width: 1px; pointer-events: none; }\u000A.pc-controls { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; color: #65727a; }\u000A.pc-controls button { padding: 4px 8px; font-size: 12px; }\u000A.tooltip { position: absolute; z-index: 10; background: #ffffff; border: 1px solid #c9d2cc; border-radius: 6px; padding: 8px 10px; pointer-events: none; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14); font-size: 12px; min-width: 180px; }\u000A.tooltip-title { font-weight: 700; margin-bottom: 6px; color: #173b42; }\u000A.tooltip-row { display: flex; justify-content: space-between; gap: 14px; color: #51606b; }\u000A.tooltip-row span:last-child { font-weight: 600; color: #26343c; }\u000A.detail-hint { font-size: 12px; font-weight: 700; color: #26343c; margin: 0 0 8px; }\u000A.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }\u000A.detail-item { border-bottom: 1px solid #edf0ed; padding-bottom: 6px; }\u000A.detail-label { display: block; font-size: 11px; color: #66747c; }\u000A.detail-value { display: block; font-size: 16px; font-weight: 700; color: #26343c; }\u000A.spark { height: 110px; display: flex; align-items: end; gap: 2px; padding-top: 10px; border-top: 1px solid #edf0ed; }\u000A.spark-bar { flex: 1 1 0; min-width: 3px; background: #76b6a2; border-radius: 2px 2px 0 0; }\u000A.chips { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }\u000A.chip { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #eef3ee; border: 1px solid #d5ded6; border-radius: 6px; padding: 5px 8px; font-size: 12px; color: #26343c; }\u000A.chip button { padding: 0 6px; border: none; background: transparent; color: #65727a; font-size: 15px; line-height: 1; }\u000A.chip button:hover { color: #c04f3f; background: transparent; border: none; }\u000A.clear-days { margin-bottom: 14px; font-size: 12px; padding: 5px 9px; }\u000A.empty { color: #65727a; }\u000A@media (max-width: 900px) {\u000A  .grid, .metrics { grid-template-columns: 1fr; }\u000A  .content { padding: 12px; }\u000A}\u000A';
+var $author$project$Views$Layout$stylesheet = '\u000A* { box-sizing: border-box; }\u000Abody { margin: 0; font-family: Inter, Segoe UI, Arial, sans-serif; color: #1d252c; background: #f4f6f2; }\u000A.page { min-height: 100vh; }\u000A.topbar { padding: 22px 28px 16px; background: #ffffff; border-bottom: 1px solid #d9ded8; }\u000Ah1 { margin: 0 0 6px; font-size: 28px; letter-spacing: 0; }\u000Ah2 { margin: 0 0 12px; font-size: 17px; letter-spacing: 0; }\u000Ap { margin: 0; color: #51606b; line-height: 1.45; }\u000A.content { max-width: 1900px; margin: 0 auto; padding: 18px; }\u000A.month-controls { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px; }\u000Abutton { border: 1px solid #b9c3bd; background: #ffffff; color: #23313a; padding: 7px 10px; border-radius: 6px; cursor: pointer; }\u000Abutton:hover, button.active { background: #214e57; border-color: #214e57; color: #ffffff; }\u000A.metrics { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }\u000A.metric { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 10px 12px; min-width: 0; }\u000A.metric-value { display: block; font-size: 20px; font-weight: 700; color: #173b42; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\u000A.metric-label { display: block; margin-top: 4px; font-size: 12px; color: #65727a; }\u000A.grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }\u000A/* Das Panel bleibt beim Scrollen sichtbar, damit es auch beim Arbeiten in\u000A   der Heatmap weiter unten im Blick ist. */\u000A.detail { position: sticky; top: 12px; }\u000A.section, .detail { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 14px; margin-bottom: 16px; overflow: hidden; }\u000A.chart { display: block; width: 100%; height: auto; }\u000A.chart-fixed { display: block; }\u000A.pc-scroll { overflow-x: auto; }\u000A.chart-label { font-size: 13px; font-weight: 700; fill: #26343c; }\u000A.tick-label, .month-label, .dimension-label { font-size: 11px; fill: #64717a; }\u000A.dimension-label { font-weight: 700; }\u000A.grid-line { stroke: #e3e7e3; stroke-width: 1px; }\u000A.axis-line { stroke: #9aa59f; stroke-width: 1px; }\u000A.month-bar { fill: #76b6a2; opacity: 0.78; cursor: pointer; }\u000A.month-bar:hover, .month-bar.active { fill: #214e57; opacity: 1; }\u000A.legend-swatch { opacity: 0.9; }\u000A.price-line { fill: none; stroke: #c04f3f; stroke-width: 2.5px; }\u000A.price-dot { fill: #c04f3f; cursor: pointer; }\u000A.heat-missing { fill: #dfe5e1; stroke: #ffffff; stroke-width: 0.25px; }\u000A.heat-cell { stroke: none; cursor: pointer; }\u000A.heat-cell:hover, .heat-cell.active { stroke: #111111; stroke-width: 1.2px; }\u000A.pc-line { fill: none; stroke: #45646e; stroke-width: 1px; stroke-opacity: 0.16; cursor: pointer; }\u000A.pc-line:hover, .pc-line.hovered { stroke: #c04f3f; stroke-width: 2px; stroke-opacity: 0.95; }\u000A.pc-line.selected { stroke: #111111; stroke-width: 2.4px; stroke-opacity: 1; }\u000A.pc-line.dimmed { stroke-opacity: 0.03; pointer-events: none; }\u000A.pc-axis-hit { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }\u000A.pc-overlay { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }\u000A.brush-rect { fill: #214e57; fill-opacity: 0.16; stroke: #214e57; stroke-width: 1px; pointer-events: none; }\u000A.pc-controls { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; color: #65727a; }\u000A.pc-controls button { padding: 4px 8px; font-size: 12px; }\u000A.tooltip { position: absolute; z-index: 10; background: #ffffff; border: 1px solid #c9d2cc; border-radius: 6px; padding: 8px 10px; pointer-events: none; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14); font-size: 12px; min-width: 180px; }\u000A.tooltip-title { font-weight: 700; margin-bottom: 6px; color: #173b42; }\u000A.tooltip-row { display: flex; justify-content: space-between; gap: 14px; color: #51606b; }\u000A.tooltip-row span:last-child { font-weight: 600; color: #26343c; }\u000A.detail-hint { font-size: 12px; font-weight: 700; color: #26343c; margin: 0 0 8px; }\u000A.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }\u000A.detail-item { border-bottom: 1px solid #edf0ed; padding-bottom: 6px; }\u000A.detail-label { display: block; font-size: 11px; color: #66747c; }\u000A.detail-value { display: block; font-size: 16px; font-weight: 700; color: #26343c; }\u000A.spark { position: relative; height: 110px; display: flex; align-items: end; gap: 2px; padding-top: 10px; border-top: 1px solid #edf0ed; }\u000A.spark-grid { position: absolute; left: 0; right: 0; border-top: 1px dashed #c9d4cd; pointer-events: none; }\u000A.spark-grid.major { border-top: 1px solid #9db0a5; }\u000A.spark-grid span { position: absolute; right: 0; top: -6px; font-size: 9px; line-height: 1; color: #66747c; background: #ffffff; padding: 0 2px; }\u000A.spark-hours { display: flex; gap: 2px; margin-top: 3px; }\u000A.spark-hour { flex: 1 1 0; min-width: 3px; font-size: 9px; line-height: 1; color: #66747c; text-align: center; white-space: nowrap; }\u000A.spark-bar { flex: 1 1 0; min-width: 3px; background: #76b6a2; border-radius: 2px 2px 0 0; }\u000A.chips { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }\u000A.chip { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #eef3ee; border: 1px solid #d5ded6; border-radius: 6px; padding: 5px 8px; font-size: 12px; color: #26343c; }\u000A.chip button { padding: 0 6px; border: none; background: transparent; color: #65727a; font-size: 15px; line-height: 1; }\u000A.chip button:hover { color: #c04f3f; background: transparent; border: none; }\u000A.clear-days { margin-bottom: 14px; font-size: 12px; padding: 5px 9px; }\u000A.empty { color: #65727a; }\u000A@media (max-width: 900px) {\u000A  .grid, .metrics { grid-template-columns: 1fr; }\u000A  .content { padding: 12px; }\u000A}\u000A';
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$core$String$fromFloat = _String_fromNumber;
@@ -6251,6 +6251,59 @@ var $author$project$Data$formatFloat = F2(
 			',',
 			$elm$core$String$fromFloat(rounded));
 	});
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $author$project$Views$Layout$classList = function (pairs) {
+	return $elm$html$Html$Attributes$class(
+		A2(
+			$elm$core$String$join,
+			' ',
+			A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$first,
+				A2($elm$core$List$filter, $elm$core$Tuple$second, pairs))));
+};
+var $author$project$Views$Layout$gridLine = F2(
+	function (major, percent) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$author$project$Views$Layout$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('spark-grid', true),
+							_Utils_Tuple2('major', major)
+						])),
+					A2(
+					$elm$html$Html$Attributes$style,
+					'bottom',
+					$elm$core$String$fromFloat(percent / 1.4) + 'px')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$span,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$elm$core$String$fromInt(percent) + ' %')
+						]))
+				]));
+	});
 var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
 var $author$project$Views$Layout$hourBar = function (point) {
 	return A2(
@@ -6268,16 +6321,51 @@ var $author$project$Views$Layout$hourBar = function (point) {
 			]),
 		_List_Nil);
 };
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
+var $elm$core$Basics$modBy = _Basics_modBy;
+var $author$project$Views$Layout$hourTick = function (hour) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('spark-hour')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(
+				(!A2($elm$core$Basics$modBy, 6, hour)) ? $elm$core$String$fromInt(hour) : '')
+			]));
+};
+var $author$project$Views$Layout$sparkline = function (points) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('spark')
+					]),
+				A2(
+					$elm$core$List$cons,
+					A2($author$project$Views$Layout$gridLine, true, 100),
+					A2(
+						$elm$core$List$cons,
+						A2($author$project$Views$Layout$gridLine, false, 50),
+						A2($elm$core$List$map, $author$project$Views$Layout$hourBar, points)))),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('spark-hours')
+					]),
+				A2(
+					$elm$core$List$map,
+					$author$project$Views$Layout$hourTick,
+					A2($elm$core$List$range, 0, 23)))
+			]));
+};
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6368,13 +6456,7 @@ var $author$project$Views$Layout$focusBlock = function (config) {
 					[
 						$elm$html$Html$text('EE-Anteil je Stunde')
 					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('spark')
-					]),
-				A2($elm$core$List$map, $author$project$Views$Layout$hourBar, config.focusHourly))
+				$author$project$Views$Layout$sparkline(config.focusHourly)
 			]);
 	}
 };
@@ -6698,20 +6780,6 @@ var $author$project$Views$Layout$metricCards = F2(
 					$elm$core$String$fromInt(negHours))
 				]));
 	});
-var $elm$core$Tuple$second = function (_v0) {
-	var y = _v0.b;
-	return y;
-};
-var $author$project$Views$Layout$classList = function (pairs) {
-	return $elm$html$Html$Attributes$class(
-		A2(
-			$elm$core$String$join,
-			' ',
-			A2(
-				$elm$core$List$map,
-				$elm$core$Tuple$first,
-				A2($elm$core$List$filter, $elm$core$Tuple$second, pairs))));
-};
 var $author$project$Data$monthName = function (month) {
 	switch (month) {
 		case 1:
