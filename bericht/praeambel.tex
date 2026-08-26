@@ -1,0 +1,78 @@
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{amsmath}
+% Dimensionen bitte nicht ändern.
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm, bindingoffset=1cm, includeheadfoot]{geometry}
+%Zeilenabstand bitte nicht ändern
+\usepackage[onehalfspacing]{setspace}
+
+\usepackage[backend=biber,style=numeric,]{biblatex}\addbibresource{literatur.bib}
+
+% --- zusätzliche Pakete (Layoutmaße der Vorlage bleiben unverändert) --------
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage[font=small]{caption}
+
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue!60!black}
+
+% --- Angaben zur Abgabe ----------------------------------------------------
+\newcommand{\repourl}{https://github.com/yaniktfl/iv-repo}
+\newcommand{\repobranch}{main}
+\newcommand{\repocommit}{ce20021}
+
+% --- Elm-Listings ----------------------------------------------------------
+\lstdefinelanguage{Elm}{
+  morekeywords={module,exposing,import,type,alias,let,in,if,then,else,case,of,port,as,where,True,False},
+  morekeywords=[2]{Model,Msg,Maybe,Just,Nothing,List,Set,Dict,Float,Int,String,Bool,Html,Svg,Cmd,Sub,Result,Ok,Err},
+  sensitive=true,
+  morecomment=[l]{--},
+  morecomment=[n]{\{-}{-\}},
+  morestring=[b]",
+}
+\lstset{
+  language=Elm,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue!55!black}\bfseries,
+  keywordstyle=[2]\color{teal!70!black},
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{purple!60!black},
+  showstringspaces=false,
+  columns=fullflexible,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!50},
+  framesep=4pt,
+  xleftmargin=6pt,
+  captionpos=b,
+  aboveskip=0.8em,
+  belowskip=0.5em,
+  literate={ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1 {Ä}{{\"A}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1 {ß}{{\ss}}1
+           {€}{{\texteuro}}1 {·}{{$\cdot$}}1 {→}{{$\rightarrow$}}1 {Ø}{{\O}}1 {–}{{--}}1,
+}
+
+% --- Abbildungsmakro -------------------------------------------------------
+% #1 Dateiname ohne Endung in figures/, #2 Breite als Anteil von \textwidth,
+% #3 Bildunterschrift, #4 Beschreibung für den Platzhalter.
+\newcommand{\abb}[4]{%
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{figures/#1.png}
+      {\includegraphics[width=#2\textwidth]{figures/#1}}
+      {\fbox{\begin{minipage}[c][0.16\textheight][c]{0.92\textwidth}
+        \centering\small
+        \textbf{Platzhalter für \texttt{figures/#1.png}}\\[0.5em]
+        #4
+      \end{minipage}}}
+    \caption{#3}\label{fig:#1}
+  \end{figure}}

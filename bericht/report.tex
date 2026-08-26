@@ -1,0 +1,44 @@
+\documentclass[usegeometry=true]{scrartcl}
+
+% Pakete, Layoutmasse, Listings-Stil und Makros
+\input{praeambel}
+
+\begin{document}
+
+% ----------------------------------------------------------------------------
+\subject{Projektbericht zum Modul Information Visualisierung Sommersemester 2026}
+\title{Wann deckt der Wind, wann die Sonne?}
+\subtitle{Eine interaktive Visual-Analytics-Anwendung für Erzeugung, Preis und Handel im deutschen Stromsystem 2024}
+\author{Lukas Schlinsog (222212780) \and Yanik Engelhardt (218205378)}
+\date{\today}
+\maketitle
+% ----------------------------------------------------------------------------
+
+\begin{center}
+\begin{minipage}{0.86\textwidth}
+\small
+\textbf{Abgabe.} Repository: \url{\repourl} \quad|\quad Branch: \texttt{\repobranch} \quad|\quad
+Bewertungsstand: Commit \texttt{\repocommit}. Die Anwendung liegt in \texttt{projekt/}, der Bericht in
+\texttt{bericht/}. Die Anwendung übersetzt fehlerfrei mit
+\texttt{elm make src/Main.elm -{}-output=main.js} (Elm 0.19.2) und lädt ihre Daten zur Laufzeit per HTTP.
+\end{minipage}
+\end{center}
+
+% ----------------------------------------------------------------------------
+% Inhaltsverzeichnis:
+\tableofcontents
+\newpage
+% ----------------------------------------------------------------------------
+% Gliederung und Text:
+
+% ----------------------------------------------------------------------------
+% Kapitel -- jedes liegt als eigene Datei in kapitel/ und laesst sich einzeln
+% bearbeiten und versionieren.
+% ----------------------------------------------------------------------------
+\input{kapitel/01-einleitung}
+\input{kapitel/02-daten}
+\input{kapitel/03-visualisierungen}
+
+\printbibliography
+
+\end{document}
