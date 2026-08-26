@@ -117,7 +117,9 @@ wahrnehmungsstärksten Kanal?) im Sinne von \cite{Munzner2014,Ware2012} diskutie
 \paragraph{Kodierung.} Die Ansicht zeigt zwölf Monatswerte. Der mittlere Erneuerbarenanteil wird
 als Balkenhöhe kodiert (Kanal: Position auf gemeinsamer Achse bzw.\ Länge), der mittlere Preis als
 Polylinie mit quadratischen Markern auf einer zweiten, rechts beschrifteten Achse in EUR/MWh.
-Gitterlinien bei $0/25/50/75/100/125\,\%$ stützen das Ablesen. Farbe trägt keine Datenbedeutung,
+Vier gleich große Intervalle teilen beide Achsen, sodass die Beschriftungen der
+Preisachse genau auf den Gitterlinien der Anteilsachse liegen; die Anteilsachse endet beim
+nächsten runden Wert oberhalb des höchsten Monatsbalkens. Farbe trägt keine Datenbedeutung,
 sondern nur die Zuordnung zur Größe: Grün für den Anteil, Rot für den Preis, erklärt durch eine
 Legende. Klick auf Balken oder Marker schaltet den Monat im Filter an bzw.\ aus, Hover liefert die
 Monatswerte inklusive Solar- und Windanteil und Summe der negativen Preisstunden.
@@ -265,11 +267,11 @@ Koordinaten alle Tage in einem gemeinsamen Bezugssystem übereinanderlegen. Hinz
 in Radarplots von der Achsenreihenfolge abhängen und systematisch fehlinterpretiert werden.
 
 \abb{parallele-koordinaten}{0.98}{Parallele Koordinaten der Tagesprofile mit aktivem Brush auf der
-Achse \enquote{Neg.\ Std.}: Nur Tage mit vielen negativen Preisstunden bleiben sichtbar, die
+Achse \enquote{Neg.\ Std.}: Die Treffer sind grün gezeichnet, alle übrigen Tage abgeblendet, die
 Statuszeile nennt die Trefferzahl.}
-{Screenshot der parallelen Koordinaten über alle Tage, mit aufgezogenem Bereich im oberen Drittel der
-rechten Achse, abgeblendeten übrigen Linien, Statuszeile \enquote{$n$ von 364 Tagen sichtbar} und
-Schaltfläche zum Zurücksetzen der Achsenfilter.}
+{Screenshot der parallelen Koordinaten über alle Tage, mit aufgezogenem Bereich in der oberen Hälfte
+der rechten Achse, grün hervorgehobenen Treffern, abgeblendeten übrigen Linien, Statuszeile
+\enquote{16 von 364 Tagen sichtbar} und Schaltfläche zum Zurücksetzen der Achsenfilter.}
 
 \subsection{Interaktion}\label{sec:interaktion}
 
