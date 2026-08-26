@@ -211,8 +211,15 @@ viewApp model dataset =
         maybeFocusDay =
             focusDate |> Maybe.andThen (\date -> Data.findDaily date dataset.daily)
 
+        -- Fuer die Gegenueberstellung braucht das Detailpanel neben den
+        -- Tageswerten auch das Stundenprofil jedes ausgewaehlten Tages.
         selectedDailies =
-            List.filterMap (\date -> Data.findDaily date dataset.daily) model.selectedDays
+            List.filterMap
+                (\date ->
+                    Data.findDaily date dataset.daily
+                        |> Maybe.map (\day -> ( day, Data.findHourlyForDate date dataset.hourly ))
+                )
+                model.selectedDays
 
         focusHourly =
             focusDate

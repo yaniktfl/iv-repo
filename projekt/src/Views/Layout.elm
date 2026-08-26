@@ -9,7 +9,7 @@ gehaengt, damit die Anwendung ohne weitere Dateien ausgeliefert werden kann.
 -}
 
 import Data exposing (Daily, Hourly, Tooltip)
-import Html exposing (Html, button, div, h2, p, span, text)
+import Html exposing (Html, button, div, h2, p, span, table, td, text, th, tr)
 import Html.Attributes as HtmlAttr exposing (class)
 import Html.Events exposing (onClick)
 import Set exposing (Set)
@@ -67,7 +67,7 @@ metricCards hourly daily =
 type alias DetailConfig msg =
     { focus : Maybe Daily
     , focusHourly : List Hourly
-    , selected : List Daily
+    , selected : List ( Daily, List Hourly )
     , onRemoveDay : String -> msg
     , onClearDays : msg
     }
@@ -81,6 +81,7 @@ detailPanel config =
     div [ class "detail" ]
         (h2 [] [ text "Tagesdetails" ]
             :: selectedBlock config
+            ++ compareBlock config
             ++ focusBlock config
         )
 
@@ -95,7 +96,8 @@ selectedBlock config =
     else
         [ p [ class "detail-hint" ]
             [ text ("Ausgewählte Tage (" ++ String.fromInt (List.length config.selected) ++ ")") ]
-        , div [ class "chips" ] (List.map (chip config.onRemoveDay) config.selected)
+        , div [ class "chips" ]
+            (List.map (\( day, _ ) -> chip config.onRemoveDay day) config.selected)
         , button [ class "clear-days", onClick config.onClearDays ] [ text "Auswahl aufheben" ]
         ]
 
@@ -148,6 +150,86 @@ focusBlock config =
             ]
 
 
+{-| Gegenueberstellung ab zwei ausgewaehlten Tagen. Das Detailpanel darunter
+folgt weiterhin dem Mauszeiger und zeigt immer nur *einen* Tag; erst diese
+Tabelle macht die Auswahl als Ganzes lesbar. Die Stundenprofile stehen
+untereinander, weil sich die Tagesform -- Solarbogen gegen flaches Windband --
+im direkten Vergleich am schnellsten erschliesst.
+-}
+compareBlock : DetailConfig msg -> List (Html msg)
+compareBlock config =
+    if List.length config.selected < 2 then
+        []
+
+    else
+        let
+            days =
+                List.map Tuple.first config.selected
+        in
+        [ p [ class "detail-hint" ]
+            [ text ("Vergleich (" ++ String.fromInt (List.length days) ++ " Tage)") ]
+        , div [ class "compare-scroll" ]
+            [ table [ class "compare" ]
+                (tr []
+                    (th [] [ text "" ]
+                        :: List.map (\day -> th [] [ text (shortDate day.date) ]) days
+                    )
+                    :: List.map (compareRow days) compareFields
+                )
+            ]
+        , p [ class "detail-hint" ] [ text "EE-Anteil je Stunde im Vergleich" ]
+        ]
+            ++ List.map compareSpark config.selected
+
+
+{-| Zeilen der Vergleichstabelle: Beschriftung und Formatierung je Attribut.
+-}
+compareFields : List ( String, Daily -> String )
+compareFields =
+    [ ( "EE-Anteil", \day -> Data.formatFloat 1 day.meanRenewableShare ++ " %" )
+    , ( "Solaranteil", \day -> Data.formatFloat 1 day.solarShare ++ " %" )
+    , ( "Windanteil", \day -> Data.formatFloat 1 day.windShare ++ " %" )
+    , ( "Ø Last", \day -> Data.formatFloat 1 day.meanLoadGw ++ " GW" )
+    , ( "Nettohandel", \day -> Data.formatFloat 1 day.meanNetImportGw ++ " GW" )
+    , ( "Ø Preis"
+      , \day ->
+            day.meanPriceEurMwh
+                |> Maybe.map (\price -> Data.formatFloat 1 price ++ " €/MWh")
+                |> Maybe.withDefault "–"
+      )
+    , ( "Neg. Std.", \day -> String.fromInt day.negativePriceHours )
+    ]
+
+
+compareRow : List Daily -> ( String, Daily -> String ) -> Html msg
+compareRow days ( label, format ) =
+    tr []
+        (td [] [ text label ]
+            :: List.map (\day -> td [] [ text (format day) ]) days
+        )
+
+
+compareSpark : ( Daily, List Hourly ) -> Html msg
+compareSpark ( day, hourly ) =
+    div [ class "compare-spark" ]
+        [ span [ class "detail-label" ]
+            [ text (shortDate day.date ++ " · EE " ++ Data.formatFloat 0 day.meanRenewableShare ++ " %") ]
+        , sparkSmall hourly
+        ]
+
+
+{-| "2024-02-04" wird zu "04.02." -- in Tabellenkoepfen zaehlt jede Stelle.
+-}
+shortDate : String -> String
+shortDate date =
+    case String.split "-" date of
+        [ _, month, day ] ->
+            day ++ "." ++ month ++ "."
+
+        _ ->
+            date
+
+
 detail : String -> String -> Html msg
 detail label value =
     div [ class "detail-item" ]
@@ -156,28 +238,52 @@ detail label value =
         ]
 
 
-{-| Stundenprofil des fokussierten Tages. Die Sparkline zeigt vor allem die
-*Form* des Tages. Damit die Balken trotzdem einzuordnen sind, liegen zwei
-Bezugslinien darueber; die 100er-Linie ist die inhaltlich wichtige, denn
-oberhalb davon uebersteigt die erneuerbare Einspeisung die Last.
+{-| Stundenprofil eines Tages. Die Sparkline zeigt vor allem die *Form* des
+Tages. Damit die Balken trotzdem einzuordnen sind, liegen Bezugslinien darueber;
+die 100er-Linie ist die inhaltlich wichtige, denn oberhalb davon uebersteigt die
+erneuerbare Einspeisung die Last.
+
+`divisor` ist der Massstab in Prozent je Pixel und muss zur Hoehe der jeweiligen
+CSS-Klasse passen, damit Linien und Balken dieselbe Skala benutzen.
+
 -}
 sparkline : List Hourly -> Html msg
 sparkline points =
+    sparkChart "" 1.4 True points
+
+
+{-| Kompakte Fassung fuer die Gegenueberstellung mehrerer Tage: flacher, und
+ohne die 50er-Linie, die auf so wenig Hoehe nur Unruhe stiftet.
+-}
+sparkSmall : List Hourly -> Html msg
+sparkSmall points =
+    sparkChart "small" 2.5 False points
+
+
+sparkChart : String -> Float -> Bool -> List Hourly -> Html msg
+sparkChart variant divisor withMinor points =
+    let
+        minorLine =
+            if withMinor then
+                [ gridLine divisor False 50 ]
+
+            else
+                []
+    in
     div []
-        [ div [ class "spark" ]
-            (gridLine True 100 :: gridLine False 50 :: List.map hourBar points)
+        [ div [ classList [ ( "spark", True ), ( variant, variant /= "" ) ] ]
+            (gridLine divisor True 100 :: (minorLine ++ List.map (hourBar divisor) points))
         , div [ class "spark-hours" ] (List.map hourTick (List.range 0 23))
         ]
 
 
-{-| Waagerechte Bezugslinie. Der Faktor 1.4 ist derselbe wie bei den Balken,
-damit Linie und Balkenhoehe dieselbe Skala benutzen.
+{-| Waagerechte Bezugslinie, auf derselben Skala wie die Balken.
 -}
-gridLine : Bool -> Int -> Html msg
-gridLine major percent =
+gridLine : Float -> Bool -> Int -> Html msg
+gridLine divisor major percent =
     div
         [ classList [ ( "spark-grid", True ), ( "major", major ) ]
-        , HtmlAttr.style "bottom" (String.fromFloat (toFloat percent / 1.4) ++ "px")
+        , HtmlAttr.style "bottom" (String.fromFloat (toFloat percent / divisor) ++ "px")
         ]
         [ span [] [ text (String.fromInt percent ++ " %") ] ]
 
@@ -198,11 +304,11 @@ hourTick hour =
         ]
 
 
-hourBar : Hourly -> Html msg
-hourBar point =
+hourBar : Float -> Hourly -> Html msg
+hourBar divisor point =
     div
         [ class "spark-bar"
-        , HtmlAttr.style "height" (String.fromFloat (max 5 (point.renewableShare / 1.4)) ++ "px")
+        , HtmlAttr.style "height" (String.fromFloat (max 3 (point.renewableShare / divisor)) ++ "px")
         , HtmlAttr.title (String.fromInt point.hour ++ " Uhr: " ++ Data.formatFloat 1 point.renewableShare ++ " %")
         ]
         []
@@ -331,6 +437,14 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .spark-grid.major { border-top: 1px solid #9db0a5; }
 .spark-grid span { position: absolute; right: 0; top: -6px; font-size: 9px; line-height: 1; color: #66747c; background: #ffffff; padding: 0 2px; }
 .spark-hours { display: flex; gap: 2px; margin-top: 3px; }
+.spark.small { height: 66px; padding-top: 6px; }
+.compare-scroll { overflow-x: auto; margin-bottom: 12px; }
+.compare { width: 100%; border-collapse: collapse; font-size: 11px; }
+.compare th { text-align: right; font-weight: 700; color: #26343c; padding: 3px 4px; border-bottom: 1px solid #d9ded8; white-space: nowrap; }
+.compare th:first-child { text-align: left; }
+.compare td { text-align: right; color: #26343c; padding: 3px 4px; border-bottom: 1px solid #edf0ed; white-space: nowrap; }
+.compare td:first-child { text-align: left; color: #66747c; }
+.compare-spark { margin-bottom: 10px; }
 .spark-hour { flex: 1 1 0; min-width: 3px; font-size: 9px; line-height: 1; color: #66747c; text-align: center; white-space: nowrap; }
 .spark-bar { flex: 1 1 0; min-width: 3px; background: #76b6a2; border-radius: 2px 2px 0 0; }
 .chips { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
