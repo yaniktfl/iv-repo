@@ -197,6 +197,28 @@ viewApp model dataset =
         filteredDaily =
             Data.filterDaily model.selectedMonths dataset.daily
 
+        -- Achsenfilter der parallelen Koordinaten wirken auf die ganze
+        -- Anwendung, nicht nur auf die eigene Ansicht.
+        brushing =
+            not (Dict.isEmpty model.brushes) || model.dragging /= Nothing
+
+        brushedDates =
+            ParallelCoordinates.matchingDates model.brushes model.dragging filteredDaily
+
+        scopedDaily =
+            if brushing then
+                List.filter (\day -> Set.member day.date brushedDates) filteredDaily
+
+            else
+                filteredDaily
+
+        scopedHourly =
+            if brushing then
+                List.filter (\point -> Set.member point.date brushedDates) filteredHourly
+
+            else
+                filteredHourly
+
         -- Hover hat Vorrang vor der Auswahl: Das Detailpanel folgt dem
         -- Mauszeiger, ohne dass die Auswahl dabei verloren geht.
         focusDate =
@@ -242,7 +264,7 @@ viewApp model dataset =
             ]
         , div [ class "content" ]
             [ Layout.monthControls model.selectedMonths ToggleMonth
-            , Layout.metricCards filteredHourly filteredDaily
+            , Layout.metricCards scopedHourly scopedDaily
             , div [ class "grid" ]
                 [ div []
                     [ Layout.section "Zeitreihen-Übersicht"
@@ -259,6 +281,12 @@ viewApp model dataset =
                         (Heatmap.view
                             { hoveredDay = model.hoveredDay
                             , selectedDays = model.selectedDays
+                            , matchedDays =
+                                if brushing then
+                                    Just brushedDates
+
+                                else
+                                    Nothing
                             , onHoverDay = HoverDay
                             , onMove = TooltipMove
                             , onLeave = LeaveDay

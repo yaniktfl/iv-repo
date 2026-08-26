@@ -6090,7 +6090,7 @@ var $elm$virtual_dom$VirtualDom$node = function (tag) {
 };
 var $elm$html$Html$node = $elm$virtual_dom$VirtualDom$node;
 var $elm$html$Html$p = _VirtualDom_node('p');
-var $author$project$Views$Layout$stylesheet = '\u000A* { box-sizing: border-box; }\u000Abody { margin: 0; font-family: Inter, Segoe UI, Arial, sans-serif; color: #1d252c; background: #f4f6f2; }\u000A.page { min-height: 100vh; }\u000A.topbar { padding: 22px 28px 16px; background: #ffffff; border-bottom: 1px solid #d9ded8; }\u000Ah1 { margin: 0 0 6px; font-size: 28px; letter-spacing: 0; }\u000Ah2 { margin: 0 0 12px; font-size: 17px; letter-spacing: 0; }\u000Ap { margin: 0; color: #51606b; line-height: 1.45; }\u000A.content { max-width: 1900px; margin: 0 auto; padding: 18px; }\u000A.month-controls { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px; }\u000Abutton { border: 1px solid #b9c3bd; background: #ffffff; color: #23313a; padding: 7px 10px; border-radius: 6px; cursor: pointer; }\u000Abutton:hover, button.active { background: #214e57; border-color: #214e57; color: #ffffff; }\u000A.metrics { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }\u000A.metric { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 10px 12px; min-width: 0; }\u000A.metric-value { display: block; font-size: 20px; font-weight: 700; color: #173b42; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\u000A.metric-label { display: block; margin-top: 4px; font-size: 12px; color: #65727a; }\u000A.grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }\u000A/* Das Panel bleibt beim Scrollen sichtbar, damit es auch beim Arbeiten in\u000A   der Heatmap weiter unten im Blick ist. */\u000A.detail { position: sticky; top: 12px; }\u000A.section, .detail { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 14px; margin-bottom: 16px; overflow: hidden; }\u000A.chart { display: block; width: 100%; height: auto; }\u000A.chart-fixed { display: block; }\u000A.pc-scroll { overflow-x: auto; }\u000A.chart-label { font-size: 13px; font-weight: 700; fill: #26343c; }\u000A.tick-label, .month-label, .dimension-label { font-size: 11px; fill: #64717a; }\u000A.dimension-label { font-weight: 700; }\u000A.grid-line { stroke: #e3e7e3; stroke-width: 1px; }\u000A.axis-line { stroke: #9aa59f; stroke-width: 1px; }\u000A.month-bar { fill: #76b6a2; opacity: 0.78; cursor: pointer; }\u000A.month-bar:hover, .month-bar.active { fill: #214e57; opacity: 1; }\u000A.legend-swatch { opacity: 0.9; }\u000A.price-line { fill: none; stroke: #c04f3f; stroke-width: 2.5px; }\u000A.price-dot { fill: #c04f3f; cursor: pointer; }\u000A.heat-missing { fill: #dfe5e1; stroke: #ffffff; stroke-width: 0.25px; }\u000A.heat-cell { stroke: none; cursor: pointer; }\u000A.heat-cell:hover, .heat-cell.active { stroke: #111111; stroke-width: 1.2px; }\u000A.pc-line { fill: none; stroke: #45646e; stroke-width: 1px; stroke-opacity: 0.16; cursor: pointer; }\u000A.pc-line:hover, .pc-line.hovered { stroke: #c04f3f; stroke-width: 2px; stroke-opacity: 0.95; }\u000A.pc-line.selected { stroke: #111111; stroke-width: 2.4px; stroke-opacity: 1; }\u000A.pc-line.dimmed { stroke-opacity: 0.03; pointer-events: none; }\u000A.pc-axis-hit { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }\u000A.pc-overlay { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }\u000A.brush-rect { fill: #214e57; fill-opacity: 0.16; stroke: #214e57; stroke-width: 1px; pointer-events: none; }\u000A.pc-controls { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; color: #65727a; }\u000A.pc-controls button { padding: 4px 8px; font-size: 12px; }\u000A.tooltip { position: absolute; z-index: 10; background: #ffffff; border: 1px solid #c9d2cc; border-radius: 6px; padding: 8px 10px; pointer-events: none; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14); font-size: 12px; min-width: 180px; }\u000A.tooltip-title { font-weight: 700; margin-bottom: 6px; color: #173b42; }\u000A.tooltip-row { display: flex; justify-content: space-between; gap: 14px; color: #51606b; }\u000A.tooltip-row span:last-child { font-weight: 600; color: #26343c; }\u000A.detail-hint { font-size: 12px; font-weight: 700; color: #26343c; margin: 0 0 8px; }\u000A.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }\u000A.detail-item { border-bottom: 1px solid #edf0ed; padding-bottom: 6px; }\u000A.detail-label { display: block; font-size: 11px; color: #66747c; }\u000A.detail-value { display: block; font-size: 16px; font-weight: 700; color: #26343c; }\u000A.spark { position: relative; height: 110px; display: flex; align-items: end; gap: 2px; padding-top: 10px; border-top: 1px solid #edf0ed; }\u000A.spark-grid { position: absolute; left: 0; right: 0; border-top: 1px dashed #c9d4cd; pointer-events: none; }\u000A.spark-grid.major { border-top: 1px solid #9db0a5; }\u000A.spark-grid span { position: absolute; right: 0; top: -6px; font-size: 9px; line-height: 1; color: #66747c; background: #ffffff; padding: 0 2px; }\u000A.spark-hours { display: flex; gap: 2px; margin-top: 3px; }\u000A.spark.small { height: 66px; padding-top: 6px; }\u000A.compare-scroll { overflow-x: auto; margin-bottom: 12px; }\u000A.compare { width: 100%; border-collapse: collapse; font-size: 11px; }\u000A.compare th { text-align: right; font-weight: 700; color: #26343c; padding: 3px 4px; border-bottom: 1px solid #d9ded8; white-space: nowrap; }\u000A.compare th:first-child { text-align: left; }\u000A.compare td { text-align: right; color: #26343c; padding: 3px 4px; border-bottom: 1px solid #edf0ed; white-space: nowrap; }\u000A.compare td:first-child { text-align: left; color: #66747c; }\u000A.compare-spark { margin-bottom: 10px; }\u000A.spark-hour { flex: 1 1 0; min-width: 3px; font-size: 9px; line-height: 1; color: #66747c; text-align: center; white-space: nowrap; }\u000A.spark-bar { flex: 1 1 0; min-width: 3px; background: #76b6a2; border-radius: 2px 2px 0 0; }\u000A.chips { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }\u000A.chip { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #eef3ee; border: 1px solid #d5ded6; border-radius: 6px; padding: 5px 8px; font-size: 12px; color: #26343c; }\u000A.chip button { padding: 0 6px; border: none; background: transparent; color: #65727a; font-size: 15px; line-height: 1; }\u000A.chip button:hover { color: #c04f3f; background: transparent; border: none; }\u000A.clear-days { margin-bottom: 14px; font-size: 12px; padding: 5px 9px; }\u000A.empty { color: #65727a; }\u000A@media (max-width: 900px) {\u000A  .grid, .metrics { grid-template-columns: 1fr; }\u000A  .content { padding: 12px; }\u000A}\u000A';
+var $author$project$Views$Layout$stylesheet = '\u000A* { box-sizing: border-box; }\u000Abody { margin: 0; font-family: Inter, Segoe UI, Arial, sans-serif; color: #1d252c; background: #f4f6f2; }\u000A.page { min-height: 100vh; }\u000A.topbar { padding: 22px 28px 16px; background: #ffffff; border-bottom: 1px solid #d9ded8; }\u000Ah1 { margin: 0 0 6px; font-size: 28px; letter-spacing: 0; }\u000Ah2 { margin: 0 0 12px; font-size: 17px; letter-spacing: 0; }\u000Ap { margin: 0; color: #51606b; line-height: 1.45; }\u000A.content { max-width: 1900px; margin: 0 auto; padding: 18px; }\u000A.month-controls { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px; }\u000Abutton { border: 1px solid #b9c3bd; background: #ffffff; color: #23313a; padding: 7px 10px; border-radius: 6px; cursor: pointer; }\u000Abutton:hover, button.active { background: #214e57; border-color: #214e57; color: #ffffff; }\u000A.metrics { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }\u000A.metric { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 10px 12px; min-width: 0; }\u000A.metric-value { display: block; font-size: 20px; font-weight: 700; color: #173b42; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }\u000A.metric-label { display: block; margin-top: 4px; font-size: 12px; color: #65727a; }\u000A.grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }\u000A/* Das Panel bleibt beim Scrollen sichtbar, damit es auch beim Arbeiten in\u000A   der Heatmap weiter unten im Blick ist. */\u000A.detail { position: sticky; top: 12px; }\u000A.section, .detail { background: #ffffff; border: 1px solid #d9ded8; border-radius: 8px; padding: 14px; margin-bottom: 16px; overflow: hidden; }\u000A.chart { display: block; width: 100%; height: auto; }\u000A.chart-fixed { display: block; }\u000A.pc-scroll { overflow-x: auto; }\u000A.chart-label { font-size: 13px; font-weight: 700; fill: #26343c; }\u000A.tick-label, .month-label, .dimension-label { font-size: 11px; fill: #64717a; }\u000A.dimension-label { font-weight: 700; }\u000A.grid-line { stroke: #e3e7e3; stroke-width: 1px; }\u000A.axis-line { stroke: #9aa59f; stroke-width: 1px; }\u000A.month-bar { fill: #76b6a2; opacity: 0.78; cursor: pointer; }\u000A.month-bar:hover, .month-bar.active { fill: #214e57; opacity: 1; }\u000A.legend-swatch { opacity: 0.9; }\u000A.price-line { fill: none; stroke: #c04f3f; stroke-width: 2.5px; }\u000A.price-dot { fill: #c04f3f; cursor: pointer; }\u000A.heat-missing { fill: #dfe5e1; stroke: #ffffff; stroke-width: 0.25px; }\u000A.heat-cell { stroke: none; cursor: pointer; }\u000A.heat-cell:hover, .heat-cell.active { stroke: #111111; stroke-width: 1.2px; }\u000A.heat-cell.muted { opacity: 0.18; }\u000A.pc-line { fill: none; stroke: #45646e; stroke-width: 1px; stroke-opacity: 0.16; cursor: pointer; }\u000A.pc-line:hover, .pc-line.hovered { stroke: #c04f3f; stroke-width: 2px; stroke-opacity: 0.95; }\u000A.pc-line.selected { stroke: #111111; stroke-width: 2.4px; stroke-opacity: 1; }\u000A.pc-line.match { stroke: #1f7a5a; stroke-width: 1.5px; stroke-opacity: 0.72; }\u000A.pc-line.dimmed { stroke-opacity: 0.05; pointer-events: none; }\u000A.pc-axis-hit { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }\u000A.pc-overlay { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }\u000A.brush-rect { fill: #214e57; fill-opacity: 0.16; stroke: #214e57; stroke-width: 1px; pointer-events: none; }\u000A.pc-controls { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; color: #65727a; }\u000A.pc-controls button { padding: 4px 8px; font-size: 12px; }\u000A.tooltip { position: absolute; z-index: 10; background: #ffffff; border: 1px solid #c9d2cc; border-radius: 6px; padding: 8px 10px; pointer-events: none; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14); font-size: 12px; min-width: 180px; }\u000A.tooltip-title { font-weight: 700; margin-bottom: 6px; color: #173b42; }\u000A.tooltip-row { display: flex; justify-content: space-between; gap: 14px; color: #51606b; }\u000A.tooltip-row span:last-child { font-weight: 600; color: #26343c; }\u000A.detail-hint { font-size: 12px; font-weight: 700; color: #26343c; margin: 0 0 8px; }\u000A.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }\u000A.detail-item { border-bottom: 1px solid #edf0ed; padding-bottom: 6px; }\u000A.detail-label { display: block; font-size: 11px; color: #66747c; }\u000A.detail-value { display: block; font-size: 16px; font-weight: 700; color: #26343c; }\u000A.spark { position: relative; height: 110px; display: flex; align-items: end; gap: 2px; padding-top: 10px; border-top: 1px solid #edf0ed; }\u000A.spark-grid { position: absolute; left: 0; right: 0; border-top: 1px dashed #c9d4cd; pointer-events: none; }\u000A.spark-grid.major { border-top: 1px solid #9db0a5; }\u000A.spark-grid span { position: absolute; right: 0; top: -6px; font-size: 9px; line-height: 1; color: #66747c; background: #ffffff; padding: 0 2px; }\u000A.spark-hours { display: flex; gap: 2px; margin-top: 3px; }\u000A.spark.small { height: 66px; padding-top: 6px; }\u000A.compare-scroll { overflow-x: auto; margin-bottom: 12px; }\u000A.compare { width: 100%; border-collapse: collapse; font-size: 11px; }\u000A.compare th { text-align: right; font-weight: 700; color: #26343c; padding: 3px 4px; border-bottom: 1px solid #d9ded8; white-space: nowrap; }\u000A.compare th:first-child { text-align: left; }\u000A.compare td { text-align: right; color: #26343c; padding: 3px 4px; border-bottom: 1px solid #edf0ed; white-space: nowrap; }\u000A.compare td:first-child { text-align: left; color: #66747c; }\u000A.compare-spark { margin-bottom: 10px; }\u000A\u000A.spark-hour { flex: 1 1 0; min-width: 3px; font-size: 9px; line-height: 1; color: #66747c; text-align: center; white-space: nowrap; }\u000A.spark-bar { flex: 1 1 0; min-width: 3px; background: #76b6a2; border-radius: 2px 2px 0 0; }\u000A.chips { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }\u000A.chip { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #eef3ee; border: 1px solid #d5ded6; border-radius: 6px; padding: 5px 8px; font-size: 12px; color: #26343c; }\u000A.chip button { padding: 0 6px; border: none; background: transparent; color: #65727a; font-size: 15px; line-height: 1; }\u000A.chip button:hover { color: #c04f3f; background: transparent; border: none; }\u000A.clear-days { margin-bottom: 14px; font-size: 12px; padding: 5px 9px; }\u000A.empty { color: #65727a; }\u000A@media (max-width: 900px) {\u000A  .grid, .metrics { grid-template-columns: 1fr; }\u000A  .content { padding: 12px; }\u000A}\u000A';
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$core$String$fromFloat = _String_fromNumber;
@@ -6199,6 +6199,12 @@ var $elm$core$Maybe$andThen = F2(
 		} else {
 			return $elm$core$Maybe$Nothing;
 		}
+	});
+var $elm$core$List$sortBy = _List_sortBy;
+var $author$project$Views$Layout$chronological = $elm$core$List$sortBy(
+	function (_v0) {
+		var day = _v0.a;
+		return day.date;
 	});
 var $elm$core$Basics$pow = _Basics_pow;
 var $elm$core$String$replace = F3(
@@ -6480,7 +6486,8 @@ var $author$project$Views$Layout$compareBlock = function (config) {
 	if ($elm$core$List$length(config.selected) < 2) {
 		return _List_Nil;
 	} else {
-		var days = A2($elm$core$List$map, $elm$core$Tuple$first, config.selected);
+		var sorted = $author$project$Views$Layout$chronological(config.selected);
+		var days = A2($elm$core$List$map, $elm$core$Tuple$first, sorted);
 		return _Utils_ap(
 			_List_fromArray(
 				[
@@ -6553,7 +6560,7 @@ var $author$project$Views$Layout$compareBlock = function (config) {
 							$elm$html$Html$text('EE-Anteil je Stunde im Vergleich')
 						]))
 				]),
-			A2($elm$core$List$map, $author$project$Views$Layout$compareSpark, config.selected));
+			A2($elm$core$List$map, $author$project$Views$Layout$compareSpark, sorted));
 	}
 };
 var $author$project$Views$Layout$detail = F2(
@@ -6769,7 +6776,7 @@ var $author$project$Views$Layout$selectedBlock = function (config) {
 					var day = _v0.a;
 					return A2($author$project$Views$Layout$chip, config.onRemoveDay, day);
 				},
-				config.selected)),
+				$author$project$Views$Layout$chronological(config.selected))),
 			A2(
 			$elm$html$Html$button,
 			_List_fromArray(
@@ -6880,6 +6887,185 @@ var $author$project$Data$findHourlyForDate = F2(
 			},
 			hourly);
 	});
+var $elm$core$List$maximum = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(
+			A3($elm$core$List$foldl, $elm$core$Basics$max, x, xs));
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm$core$List$minimum = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(
+			A3($elm$core$List$foldl, $elm$core$Basics$min, x, xs));
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$Views$ParallelCoordinates$makeDimension = F3(
+	function (label, read, daily) {
+		var values = A2($elm$core$List$map, read, daily);
+		return {
+			label: label,
+			maxValue: A2(
+				$elm$core$Maybe$withDefault,
+				1,
+				$elm$core$List$maximum(values)),
+			minValue: A2(
+				$elm$core$Maybe$withDefault,
+				0,
+				$elm$core$List$minimum(values)),
+			read: read
+		};
+	});
+var $author$project$Views$ParallelCoordinates$dimensions = function (daily) {
+	return _List_fromArray(
+		[
+			A3(
+			$author$project$Views$ParallelCoordinates$makeDimension,
+			'Last (GW)',
+			function ($) {
+				return $.meanLoadGw;
+			},
+			daily),
+			A3(
+			$author$project$Views$ParallelCoordinates$makeDimension,
+			'Solar (%)',
+			function ($) {
+				return $.solarShare;
+			},
+			daily),
+			A3(
+			$author$project$Views$ParallelCoordinates$makeDimension,
+			'Wind (%)',
+			function ($) {
+				return $.windShare;
+			},
+			daily),
+			A3(
+			$author$project$Views$ParallelCoordinates$makeDimension,
+			'EE (%)',
+			function ($) {
+				return $.meanRenewableShare;
+			},
+			daily),
+			A3(
+			$author$project$Views$ParallelCoordinates$makeDimension,
+			'Handel (GW)',
+			function ($) {
+				return $.meanNetImportGw;
+			},
+			daily),
+			A3(
+			$author$project$Views$ParallelCoordinates$makeDimension,
+			'Preis (€/MWh)',
+			function (day) {
+				return A2($elm$core$Maybe$withDefault, 0, day.meanPriceEurMwh);
+			},
+			daily),
+			A3(
+			$author$project$Views$ParallelCoordinates$makeDimension,
+			'Neg. Std.',
+			function (day) {
+				return day.negativePriceHours;
+			},
+			daily)
+		]);
+};
+var $elm$core$Set$fromList = function (list) {
+	return A3($elm$core$List$foldl, $elm$core$Set$insert, $elm$core$Set$empty, list);
+};
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $elm$core$Basics$not = _Basics_not;
+var $elm$core$List$all = F2(
+	function (isOkay, list) {
+		return !A2(
+			$elm$core$List$any,
+			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
+			list);
+	});
+var $elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var $author$project$Views$ParallelCoordinates$passesBrushes = F3(
+	function (dims, brushes, day) {
+		return A2(
+			$elm$core$List$all,
+			function (_v0) {
+				var index = _v0.a;
+				var _v1 = _v0.b;
+				var lo = _v1.a;
+				var hi = _v1.b;
+				var _v2 = $elm$core$List$head(
+					A2($elm$core$List$drop, index, dims));
+				if (_v2.$ === 'Nothing') {
+					return true;
+				} else {
+					var dim = _v2.a;
+					var span = A2($elm$core$Basics$max, 0.0001, dim.maxValue - dim.minValue);
+					var fraction = (dim.read(day) - dim.minValue) / span;
+					return (_Utils_cmp(lo - 0.001, fraction) < 1) && (_Utils_cmp(fraction, hi + 0.001) < 1);
+				}
+			},
+			$elm$core$Dict$toList(brushes));
+	});
+var $author$project$Views$ParallelCoordinates$withDrag = F2(
+	function (dragging, brushes) {
+		if (dragging.$ === 'Just') {
+			var drag = dragging.a;
+			return A3(
+				$elm$core$Dict$insert,
+				drag.axis,
+				_Utils_Tuple2(
+					A2($elm$core$Basics$min, drag.start, drag.current),
+					A2($elm$core$Basics$max, drag.start, drag.current)),
+				brushes);
+		} else {
+			return brushes;
+		}
+	});
+var $author$project$Views$ParallelCoordinates$matchingDates = F3(
+	function (brushes, dragging, daily) {
+		var effective = A2($author$project$Views$ParallelCoordinates$withDrag, dragging, brushes);
+		var dims = $author$project$Views$ParallelCoordinates$dimensions(daily);
+		return $elm$core$Set$fromList(
+			A2(
+				$elm$core$List$map,
+				function ($) {
+					return $.date;
+				},
+				A2(
+					$elm$core$List$filter,
+					A2($author$project$Views$ParallelCoordinates$passesBrushes, dims, effective),
+					daily)));
+	});
 var $author$project$Views$Layout$card = F2(
 	function (label, value) {
 		return A2(
@@ -6912,16 +7098,6 @@ var $author$project$Views$Layout$card = F2(
 						]))
 				]));
 	});
-var $elm$core$List$maximum = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(
-			A3($elm$core$List$foldl, $elm$core$Basics$max, x, xs));
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
 var $elm$core$List$sum = function (numbers) {
 	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
 };
@@ -7159,11 +7335,6 @@ var $elm_community$typed_svg$TypedSvg$Attributes$class = function (names) {
 		'class',
 		A2($elm$core$String$join, ' ', names));
 };
-var $elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
-	});
 var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
@@ -7361,12 +7532,22 @@ var $author$project$Views$Heatmap$cell = F7(
 	function (config, minDay, left, top, cellW, cellH, point) {
 		var y0 = top + (point.hour * cellH);
 		var x0 = left + ((point.dayOfYear - minDay) * cellW);
+		var isMuted = function () {
+			var _v0 = config.matchedDays;
+			if (_v0.$ === 'Just') {
+				var matched = _v0.a;
+				return !A2($elm$core$Set$member, point.date, matched);
+			} else {
+				return false;
+			}
+		}();
 		var isActive = A2($elm$core$List$member, point.date, config.selectedDays) || _Utils_eq(
 			config.hoveredDay,
 			$elm$core$Maybe$Just(point.date));
 		var className = isActive ? _List_fromArray(
-			['heat-cell', 'active']) : _List_fromArray(
-			['heat-cell']);
+			['heat-cell', 'active']) : (isMuted ? _List_fromArray(
+			['heat-cell', 'muted']) : _List_fromArray(
+			['heat-cell']));
 		return A2(
 			$elm_community$typed_svg$TypedSvg$rect,
 			_List_fromArray(
@@ -7544,16 +7725,6 @@ var $author$project$Views$Heatmap$legend = F2(
 								]))
 						]))));
 	});
-var $elm$core$List$minimum = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(
-			A3($elm$core$List$foldl, $elm$core$Basics$min, x, xs));
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -7907,90 +8078,8 @@ var $author$project$Views$ParallelCoordinates$controls = F3(
 						]))
 				]));
 	});
-var $author$project$Views$ParallelCoordinates$makeDimension = F3(
-	function (label, read, daily) {
-		var values = A2($elm$core$List$map, read, daily);
-		return {
-			label: label,
-			maxValue: A2(
-				$elm$core$Maybe$withDefault,
-				1,
-				$elm$core$List$maximum(values)),
-			minValue: A2(
-				$elm$core$Maybe$withDefault,
-				0,
-				$elm$core$List$minimum(values)),
-			read: read
-		};
-	});
-var $author$project$Views$ParallelCoordinates$dimensions = function (daily) {
-	return _List_fromArray(
-		[
-			A3(
-			$author$project$Views$ParallelCoordinates$makeDimension,
-			'Last (GW)',
-			function ($) {
-				return $.meanLoadGw;
-			},
-			daily),
-			A3(
-			$author$project$Views$ParallelCoordinates$makeDimension,
-			'Solar (%)',
-			function ($) {
-				return $.solarShare;
-			},
-			daily),
-			A3(
-			$author$project$Views$ParallelCoordinates$makeDimension,
-			'Wind (%)',
-			function ($) {
-				return $.windShare;
-			},
-			daily),
-			A3(
-			$author$project$Views$ParallelCoordinates$makeDimension,
-			'EE (%)',
-			function ($) {
-				return $.meanRenewableShare;
-			},
-			daily),
-			A3(
-			$author$project$Views$ParallelCoordinates$makeDimension,
-			'Handel (GW)',
-			function ($) {
-				return $.meanNetImportGw;
-			},
-			daily),
-			A3(
-			$author$project$Views$ParallelCoordinates$makeDimension,
-			'Preis (€/MWh)',
-			function (day) {
-				return A2($elm$core$Maybe$withDefault, 0, day.meanPriceEurMwh);
-			},
-			daily),
-			A3(
-			$author$project$Views$ParallelCoordinates$makeDimension,
-			'Neg. Std.',
-			function (day) {
-				return day.negativePriceHours;
-			},
-			daily)
-		]);
-};
 var $author$project$Views$ParallelCoordinates$effectiveBrushes = function (config) {
-	var _v0 = config.dragging;
-	if (_v0.$ === 'Just') {
-		var drag = _v0.a;
-		return A3(
-			$elm$core$Dict$insert,
-			drag.axis,
-			_Utils_Tuple2(
-				A2($elm$core$Basics$min, drag.start, drag.current),
-				A2($elm$core$Basics$max, drag.start, drag.current)),
-			config.brushes);
-	} else {
-		return config.brushes;
-	}
+	return A2($author$project$Views$ParallelCoordinates$withDrag, config.dragging, config.brushes);
 };
 var $elm$core$Basics$composeR = F3(
 	function (f, g, x) {
@@ -8035,57 +8124,6 @@ var $author$project$Views$ParallelCoordinates$overlay = function (config) {
 			]);
 	}
 };
-var $elm$core$Basics$not = _Basics_not;
-var $elm$core$List$all = F2(
-	function (isOkay, list) {
-		return !A2(
-			$elm$core$List$any,
-			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
-			list);
-	});
-var $elm$core$List$drop = F2(
-	function (n, list) {
-		drop:
-		while (true) {
-			if (n <= 0) {
-				return list;
-			} else {
-				if (!list.b) {
-					return list;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs;
-					n = $temp$n;
-					list = $temp$list;
-					continue drop;
-				}
-			}
-		}
-	});
-var $author$project$Views$ParallelCoordinates$passesBrushes = F3(
-	function (dims, brushes, day) {
-		return A2(
-			$elm$core$List$all,
-			function (_v0) {
-				var index = _v0.a;
-				var _v1 = _v0.b;
-				var lo = _v1.a;
-				var hi = _v1.b;
-				var _v2 = $elm$core$List$head(
-					A2($elm$core$List$drop, index, dims));
-				if (_v2.$ === 'Nothing') {
-					return true;
-				} else {
-					var dim = _v2.a;
-					var span = A2($elm$core$Basics$max, 0.0001, dim.maxValue - dim.minValue);
-					var fraction = (dim.read(day) - dim.minValue) / span;
-					return (_Utils_cmp(lo - 0.001, fraction) < 1) && (_Utils_cmp(fraction, hi + 0.001) < 1);
-				}
-			},
-			$elm$core$Dict$toList(brushes));
-	});
 var $elm_community$typed_svg$TypedSvg$Attributes$d = $elm_community$typed_svg$TypedSvg$Core$attribute('d');
 var $author$project$Views$ParallelCoordinates$pointsToPath = function (points) {
 	if (!points.b) {
@@ -8180,15 +8218,16 @@ var $author$project$Views$ParallelCoordinates$positionDecoder = function (toMsg)
 		A2($elm$json$Json$Decode$field, 'pageX', $elm$json$Json$Decode$float),
 		A2($elm$json$Json$Decode$field, 'pageY', $elm$json$Json$Decode$float));
 };
-var $author$project$Views$ParallelCoordinates$polyline = F4(
-	function (config, dims, passes, day) {
+var $author$project$Views$ParallelCoordinates$polyline = F5(
+	function (config, dims, passes, brushing, day) {
 		var className = (!passes(day)) ? _List_fromArray(
 			['pc-line', 'dimmed']) : (A2($elm$core$List$member, day.date, config.selectedDays) ? _List_fromArray(
 			['pc-line', 'selected']) : (_Utils_eq(
 			config.hoveredDay,
 			$elm$core$Maybe$Just(day.date)) ? _List_fromArray(
-			['pc-line', 'hovered']) : _List_fromArray(
-			['pc-line'])));
+			['pc-line', 'hovered']) : (brushing ? _List_fromArray(
+			['pc-line', 'match']) : _List_fromArray(
+			['pc-line']))));
 		return A2(
 			$elm_community$typed_svg$TypedSvg$path,
 			_List_fromArray(
@@ -8275,7 +8314,12 @@ var $author$project$Views$ParallelCoordinates$view = F2(
 										_List_Nil,
 										A2(
 											$elm$core$List$map,
-											A3($author$project$Views$ParallelCoordinates$polyline, config, dims, passes),
+											A4(
+												$author$project$Views$ParallelCoordinates$polyline,
+												config,
+												dims,
+												passes,
+												!$elm$core$Dict$isEmpty(effective)),
 											daily)),
 										A2(
 										$elm_community$typed_svg$TypedSvg$g,
@@ -8974,6 +9018,20 @@ var $author$project$Main$viewApp = F2(
 			focusDate);
 		var filteredHourly = A2($author$project$Data$filterHourly, model.selectedMonths, dataset.hourly);
 		var filteredDaily = A2($author$project$Data$filterDaily, model.selectedMonths, dataset.daily);
+		var brushing = (!$elm$core$Dict$isEmpty(model.brushes)) || (!_Utils_eq(model.dragging, $elm$core$Maybe$Nothing));
+		var brushedDates = A3($author$project$Views$ParallelCoordinates$matchingDates, model.brushes, model.dragging, filteredDaily);
+		var scopedDaily = brushing ? A2(
+			$elm$core$List$filter,
+			function (day) {
+				return A2($elm$core$Set$member, day.date, brushedDates);
+			},
+			filteredDaily) : filteredDaily;
+		var scopedHourly = brushing ? A2(
+			$elm$core$List$filter,
+			function (point) {
+				return A2($elm$core$Set$member, point.date, brushedDates);
+			},
+			filteredHourly) : filteredHourly;
 		return A2(
 			$elm$html$Html$div,
 			_List_Nil,
@@ -9012,7 +9070,7 @@ var $author$project$Main$viewApp = F2(
 					_List_fromArray(
 						[
 							A2($author$project$Views$Layout$monthControls, model.selectedMonths, $author$project$Main$ToggleMonth),
-							A2($author$project$Views$Layout$metricCards, filteredHourly, filteredDaily),
+							A2($author$project$Views$Layout$metricCards, scopedHourly, scopedDaily),
 							A2(
 							$elm$html$Html$div,
 							_List_fromArray(
@@ -9047,7 +9105,15 @@ var $author$project$Main$viewApp = F2(
 											'Stunden-Heatmap (pixelorientiert)',
 											A2(
 												$author$project$Views$Heatmap$view,
-												{hoveredDay: model.hoveredDay, onHoverDay: $author$project$Main$HoverDay, onLeave: $author$project$Main$LeaveDay, onMove: $author$project$Main$TooltipMove, onToggleDay: $author$project$Main$ToggleDay, selectedDays: model.selectedDays},
+												{
+													hoveredDay: model.hoveredDay,
+													matchedDays: brushing ? $elm$core$Maybe$Just(brushedDates) : $elm$core$Maybe$Nothing,
+													onHoverDay: $author$project$Main$HoverDay,
+													onLeave: $author$project$Main$LeaveDay,
+													onMove: $author$project$Main$TooltipMove,
+													onToggleDay: $author$project$Main$ToggleDay,
+													selectedDays: model.selectedDays
+												},
 												filteredHourly)),
 											A2(
 											$author$project$Views$Layout$section,

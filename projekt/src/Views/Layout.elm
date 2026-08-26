@@ -97,7 +97,7 @@ selectedBlock config =
         [ p [ class "detail-hint" ]
             [ text ("Ausgewählte Tage (" ++ String.fromInt (List.length config.selected) ++ ")") ]
         , div [ class "chips" ]
-            (List.map (\( day, _ ) -> chip config.onRemoveDay day) config.selected)
+            (List.map (\( day, _ ) -> chip config.onRemoveDay day) (chronological config.selected))
         , button [ class "clear-days", onClick config.onClearDays ] [ text "Auswahl aufheben" ]
         ]
 
@@ -163,8 +163,11 @@ compareBlock config =
 
     else
         let
+            sorted =
+                chronological config.selected
+
             days =
-                List.map Tuple.first config.selected
+                List.map Tuple.first sorted
         in
         [ p [ class "detail-hint" ]
             [ text ("Vergleich (" ++ String.fromInt (List.length days) ++ " Tage)") ]
@@ -179,7 +182,7 @@ compareBlock config =
             ]
         , p [ class "detail-hint" ] [ text "EE-Anteil je Stunde im Vergleich" ]
         ]
-            ++ List.map compareSpark config.selected
+            ++ List.map compareSpark sorted
 
 
 {-| Zeilen der Vergleichstabelle: Beschriftung und Formatierung je Attribut.
@@ -216,6 +219,15 @@ compareSpark ( day, hourly ) =
             [ text (shortDate day.date ++ " · EE " ++ Data.formatFloat 0 day.meanRenewableShare ++ " %") ]
         , sparkSmall hourly
         ]
+
+
+{-| Ausgewaehlte Tage werden in Klickreihenfolge gesammelt; gezeigt werden sie
+nach Datum sortiert, weil ein Vergleich sonst von der Reihenfolge der Klicks
+abhaengt.
+-}
+chronological : List ( Daily, List Hourly ) -> List ( Daily, List Hourly )
+chronological =
+    List.sortBy (\( day, _ ) -> day.date)
 
 
 {-| "2024-02-04" wird zu "04.02." -- in Tabellenkoepfen zaehlt jede Stelle.
@@ -414,10 +426,12 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .heat-missing { fill: #dfe5e1; stroke: #ffffff; stroke-width: 0.25px; }
 .heat-cell { stroke: none; cursor: pointer; }
 .heat-cell:hover, .heat-cell.active { stroke: #111111; stroke-width: 1.2px; }
+.heat-cell.muted { opacity: 0.18; }
 .pc-line { fill: none; stroke: #45646e; stroke-width: 1px; stroke-opacity: 0.16; cursor: pointer; }
 .pc-line:hover, .pc-line.hovered { stroke: #c04f3f; stroke-width: 2px; stroke-opacity: 0.95; }
 .pc-line.selected { stroke: #111111; stroke-width: 2.4px; stroke-opacity: 1; }
-.pc-line.dimmed { stroke-opacity: 0.03; pointer-events: none; }
+.pc-line.match { stroke: #1f7a5a; stroke-width: 1.5px; stroke-opacity: 0.72; }
+.pc-line.dimmed { stroke-opacity: 0.05; pointer-events: none; }
 .pc-axis-hit { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }
 .pc-overlay { fill: #ffffff; fill-opacity: 0; cursor: ns-resize; }
 .brush-rect { fill: #214e57; fill-opacity: 0.16; stroke: #214e57; stroke-width: 1px; pointer-events: none; }
@@ -445,6 +459,7 @@ button:hover, button.active { background: #214e57; border-color: #214e57; color:
 .compare td { text-align: right; color: #26343c; padding: 3px 4px; border-bottom: 1px solid #edf0ed; white-space: nowrap; }
 .compare td:first-child { text-align: left; color: #66747c; }
 .compare-spark { margin-bottom: 10px; }
+
 .spark-hour { flex: 1 1 0; min-width: 3px; font-size: 9px; line-height: 1; color: #66747c; text-align: center; white-space: nowrap; }
 .spark-bar { flex: 1 1 0; min-width: 3px; background: #76b6a2; border-radius: 2px 2px 0 0; }
 .chips { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }

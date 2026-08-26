@@ -1,4 +1,4 @@
-module Views.ParallelCoordinates exposing (Drag, view)
+module Views.ParallelCoordinates exposing (Drag, matchingDates, view)
 
 {-| Visualisierung Drei: parallele Koordinaten der Tagesprofile.
 
@@ -20,6 +20,7 @@ Stunden.
 
 import Data exposing (Daily, Tooltip)
 import Dict exposing (Dict)
+import Set exposing (Set)
 import Html exposing (Html, button, div, span, text)
 import Html.Attributes as HtmlAttr
 import Html.Events
@@ -137,7 +138,7 @@ view config daily =
                 , SvgAttr.class [ "chart-fixed", "parallel" ]
                 ]
                 ([ text_ [ SvgAttr.class [ "chart-label" ], Px.x 14, Px.y 20 ] [ SvgCore.text "Parallele Koordinaten: Tagesprofile" ]
-                 , g [] (List.map (polyline config dims passes) daily)
+                 , g [] (List.map (polyline config dims passes (not (Dict.isEmpty effective))) daily)
                  , g [] (List.indexedMap (axis (List.length dims)) dims)
                  , g [] (brushRects effective (List.length dims))
                  , g [] (List.indexedMap (\index _ -> axisHit config (List.length dims) index) dims)
@@ -173,14 +174,39 @@ damit live gefiltert wird, ohne den bestaetigten Zustand zu ueberschreiben.
 -}
 effectiveBrushes : Config msg -> Dict Int ( Float, Float )
 effectiveBrushes config =
-    case config.dragging of
+    withDrag config.dragging config.brushes
+
+
+withDrag : Maybe Drag -> Dict Int ( Float, Float ) -> Dict Int ( Float, Float )
+withDrag dragging brushes =
+    case dragging of
         Just drag ->
             Dict.insert drag.axis
                 ( min drag.start drag.current, max drag.start drag.current )
-                config.brushes
+                brushes
 
         Nothing ->
-            config.brushes
+            brushes
+
+
+{-| Die Tage, die alle gesetzten Achsenfilter passieren. `Main` braucht sie,
+damit Kennzahlen und Heatmap denselben Ausschnitt zeigen wie die Linien -- sonst
+filtert das Brushing nur die eigene Ansicht und die Kopplung waere an dieser
+Stelle gebrochen.
+-}
+matchingDates : Dict Int ( Float, Float ) -> Maybe Drag -> List Daily -> Set String
+matchingDates brushes dragging daily =
+    let
+        dims =
+            dimensions daily
+
+        effective =
+            withDrag dragging brushes
+    in
+    daily
+        |> List.filter (passesBrushes dims effective)
+        |> List.map .date
+        |> Set.fromList
 
 
 {-| Brushes auf mehreren Achsen werden UND-verknuepft; List.all drueckt das
@@ -306,8 +332,8 @@ makeDimension label read daily =
     }
 
 
-polyline : Config msg -> List Dimension -> (Daily -> Bool) -> Daily -> Svg msg
-polyline config dims passes day =
+polyline : Config msg -> List Dimension -> (Daily -> Bool) -> Bool -> Daily -> Svg msg
+polyline config dims passes brushing day =
     let
         className =
             if not (passes day) then
@@ -318,6 +344,11 @@ polyline config dims passes day =
 
             else if config.hoveredDay == Just day.date then
                 [ "pc-line", "hovered" ]
+
+            else if brushing then
+                -- Treffer eines aktiven Achsenfilters heben sich deutlich vom
+                -- ungefilterten Grundrauschen ab.
+                [ "pc-line", "match" ]
 
             else
                 [ "pc-line" ]

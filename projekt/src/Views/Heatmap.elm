@@ -12,6 +12,7 @@ horizontales Band. Beides ist ohne Rechnung an der Form unterscheidbar.
 -}
 
 import Color
+import Set exposing (Set)
 import Data exposing (Hourly, Tooltip)
 import Html exposing (Html)
 import Html.Events
@@ -27,6 +28,7 @@ import TypedSvg.Types exposing (AnchorAlignment(..), Paint(..))
 type alias Config msg =
     { hoveredDay : Maybe String
     , selectedDays : List String
+    , matchedDays : Maybe (Set String)
     , onHoverDay : String -> Tooltip -> msg
     , onMove : Float -> Float -> msg
     , onLeave : msg
@@ -99,9 +101,22 @@ cell config minDay left top cellW cellH point =
         isActive =
             List.member point.date config.selectedDays || config.hoveredDay == Just point.date
 
+        -- Bei aktivem Achsenfilter bleiben alle Tage stehen -- der Zeitstrahl
+        -- darf keine Luecken bekommen --, die Nichttreffer treten aber zurueck.
+        isMuted =
+            case config.matchedDays of
+                Just matched ->
+                    not (Set.member point.date matched)
+
+                Nothing ->
+                    False
+
         className =
             if isActive then
                 [ "heat-cell", "active" ]
+
+            else if isMuted then
+                [ "heat-cell", "muted" ]
 
             else
                 [ "heat-cell" ]
