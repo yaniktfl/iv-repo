@@ -109,23 +109,7 @@ Zusammenhänge stehen Heatmap und parallele Koordinaten bereit. Um aus der doppe
 Fehlaussage entstehen zu lassen, ist die Preisachse explizit beschriftet und die Interpretation im
 Bericht auf qualitative Verläufe beschränkt.
 
-Als Alternativen zur gewählten Darstellung wurden verschiedene Optionen abgewogen. Eine vollständige
-Stundenzeitreihe als Liniendiagramm wäre zwar expressiver und erfüllte R3. Bei $8\,690$ Punkten auf
-einer Bildschirmbreite fallen jedoch rund zwölf Werte auf ein Pixel. Überzeichnung macht Extremwerte
-ununterscheidbar von Rauschen, und der Tagesgang erscheint als geschlossenes Band. Für die
-Orientierungsaufgabe A1 erweist sie sich als ungeeignet. Stattdessen übernimmt die Heatmap die
-Darstellung desselben Datenvolumens ohne visuelle Überdeckung.
-
-Auch ein \emph{Horizon Graph} löst dieses Auflösungsproblem: Durch Falten und Einfärben des
-Wertebereichs erreicht er bei gleicher Höhe eine mehrfach höhere Datendichte und ist für lange
-Zeitreihen Stand der Technik \cite{Aigner2011}. Er wurde jedoch verworfen, weil sein Lesen geübt sein
-muss (Bänder, Vorzeichenfaltung) und er damit R1 verletzt, also den einfachen Einstieg ohne Vorwissen für
-Z2 und Z3. Für ein reines Expertenpublikum wäre er die bessere Wahl.
-
-Schließlich wurden auch ein \emph{Cycle Plot} oder monatliche Boxplots erwogen. Sie würden die
-innermonatliche Streuung visualisieren, die der Mittelwertbalken aggregiert. Ein kompakter Balken
-bietet jedoch eine verlässliche und großflächige Interaktionsfläche für den Monatsfilter. Die detaillierte
-Streuungsinformation wird stattdessen in der nachgelagerten Heatmap lückenlos dargestellt.
+Als Alternativen zur aggregierten Monatsübersicht wurden verschiedene Optionen abgewogen. Eine vollständige Stundenzeitreihe mit $8\,690$ Datenpunkten als Liniendiagramm erfüllt zwar R3, führt bei rund zwölf Werten pro Bildschirmpixel jedoch zu massiver Überzeichnung und verfehlt die Orientierungsaufgabe A1. Ein kompakterer \emph{Horizon Graph} \cite{Aigner2011} löst dieses Auflösungsproblem durch Wertebereichsfaltung, verlangt vom Publikum jedoch spezielles Vorwissen und widerspricht damit dem einfachen Einstieg für Z2 und Z3 (R1). Monatliche Boxplots oder ein \emph{Cycle Plot} wiederum würden die innermonatliche Streuung sichtbar machen. Sie bieten im Vergleich zu einfachen Balken jedoch eine unruhigere Interaktionsfläche für den Monatsfilter. Die detaillierte Streuungsinformation bleibt stattdessen der nachgelagerten Heatmap vorbehalten.
 
 \abb{zeitreihe}{0.92}{Zeitreihen-Übersicht: Balken zeigen den mittleren Erneuerbarenanteil je Monat,
 die rote Linie den mittleren Preis auf der rechten Achse. Der Tooltip nennt die exakten Monatswerte.}
@@ -162,23 +146,7 @@ der Skala abhebt und in der Legende separat ausgewiesen wird (R9). Dass Farbe ei
 schwächerer Kanal als die Position ist, wird bewusst in Kauf genommen und durch detaillierte Tooltips
 (R8) kompensiert, die bei Interaktion die exakten physikalischen Werte ausgeben.
 
-Als alternative Darstellungen wurden verschiedene Ansätze evaluiert. Eine Kalender-Heatmap nach van Wijk
-und van Selow \cite{vanWijk1999} ordnet Tage in einem klassischen Kalenderraster (Wochentage $\times$ Wochen)
-an und eignet sich hervorragend zur Erkennung von Wochenrhythmen. Sie wurde jedoch verworfen, da sie jeden
-Tag auf eine einzige Kennzahl aggregiert und den Tagesgang (R2) vollständig ausblendet. Da die Erzeugung
-zudem kaum nennenswerte Wochenstrukturen aufweist, wiegt dieser Nachteil schwer.
-
-Überlagerte Tageskurven (\enquote{Spaghettiplots}) würden den Tagesverlauf exakt über die Position kodieren.
-Bei $366$ Linien führt dies jedoch zu massiver Überzeichnung, insbesondere in den Mittagsstunden. Eine
-eindeutige Zuordnung einzelner Tage ist ohne intensive Interaktion unmöglich. Die Heatmap verzichtet
-zugunsten der Übersicht auf die präzise Positionskodierung und ermöglicht dafür ein überlagerungsfreies
-Gesamtbild.
-
-Auch die Aufteilung in \emph{Small Multiples} je Monat wurde geprüft. Diese würde zwar den Monatsvergleich
-erleichtern, zerschneidet jedoch den kontinuierlichen zeitlichen Verlauf, wodurch saisonale Übergänge
-wie das allmähliche Breiterwerden des solaren Mittagsbandes schwerer zu verfolgen wären. Da der
-Monatsvergleich bereits über Vis~1 und die interaktiven Filter abgedeckt ist, bietet die durchgehende
-Zeitachse den größeren Nutzen.
+Verworfene Alternativen zur Stunden-Heatmap umfassen die klassische Kalender-Heatmap nach van Wijk und van Selow \cite{vanWijk1999}, überlagerte Tageskurven sowie \emph{Small Multiples} je Monat. Ein Kalenderraster (Wochentage $\times$ Wochen) aggregiert jeden Tag auf einen Einzelwert, wodurch der essentielle 24-Stunden-Tagesgang (R2) verloren ginge. Überlagerte Tageskurven aller 364 Profile würden durch massive Überdeckung in den Mittagsstunden die Mustererkennung blockieren. Eine Aufteilung in zwölf monatliche Teilansichten wiederum würde die kontinuierliche Zeitachse zerschneiden und das Nachvollziehen saisonaler Verschiebungen erschweren. Die kontinuierliche Tag-Stunden-Matrix verbindet dagegen das vollständige Datenvolumen mit überlagerungsfreier Lesbarkeit.
 
 \abb{heatmap}{0.98}{Stunden-Heatmap für das gesamte Jahr 2024: $x$ = Tag, $y$ = Stunde,
 Farbe = Erneuerbarenanteil. Solares Mittagsband, windgetriebene vertikale Streifen und die grauen
@@ -218,20 +186,7 @@ wichtigsten Attribute direkt nebeneinander. Die bei $364$ Linien unvermeidliche 
 eine reduzierte Deckkraft abgemildert, was zu einer visuell erfassbaren Dichteinformation führt und
 durch interaktives Brushing steuerbar bleibt.
 
-Als Alternativen wurden eine Streudiagramm-Matrix (SPLOM), Projektionsverfahren sowie Stern-Glyphen
-diskutiert. Eine Streudiagramm-Matrix zeigt zwar jedes Attributpaar präzise, würde bei sieben
-Attributen jedoch $21$ Einzeldiagramme erfordern. Die gedankliche Rekonstruktion eines einzelnen Tages
-über alle Panels hinweg wäre für die Nutzenden extrem kognitiv belastend.
-
-Projektionsverfahren (wie PCA oder MDS) lösen das Überzeichnungsproblem und zeigen Ähnlichkeitscluster
-als Punktwolke. Sie wurden jedoch verworfen, weil die Achsen ihre physikalische Bedeutung verlieren.
-Die Frage, warum bestimmte Tage ähnlich sind, lässt sich nicht mehr direkt ablesen, und wertbasierte Filter
-(R6) sind in einem solchen abstrakten Komponentenraum nicht definierbar.
-
-Stern-Glyphen oder Radarplots halten den Tag als Objekt zwar zusammen, der Vergleich von $364$ Einzelglyphen
-erfordert jedoch einen mühsamen seriellen Suchvorgang. Parallele Koordinaten hingegen betten alle Tage in ein
-gemeinsames Bezugssystem ein, das durch Übereinanderlegen einen direkten Vergleich ermöglicht. Zudem vermeiden
-sie die typischen Fehlinterpretationen von Radarplot-Flächen, die stark von der Achsenreihenfolge abhängen.
+Die diskutierten Alternativen zu den parallelen Koordinaten erwiesen sich als weniger geeignet. Eine Streudiagramm-Matrix (SPLOM) würde bei sieben Attributen 21 Einzeldiagramme erfordern und das ganzheitliche Erfassen eines Tagesprofils kognitiv überlasten. Dimensionsreduzierende Projektionsverfahren (wie PCA oder MDS) bilden Tage zwar überlagerungsfrei als Punktwolke ab, vernichten jedoch die physikalischen Einheiten der Achsen und verhindern wertbasierte Bereichsfilter (R6). Radarplots oder Stern-Glyphen wiederum zwingen zu einem seriellen Suchprozess über 364 Einzelobjekte. Parallele Koordinaten betten sämtliche Tage stattdessen in ein gemeinsames, direkt vergleichbares Koordinatensystem ein.
 
 \abb{parallele-koordinaten}{0.98}{Parallele Koordinaten der Tagesprofile mit aktivem Brush auf der
 Achse \enquote{Neg.\ Std.}: Die Treffer sind grün gezeichnet, alle übrigen Tage abgeblendet, die
@@ -318,16 +273,7 @@ Bereich auf Achse aufziehen
 \end{tabular}
 \end{table}
 
-Einige denkbare Interaktionen wurden bewusst nicht umgesetzt. So wäre ein \emph{Umordnen der Achsen} die
-wirksamste Einzelverbesserung der parallelen Koordinaten \cite{Heinrich2013}, da nur benachbarte Achsen auf
-Korrelation prüfbar sind. Dies wurde jedoch zurückgestellt, weil die fachlich begründete feste
-Reihenfolge die wichtigen Paare bereits benachbart macht und das Ziehen von Achsen mit dem Aufziehen
-von Filtern (Brushes) um dieselbe Interaktionsgeste konkurrieren würde. Auch ein \emph{Umschalten der Heatmap-Metrik}
-auf den Preis wurde verworfen, da dieses wegen dessen zweiseitiger Skala (negativ bis $936$\,EUR/MWh) eine
-divergierende Farbskala mit Nullpunkt erfordern würde. Zwei wechselnde Farbsemantiken in derselben Visualisierungsfläche stellen jedoch
-eine bekannte visuelle Fehlerquelle dar (siehe Abschnitt~\ref{sec:ausblick}). Ein \emph{Zeitraum-Brush in der Zeitreihe}
-wäre zwar flexibler, doch der Kalendermonat ist hier die natürliche Navigationseinheit, ein einzelner Klick einfacher
-als ein gezogener Bereich, und für tagesgenaues Eingrenzen steht ohnehin die detaillierte Heatmap bereit.
+Einige weiterführende Interaktionen wurden zugunsten der Bedienbarkeit zurückgestellt. Ein dynamisches \emph{Umordnen der Achsen} \cite{Heinrich2013} böte zwar zusätzliche Korrelationsvergleiche, würde aber gestisch mit dem Aufziehen von Filtern (Brushes) konkurrieren. Die gewählte Achsenreihenfolge bildet die Kausalkette der Erzeugung ohnehin direkt ab. Ein \emph{Umschalten der Heatmap auf den Börsenpreis} wurde verworfen, da der Wechsel zwischen sequentieller Erneuerbaren-Skala und divergierender Preisskala mit Nullpunkt eine erhebliche visuelle Fehlerquelle birgt. Für eine zeitliche Eingrenzung dient der Kalendermonat in der Zeitreihe als intuitive Navigationseinheit, während feingranulare Filterungen der Heatmap überlassen bleiben.
 
 \abb{verknuepfung}{0.98}{Kopplung in Aktion: Monatsfilter Juli, der 7.\ Juli ist in der Heatmap
 angeklickt und wird gleichzeitig in den parallelen Koordinaten hervorgehoben.}
