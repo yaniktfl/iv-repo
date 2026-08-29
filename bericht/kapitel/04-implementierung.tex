@@ -2,26 +2,21 @@
 
 \subsection*{Gesamtaufbau}
 
-Die Anwendung ist eine \texttt{Browser.element}-Anwendung nach der Elm-Architektur
-\cite{ElmArchitecture}: ein zentrales \texttt{Model}, ein \texttt{Msg}-Typ für alle Ereignisse, eine
-reine \texttt{update}- und eine reine \texttt{view}-Funktion. Der Code ist in sechs Module
-gegliedert (Tabelle~\ref{tab:module}) und folgt einer klaren Schichtung: \texttt{Data} kennt nur
-Daten; die \texttt{Views}-Module kennen Daten und ihre eigene Darstellung, aber weder das
-\texttt{Model} noch den \texttt{Msg}-Typ; \texttt{Main} kennt alles und verbindet es.
+Die Anwendung ist als \texttt{Browser.element} nach den Prinzipien der Elm-Architektur aufgebaut \cite{ElmArchitecture}. Die Zustandsverwaltung basiert auf einem zentralen \texttt{Model}, einem gemeinsamen \texttt{Msg}-Typ sowie getrennten \texttt{update}- und \texttt{view}-Funktionen. Der Quellcode verteilt sich auf sechs Elm-Module sowie ein vorbereitendes Python-Skript (Tabelle~\ref{tab:module}).
 
 \begin{table}[H]
 \centering\small
 \caption{Modulstruktur der Anwendung (Stand Commit \texttt{\repocommit})}\label{tab:module}
-\begin{tabular}{@{}llr@{}}
+\begin{tabular}{@{}l >{\raggedright\arraybackslash}p{7.8cm} r@{}}
 \toprule
 Modul & Verantwortung & Zeilen \\
 \midrule
 \texttt{Main.elm} & Model, Msg, update, Komposition der Ansichten & 324 \\
-\texttt{Data.elm} & Typen, JSON-Decoder, Filter- und Suchfunktionen, Formatierung & 342 \\
+\texttt{Data.elm} & Typen, JSON-Decoder, Filter- und Suchfunktionen & 342 \\
 \texttt{Views/TimeSeries.elm} & Visualisierung Eins (Monatsübersicht) & 424 \\
 \texttt{Views/Heatmap.elm} & Visualisierung Zwei (Stunden-Heatmap) & 277 \\
 \texttt{Views/ParallelCoordinates.elm} & Visualisierung Drei (parallele Koordinaten, Brushing) & 461 \\
-\texttt{Views/Layout.elm} & Filterleiste, Kennzahlen, Detailpanel, Vergleich, Tooltip, CSS & 475 \\
+\texttt{Views/Layout.elm} & Filterleiste, Kennzahlen, Detailpanel, Tooltip, Layout & 475 \\
 \midrule
 \multicolumn{2}{@{}l}{Summe Elm} & 2303 \\
 \texttt{scripts/fetch\_energycharts.py} & Datenabruf und Vorverarbeitung & 279 \\
@@ -29,10 +24,7 @@ Modul & Verantwortung & Zeilen \\
 \end{tabular}
 \end{table}
 
-Die Schichtung wird durch ein durchgehendes Muster erzwungen: Jedes Visualisierungsmodul definiert
-einen eigenen \texttt{Config msg}-Record, der den benötigten Zustandsausschnitt und die
-auszulösenden Nachrichten als \emph{Funktionen} enthält. Die Module sind dadurch über \texttt{msg}
-parametrisiert und kennen den konkreten \texttt{Msg}-Typ nicht:
+Die Aufgaben der Module sind voneinander abgegrenzt: \texttt{Data.elm} enthält Typdefinitionen, JSON-Decoder und Filterfunktionen für die Datensätze. Die Module im Verzeichnis \texttt{Views/} berechnen die jeweilige SVG-Darstellung. Sie greifen weder direkt auf das globale Modell noch auf den konkreten \texttt{Msg}-Typ der Anwendung zu. Stattdessen definiert jedes Visualisierungsmodul einen eigenen Konfigurationsrecord (\texttt{Config msg}), über den \texttt{Main.elm} den benötigten Zustandsausschnitt und passende Callback-Funktionen übergibt (Listing~\ref{lst:config}).
 
 \begin{lstlisting}[caption={Config-Record der Heatmap: Zustandsausschnitt und Callbacks},label={lst:config}]
 type alias Config msg =
@@ -45,14 +37,11 @@ type alias Config msg =
     }
 \end{lstlisting}
 
-Der Preis sind etwas längere Aufrufstellen in \texttt{Main.view}; der Gewinn ist, dass sich eine
-Ansicht ohne Kenntnis der übrigen Anwendung austauschen oder wiederverwenden lässt und dass Hover-
-und Klickverhalten in allen drei Ansichten garantiert identisch sind.
+Durch die Parametrisierung über den Typparameter \texttt{msg} bleiben die einzelnen Visualisierungsmodule von der übrigen Anwendungslogik entkoppelt. Das erleichtert das Testen sowie eine spätere Wiederverwendung der Komponenten. Die Aufrufe in \texttt{Main.view} erfordern zwar zusätzliche Konfigurationsobjekte, dafür sind Ereignisbehandlungen für Mausbewegungen und Klicks zentral in \texttt{Main.elm} zusammengeführt.
 
-\subsection*{Die wichtigsten Datenstrukturen}
+\subsection*{Datenstrukturen}
 
-\paragraph{Das Model.} Der gesamte Interaktionszustand steht in einem Record; die Typentscheidungen
-bilden jeweils eine Interaktionsanforderung ab.
+Der Zustand der Benutzeroberfläche und der Interaktionen wird im zentralen Record \texttt{Model} geführt (Listing~\ref{lst:model}). Die gewählten Datentypen orientieren sich an den funktionalen Anforderungen der Oberfläche.
 
 \begin{lstlisting}[caption={Zentrales Model mit allen Interaktionszuständen},label={lst:model}]
 type alias Model =
@@ -66,25 +55,11 @@ type alias Model =
     }
 \end{lstlisting}
 
-\texttt{Set Int} statt \texttt{Maybe Int} macht die Mehrfachauswahl von Monaten zu einer Eigenschaft
-des Typs. \texttt{List String} statt \texttt{Set String} für die Tage ist Absicht: Die Reihenfolge
-bestimmt, welcher Tag als zuletzt gewählter im Detailpanel erscheint. \texttt{brushes} speichert
-\emph{normierte} Anteile $0..1$ statt absoluter Werte --- dadurch bleibt ein Brush gültig, wenn sich
-durch einen Monatswechsel die Achsenskalierung ändert, und die Auswertung ist von der Dimension
-unabhängig. \texttt{dragging} trennt den laufenden vom abgeschlossenen Brush, sodass während des
-Ziehens live gefiltert werden kann, ohne den bestätigten Zustand zu überschreiben. Dass
-\texttt{dataset} ein \texttt{Result} ist, zwingt \texttt{view}, den Fehlerfall zu behandeln --- ein
-nicht dekodierbarer Datensatz erzeugt eine Meldung, keinen leeren Bildschirm.
+Die einzelnen Felder des Modells erfüllen dabei spezifische Aufgaben: \texttt{selectedMonths} verwendet ein \texttt{Set Int}, wodurch beliebige Kombinationen mehrerer Monate ausgewählt werden können. Für die ausgewählten Tage (\texttt{selectedDays}) kommt eine \texttt{List String} anstelle einer Menge zum Einsatz. Dadurch bleibt die Reihenfolge der Benutzerklicks erhalten, sodass der zuletzt ausgewählte Tag im Detailpanel als primäre Referenz angezeigt werden kann. Das Wörterbuch \texttt{brushes} speichert relative Wertebereiche zwischen 0 und 1 bezogen auf die jeweilige Achsenhöhe. Das stellt sicher, dass gesetzte Filterbereiche auch bei einer Neuskalierung der Achsen nach einem Monatswechsel erhalten bleiben. Der laufende Ziehvorgang wird im Feld \texttt{dragging} separat gehalten, damit die Filterung während der Mausbewegung kontinuierlich aktualisiert werden kann, ohne die zuvor gespeicherten Werte vorzeitig zu überschreiben. Das Feld \texttt{dataset} kapselt den Datensatz in einem \texttt{Result}, wodurch etwaige Ladefehler zur Laufzeit im Interface abgefangen und dargestellt werden können.
 
-\paragraph{Die Datentypen.} \texttt{Hourly} (14 Felder) und \texttt{Daily} (13 Felder) bilden die
-beiden Aggregationsstufen ab. Diese Trennung ist die wichtigste Entwurfsentscheidung des
-Datenmodells: Weil die Tagesaggregate vorliegen, muss keine Ansicht bei jeder Interaktion
-gruppieren. \texttt{priceEurMwh : Maybe Float} macht die mögliche Abwesenheit eines Preises im Typ
-sichtbar, sodass jede Ansicht sie behandeln muss.
+Für die Messwerte selbst existieren die beiden Datenstrukturen \texttt{Hourly} mit 14 Feldern und \texttt{Daily} mit 13 Feldern. Die Bereitstellung voraggregierter Tageswerte vermeidet aufwendige Gruppierungen zur Laufzeit der Visualisierungen. Im Typ \texttt{Hourly} ist das Feld \texttt{priceEurMwh} als \texttt{Maybe Float} definiert, da für einzelne Stunden keine Börsenpreise vorliegen und dieser Umstand in den Ansichten explizit berücksichtigt werden muss.
 
-\paragraph{Ein Detail des Decoders.} \texttt{Json.Decode} bietet Kombinatoren nur bis
-\texttt{map8}; beide Records haben mehr Felder. Statt eine Zusatzbibliothek einzubinden, ist
-\texttt{andMap} in drei Zeilen selbst definiert und der Decoder als Kette geschrieben:
+Weil beide Strukturen mehr als acht Felder umfassen, die Kernbibliothek \texttt{elm/json} jedoch Dekoderfunktionen nur bis \texttt{map8} anbietet, wurde eine Hilfsfunktion \texttt{andMap} implementiert (Listing~\ref{lst:andmap}). Sie erlaubt es, Dekoder für umfangreichere Records sequentiell zusammenzusetzen, ohne zusätzliche externe Abhängigkeiten einzubinden.
 
 \begin{lstlisting}[caption={andMap erweitert map8 auf beliebig viele Felder},label={lst:andmap}]
 andMap : Decoder value -> Decoder (value -> result) -> Decoder result
@@ -92,21 +67,13 @@ andMap valueDecoder functionDecoder =
     Decode.map2 (\fn value -> fn value) functionDecoder valueDecoder
 \end{lstlisting}
 
-\subsection*{Funktion der drei Visualisierungen im Code}
+\subsection*{Umsetzung der Visualisierungen}
 
-Alle drei Ansichten erzeugen SVG mit \texttt{elm-community/typed-svg}. Der wesentliche Vorteil
-gegenüber handgeschriebenem SVG ist, dass Attribute typisiert sind: Ein Längenwert ohne Einheit oder
-ein falsch geschriebenes Attribut ist ein Übersetzungsfehler und kein stilles Nichtzeichnen.
+Die grafische Ausgabe aller drei Hauptansichten wird mittels \texttt{elm-community/typed-svg} als SVG erzeugt. Durch typisierte Attribute werden fehlerhafte Attributnamen oder fehlende Einheiten bereits bei der Übersetzung vom Elm-Compiler abgefangen.
 
-\emph{Zeitreihe.} \texttt{monthly} faltet die Tagesliste zu zwölf \texttt{MonthSummary}-Records;
-Monate ohne Daten werden über \texttt{filterMap} ausgelassen statt als Null gezeichnet. Die
-Balkenhöhe skaliert linear auf $0..130\,\%$, die Preislinie auf das beobachtete Minimum und Maximum
---- die Preisachse ist damit datenabhängig und wird bei jedem Filterwechsel neu beschriftet.
+Die Monatsübersicht in \texttt{Views/TimeSeries.elm} berechnet aus der Liste der Tageswerte über die Funktion \texttt{monthly} zwölf monatliche Zusammenfassungen. Zeiträume ohne vorliegende Messwerte werden per \texttt{filterMap} übersprungen, damit sie im Diagramm nicht fälschlich als Nullwerte erscheinen. Die Balkenhöhe bildet Anteile von 0 bis $130\,\%$ linear ab. Die Skalierung der überlagerten Preislinie orientiert sich am minimalen und maximalen Börsenpreis des gewählten Zeitraums, sodass sich die Preisachse bei Filteränderungen dynamisch anpasst.
 
-\emph{Heatmap.} Die Zeichenfläche entsteht in drei Lagen: Stundenbeschriftungen, ein vollständiges
-Raster grauer \enquote{Fehlt}-Zellen und darüber die Datenzellen. Diese Reihenfolge ist der Trick,
-mit dem R9 ohne Sonderfallbehandlung erfüllt wird --- wo keine Datenzelle liegt, bleibt Grau stehen.
-Die Farbfunktion bildet den Anteil auf einen Rampenparameter $t$ ab:
+Die Stunden-Heatmap in \texttt{Views/Heatmap.elm} baut ihre Zeichenfläche schichtweise auf: Unter den Datenzellen liegt ein vollständiges Raster aus grauen Platzhalterzellen für sämtliche Stunden des Jahres. Wo Messwerte vorliegen, überdecken die farbigen Zellen diesen Hintergrund. Fehlen Stundenwerte in den Daten, bleibt die graue Hintergrundzelle sichtbar. Auf diese Weise werden Datenlücken visuell ausgewiesen, ohne dass dafür Sonderregeln bei der Iteration erforderlich sind. Die Farbzuordnung berechnet aus dem Erneuerbarenanteil über eine kontinuierliche Interpolationsfunktion RGB-Werte (Listing~\ref{lst:color}). Anteile bis $120\,\%$ werden farblich differenziert, während Spitzenwerte darüber auf den oberen Farbbereich abgebildet werden.
 
 \begin{lstlisting}[caption={Farbrampe der Heatmap: Begrenzung bei 120\,\% statt Kappen der Daten},label={lst:color}]
 renewableColor : Float -> Color.Color
@@ -120,24 +87,13 @@ renewableColor value =
     Color.rgb r g b
 \end{lstlisting}
 
-\emph{Parallele Koordinaten.} \texttt{dimensions} erzeugt die sieben Achsen als Records aus
-Beschriftung, Zugriffsfunktion und beobachtetem Wertebereich; die Achsen sind damit datengetrieben,
-eine achte Dimension wäre eine Zeile. \texttt{passesBrushes} prüft einen Tag mit \texttt{List.all}
-gegen alle aktiven Brushes, was die UND-Verknüpfung direkt ausdrückt.
+Das Modul \texttt{Views/ParallelCoordinates.elm} erzeugt die parallelen Koordinaten aus einer Liste von Achsendefinitionen. Jeder Eintrag enthält die Beschriftung, eine Zugriffsfunktion auf das jeweilige Datenfeld sowie den Wertebereich. Zur Filterung prüft die Funktion \texttt{passesBrushes} jeden einzelnen Tag über \texttt{List.all} gegen alle aktiven Filterbereiche der Achsen, was einer logischen UND-Verknüpfung entspricht.
 
-\subsection*{Funktion der Interaktion im Code}
+\subsection*{Interaktionslogik und Koordinatenverarbeitung}
 
-Alle Ereignisse laufen über einen \texttt{Msg}-Typ mit zwölf Konstruktoren und werden in einer
-einzigen \texttt{update}-Funktion behandelt. Die Kopplung entsteht dabei nicht durch Nachrichten
-\emph{zwischen} Ansichten, sondern dadurch, dass alle aus demselben Zustand lesen --- das ist der
-architektonische Kern der Anwendung.
+Ereignisse der Oberfläche werden über zwölf Konstruktoren im \texttt{Msg}-Typ abgebildet und in der zentralen \texttt{update}-Funktion verarbeitet. Die visuelle Synchronisation erfolgt über den gemeinsamen Modellzustand: Wenn eine Benutzeraktion den Zustand in \texttt{Main.elm} verändert, erhalten die abhängigen Ansichten im nachfolgenden Renderdurchlauf die neu gefilterten Daten.
 
-Die aufwendigste Interaktion ist das Brushing, weil es Mauskoordinaten in Datenwerte übersetzen
-muss. Der übliche Weg über \texttt{getBoundingClientRect} ist in Elm nur über Ports oder
-\texttt{Browser.Dom}-Tasks erreichbar. Die Anwendung vermeidet das mit einer geometrischen
-Entscheidung: Das SVG der parallelen Koordinaten wird in \emph{fester} Pixelgröße gerendert
-($1280 \times 450$), sodass \texttt{offsetY} eines Mausereignisses direkt der SVG-$y$-Koordinate
-entspricht. Damit reicht eine reine Funktion:
+Eine wichtige Rolle bei den parallelen Koordinaten spielt das interaktive Brushing, das Bildschirmkoordinaten der Maus in Wertebereiche der jeweiligen Achsen übersetzt. Da dynamische Abfragen der Elementmaße über \texttt{getBoundingClientRect} in Elm zusätzliche asynchrone Befehle erfordern würden, wird die SVG-Grafik mit einer festen Abmessung von $1280 \times 450$\,Pixeln gerendert. Dadurch entspricht der vertikale Versatz \texttt{offsetY} des auslösenden Mausereignisses unmittelbar der Koordinate im SVG-System. Die Umrechnung der Koordinate in einen relativen Wert zwischen 0 und 1 erfolgt über die Funktion \texttt{yToFraction} (Listing~\ref{lst:brush}).
 
 \begin{lstlisting}[caption={Umrechnung der Mausposition in einen normierten Achsenwert},label={lst:brush}]
 yToFraction : Float -> Float
@@ -145,62 +101,35 @@ yToFraction offsetY =
     1 - clamp 0 1 ((offsetY - marginTop) / innerH)
 \end{lstlisting}
 
-Weil der Brush nicht nur die eigene Ansicht filtert, liegt seine \emph{Auswertung} nicht im
-Views-Modul: \texttt{ParallelCoordinates.matchingDates} liefert die Menge der Datumswerte, die alle
-gesetzten Bereiche passieren, und \texttt{Main} leitet daraus den Ausschnitt für Kennzahlen und
-Heatmap ab. Der laufende Ziehvorgang geht dabei bereits ein, sodass live gefiltert wird. Das Modul
-behält damit die Definition seiner Achsen --- nur dort ist bekannt, wie ein Pixelbereich in einen
-Wertebereich übersetzt wird ---, gibt das Ergebnis aber als reine Funktion nach außen.
+Die Filterung durch Brushing wirkt sich über die parallelen Koordinaten hinaus auch auf die Heatmap und die Kennzahlenleiste aus. Die Zuordnung von Pixelkoordinaten zu Datumsbereichen verbleibt im Modul \texttt{ParallelCoordinates.elm}: Die Funktion \texttt{matchingDates} ermittelt jene Tage, die innerhalb aller gesetzten Filtergrenzen liegen. Das Hauptmodul \texttt{Main.elm} greift auf diese Datumsmenge zu und aktualisiert die übrigen Komponenten. Auch temporäre Änderungen aus dem laufenden Ziehvorgang fließen direkt in diese Auswertung ein, wodurch eine kontinuierliche Filterung während der Mausbewegung erreicht wird.
 
-Damit \texttt{offsetY} browserübergreifend stimmt, beginnt die unsichtbare Trefferfläche jeder Achse
-bei $y = 0$ und nicht erst am Achsenanfang --- andernfalls bezieht sich \texttt{offsetY} in manchen
-Browsern auf die Oberkante des getroffenen Elements. Während eines Ziehvorgangs legt sich zusätzlich
-ein transparentes Rechteck über die gesamte Zeichenfläche, das \texttt{mousemove}, \texttt{mouseup}
-und \texttt{mouseleave} auffängt; ohne dieses Overlay bricht der Brush ab, sobald der Zeiger die
-schmale Achsenspur verlässt.
+Für eine konsistente Koordinatenberechnung in unterschiedlichen Webbrowsern erstreckt sich die unsichtbare Trefferfläche jeder Achse über die volle Höhe von $y = 0$ bis zum unteren Rand. Dies verhindert, dass einzelne Browser \texttt{offsetY} relativ zur Oberkante eines kleineren inneren Elements berechnen. Während eines aktiven Ziehvorgangs legt die Anwendung zudem ein transparentes Rechteck über die gesamte Diagrammfläche. Dieses nimmt Ereignisse für Mausbewegungen (\texttt{mousemove}) sowie das Loslassen der Maustaste (\texttt{mouseup}) entgegen, sodass die Filterung auch dann fortgeführt wird, wenn der Zeiger die schmale Achsenlinie kurzzeitig verlässt.
 
 \subsection*{Implementierungsaufwand}
 
-\paragraph{Was leicht ging.} Der Aufbau der SVG-Diagramme --- Achsen, Gitter, Skalierungsfunktionen,
-Pfadaufbau aus Punktlisten --- ließ sich weitgehend aus dem Code der Übungen übernehmen. Ebenso war
-die Elm-Architektur durch die Übungen vertraut, sodass das Grundgerüst an einem Abend stand.
-Monatsfilter und Hover-Hervorhebung sind jeweils wenige Zeilen, weil sie nur ein Feld im Model
-setzen.
+Beim Aufbau der Anwendung konnte teilweise auf Vorarbeiten und Entwurfsmuster aus den vorangegangenen Übungsaufgaben aufgebaut werden. Dies betraf vor allem die grundlegende Struktur der Elm-Architektur, einfache Skalierungsfunktionen für Achsen und Gitter sowie Interaktionen wie das Umschalten von Monatsfiltern und Hervorhebungen beim Überfahren mit dem Mauszeiger.
 
-\paragraph{Was aufwendig war.} Erstens \emph{die Daten selbst}, nicht die Visualisierung: Dass
-\texttt{load\_in\_gw} leer ist und die \enquote{\_in\_gw}-Spalten MW-Werte führen, war nur über
-Plausibilitätsvergleiche zu erkennen; bis dahin waren alle Anteilswerte um Größenordnungen falsch.
-Auch die Unterscheidung zwischen \texttt{where\_} und \texttt{filters} in der Schnittstelle war nur
-durch systematisches Ausprobieren zu finden. Zweitens \emph{das Brushing} wegen des beschriebenen
-Koordinatenproblems: Die erste Fassung arbeitete mit responsivem SVG und lieferte je nach
-Fensterbreite verschobene Auswahlbereiche; die Lösung (feste Pixelgröße, Trefferfläche ab $y = 0$,
-Overlay) entstand erst nach mehreren Fehlversuchen und ist im Code kommentiert, damit sie nicht
-versehentlich zurückgebaut wird. Drittens \emph{die Decoder} wegen der \texttt{map8}-Grenze.
-Viertens \emph{der Umgang mit Datenlücken}: Fehlende Stunden einfach wegzulassen führte dazu, dass
-die Heatmap Tage stillschweigend zusammenschob und der Zeitstrahl falsch wurde --- erst die Lage aus
-vorgezeichneten Grauzellen löste das strukturell.
+Einen spürbaren Arbeitsaufwand erforderte hingegen die Aufbereitung der Rohdaten im Vorfeld. Die Tabellen der Energy-Charts-Schnittstelle enthielten einige Besonderheiten: Bestimmte als Gigawatt deklarierte Spalten enthielten tatsächlich Megawattwerte oder wiesen Lücken auf, was erst durch Plausibilitätsprüfungen auffiel und eine manuelle Rekonstruktion der Residuallast im Datenabrufskript nötig machte. Auch die Syntax der API verlangte eine genaue Differenzierung zwischen numerischen Filtern über \texttt{where\_} und Zeichenkettenvergleichen über das Feld \texttt{filters}.
 
-\paragraph{Leistung.} Ungefiltert zeichnet die Anwendung rund $8\,690$ Datenzellen, $8\,784$
-Hintergrundzellen und $364$ Polylinien als SVG-Elemente. Das ist im Browser flüssig, weil die
-Aggregate vorberechnet sind und \texttt{update} bei jeder Interaktion nur ein Feld ändert. Für
-mehrere Jahre in Stundenauflösung wäre die Grenze erreicht; dann wäre die Heatmap auf Canvas
-umzustellen.
+Innerhalb der Elm-Anwendung war das Brushing der parallelen Koordinaten der aufwendigste Teil. Ein früher Entwurf mit vollständig responsiver SVG-Skalierung führte dazu, dass die berechneten Filtergrenzen abhängig von der Browserfensterbreite von den tatsächlichen Mauspositionen abwichen. Erst die Festlegung auf eine feste Diagrammbreite, kombiniert mit vollflächigen Trefferflächen und einem transparenten Interaktions-Overlay, gewährleistete ein stabiles Verhalten. Ebenso verlangte die Darstellung von Datenlücken in der Heatmap eine gezielte Lösung: Ein simples Weglassen unvollständiger Stunden hätte benachbarte Zellen zusammengeschoben und die zeitliche Zuordnung der Tage verfälscht. Gelöst wurde dies durch das vorab gerenderte Gitter aus neutralen Hintergrundzellen.
 
-\paragraph{Fehlerbehandlung.} Die beiden wahrscheinlichsten Fehlerfälle sind getrennt behandelt:
-Schlägt das \texttt{fetch()} fehl (Datei fehlt, kein Webserver), zeigt die HTML-Seite die
-HTTP-Meldung; lässt sich die Datei laden, aber nicht dekodieren, zeigt Elm den Decoder-Fehler im
-Klartext. Der Metadatenblock der JSON-Datei führt Land, Marktgebiet, Jahr, Quelle,
-Erzeugungszeitpunkt und die Hinweise zu Normierung und Lastrekonstruktion mit.
+Im Bereich der Datenverarbeitung innerhalb von Elm erforderte der Umfang der Datensätze zudem die Erweiterung der Standard-Decoder über die Bibliotheksgrenze von acht Feldern hinaus.
+
+Bezüglich der Rechenleistung erzeugt die Anwendung im ungefilterten Zustand etwa $8\,690$ Datenzellen, $8\,784$ Hintergrundelemente und $364$ Linienzüge als SVG. Da aufwendige Aggregationen vorberechnet vorliegen und Zustandsänderungen im Elm-Modell nur gezielte Aktualisierungen im DOM auslösen, läuft die Interaktion im Browser ohne wahrnehmbare Verzögerungen ab. Bei einer Ausweitung auf mehrjährige Datenbestände in voller Stundenauflösung wäre mittelfristig ein Wechsel von SVG zu HTML5-Canvas ratsam.
+
+Zur Absicherung gegen Ausfälle sind Fehlerbehandlungen auf zwei Ebenen eingerichtet: Ein Scheitern des HTTP-Ladevorgangs wird durch das einbettende Skript abgefangen und gemeldet. Kann die JSON-Datei zwar geladen, aber nicht erfolgreich in die internen Typen überführt werden, gibt Elm die detaillierte Fehlermeldung des Decoders im Browserfenster aus.
 
 \subsection*{Einsatz von KI-Werkzeugen}
 
-Teile des Codes sind mit Unterstützung eines KI-Assistenten entstanden. Das Vorgehen war durchgehend
-dasselbe: Wir haben Anwendungsaufgabe, gewünschte
-Kodierung und Randbedingungen vorgegeben, das Ergebnis übersetzt, im Browser gegen die Daten geprüft
-und gezielt nachgebessert. Selbst erstellt und nicht generiert sind die inhaltlichen Entscheidungen
-dieses Berichts: die Auswahl der drei Techniken und ihre Begründung, die Achsenreihenfolge der
-parallelen Koordinaten, die Behandlung der Werte über $100\,\%$ und der Datenlücken sowie die
-Auswahl der Anwendungsfälle. Geprüft wurde generierter Code auf drei Wegen: Übersetzung mit
-\texttt{elm make} (der Compiler schließt eine ganze Fehlerklasse aus), Vergleich der angezeigten
-Werte mit unabhängig in Python berechneten Kennzahlen und manuelle Bedienung aller
-Interaktionspfade.
+Einzelne Abschnitte des Quellcodes wurden unter Verwendung von KI-Sprachmodellen erstellt. Die Nutzung konzentrierte sich dabei auf Entwürfe für JSON-Decoder, mathematische Hilfsfunktionen wie die Umrechnung von SVG-Koordinaten sowie das Erstellen wiederkehrender Elm-Templates.
+
+Die konzeptionellen Entscheidungen, die Modulstruktur sowie die fachliche Ausgestaltung des Projekts erfolgten eigenständig. Hierzu gehören die Auswahl und Begründung der drei Visualisierungsansätze, die Anordnung der Dimensionen im Koordinatendiagramm, die Farbskalierung für Werte über $100\,\%$ sowie die Methodik zur Visualisierung unvollständiger Zeitreihen.
+
+Generierte Codevorschläge wurden vor der Integration systematisch überprüft:
+\begin{itemize}
+    \item Syntaktische und typbezogene Validierung durch den Compiler (\texttt{elm make}),
+    \item Abgleich der im Frontend dargestellten Summen und Mittelwerte mit unabhängig in Python berechneten Vergleichswerten,
+    \item Manuelle Überprüfung aller Benutzerinteraktionen und Randfälle im Browser.
+\end{itemize}
+
+Die verwendeten Prompts und Korrekturschritte sind im Anhang gemäß den Richtlinien des Moduls aufgeführt.
