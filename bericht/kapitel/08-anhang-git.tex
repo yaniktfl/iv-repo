@@ -1,0 +1,28 @@
+\section*{Anhang: Git-Historie}
+\addcontentsline{toc}{section}{Anhang: Git-Historie}
+
+Das Projekt liegt unter \url{\repourl}. Anwendung und Bericht liegen auf dem Branch
+\texttt{\repobranch}. Für die Bewertung ist der Commit \texttt{\repocommit} maßgeblich. Neben
+\texttt{projekt/} und \texttt{bericht/} enthält derselbe Branch die Übungsaufgaben des Semesters in
+den Verzeichnissen \texttt{7}, \texttt{9}, \texttt{10} und \texttt{11}.
+
+Die \texttt{README.md} im Projektverzeichnis beschreibt den Zugang zur Datenquelle, die beiden
+verwendeten Sichten \texttt{energycharts\_totalpower} und \texttt{energycharts\_price}, den Aufruf
+des Vorverarbeitungsskripts, den Übersetzungsaufruf \texttt{elm make Main.elm -{}-output=main.js}
+und den Hinweis, dass \texttt{index.html} über einen Webserver ausgeliefert werden muss, damit das
+\texttt{fetch()} auf die JSON-Datei zulässig ist.
+
+Die folgende Ausgabe entstand mit
+\begin{verbatim}
+git --no-pager log --all --graph --no-color --date=short \
+    --pretty='format:%h%d (%s, %ad)'
+\end{verbatim}
+
+{\scriptsize\verbatiminput{git-historie.txt}}
+
+\bigskip
+\noindent\textbf{Anmerkung zur Historie:} Die Commits der Übungsphase (April bis Juni) sind teilweise grob
+geschnitten und kurz beschrieben, da ein Teil der Dateien über die Weboberfläche hochgeladen
+wurde (\enquote{Add files via upload}). Die Projektarbeit ab dem 19.\ Juni ist dagegen thematisch
+strukturiert: Datensatz und Grundgerüst, Bericht, Elm-Version, Mehrfachfilter, Berichtsfassung sowie
+die Kopplung der Achsenfilter an Kennzahlen und Heatmap.
