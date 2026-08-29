@@ -9,31 +9,31 @@ und miteinander verbunden werden \texttt{energycharts\_totalpower} (Erzeugungsle
 Energieträger in 15-Minuten-Auflösung, gefiltert auf 2024 über \texttt{unix\_seconds}) und
 \texttt{energycharts\_price} (Börsenpreise, gefiltert auf \texttt{market\_id = "DE-LU"}).
 
-Die Verbindung beider Quellen ist bereits eine inhaltliche Anreicherung: Erst die Kopplung von
+Die Verbindung beider Quellen ist bereits eine inhaltliche Anreicherung. Erst die Kopplung von
 physikalischer Erzeugung und ökonomischem Preis über denselben Zeitstempel macht F2 und F4
 beantwortbar. Eine weitere Anreicherung mit Wetterdaten des DWD (Globalstrahlung,
-Windgeschwindigkeit) haben wir geprüft und bewusst nicht umgesetzt: Sie würde die Erklärung von der
-Wirkung (eingespeiste Leistung) auf die Ursache (Wetter) verschieben und damit eine zweite,
-meteorologische Aufgabenklasse eröffnen, für die die drei gewählten Ansichten nicht ausgelegt sind.
+Windgeschwindigkeit) haben wir geprüft und bewusst nicht umgesetzt. Eine solche Erweiterung würde die
+Erklärung von der Wirkung (eingespeiste Leistung) auf die Ursache (Wetter) verschieben und damit eine
+zweite, meteorologische Aufgabenklasse eröffnen, für die die drei gewählten Ansichten nicht ausgelegt sind.
 Abschnitt~\ref{sec:ausblick} greift den Punkt als Erweiterung auf.
 
 \subsubsection*{Technische Bereitstellung}
 
 Der Zugriff auf die Quelle erfolgt einmalig über das Skript
-\texttt{scripts/fetch\_energycharts.py}: Basic Authentication am Endpunkt \texttt{/token}, danach
-seitenweiser Abruf über \texttt{/rpc/user\_table\_get} ($500$ Zeilen je Anfrage). Zwei
-Besonderheiten der Schnittstelle waren wesentlich und sind im Skript berücksichtigt: Numerische
+\texttt{scripts/fetch\_energycharts.py}. Dieses nutzt Basic Authentication am Endpunkt \texttt{/token}
+und ruft die Daten danach seitenweise über \texttt{/rpc/user\_table\_get} ab ($500$ Zeilen je Anfrage).
+Zwei Besonderheiten der Schnittstelle waren wesentlich und sind im Skript berücksichtigt. Numerische
 Bereichsbedingungen (Zeitstempel) funktionieren zuverlässig über das Feld \texttt{where\_} mit den
 Operatoren \texttt{>=} und \texttt{<}, während Textgleichheit (\texttt{country\_id}, \texttt{market\_id})
 über das Feld \texttt{filters} als Objekt übergeben wird, z.\,B.\ \texttt{\{"market\_id": "DE-LU"\}}.
 
 Ergebnis ist die Datei \texttt{data/energycharts\_de\_2024.json} ($3{,}4$\,MB, UTF-8). Sie wird von
-der Anwendung zur Laufzeit per HTTP nachgeladen: \texttt{index.html} führt ein \texttt{fetch()} auf
+der Anwendung zur Laufzeit per HTTP nachgeladen. Dabei führt \texttt{index.html} ein \texttt{fetch()} auf
 denselben Ursprung aus und übergibt das Ergebnis als Flag an \texttt{Elm.Main.init}. Die Anwendung
 setzt also keine lokal gespeicherten Daten voraus und funktioniert unverändert, sobald HTML,
 JavaScript und JSON gemeinsam ausgeliefert werden (etwa über GitLab-Pages).
 
-Die Trennung von Abholen und Ausliefern hat drei Gründe: Erstens dürfen Zugangsdaten nicht in eine
+Die Trennung von Abholen und Ausliefern beruht auf drei Gründen. Erstens dürfen Zugangsdaten nicht in eine
 clientseitige Anwendung gelangen. Zweitens wäre die Abgabe sonst von Tokengültigkeit und
 Serververfügbarkeit abhängig. Drittens sind die Rohdaten mit über $35\,000$ Viertelstundenzeilen und
 mehreren Dutzend Spalten für eine direkte interaktive Darstellung zu umfangreich. Der Preis dafür ist der
@@ -41,21 +41,21 @@ Verzicht auf eine Live-Aktualisierung, den Abschnitt~\ref{sec:ausblick} diskutie
 
 \subsubsection*{Datenvorverarbeitung}
 
-\textbf{1. Normierung der Einheiten:} Die Quellspalten tragen den Suffix \texttt{\_in\_gw}, führen die
+\textbf{1. Normierung der Einheiten.} Die Quellspalten tragen den Suffix \texttt{\_in\_gw}, führen die
 deutschen Werte aber in MW-Skala (Solar-Mittagswerte um $43\,000$). Das Skript teilt daher durch
 $1000$. Ohne diesen Schritt wären alle Achsen um drei Größenordnungen falsch beschriftet. Der
 Fehler fiel erst beim Vergleich mit bekannten Größenordnungen des deutschen Systems auf.
 
-\textbf{2. Aggregation auf Stunden:} Aus vier Viertelstundenwerten wird der arithmetische Mittelwert
+\textbf{2. Aggregation auf Stunden.} Aus vier Viertelstundenwerten wird der arithmetische Mittelwert
 gebildet. Der Börsenpreis ist im betrachteten Jahr ein Stundenprodukt, die Erzeugung liegt in
 Viertelstunden vor. Die Stunde ist damit die feinste Auflösung, in der beide Größen gemeinsam
 definiert sind. Eine Kopplung auf Viertelstundenebene würde den Preiswert dreimal künstlich
 wiederholen und Scheingenauigkeit erzeugen. Der Mittelwert ist hier der richtige Aggregator, weil
 Leistung über die Stunde integriert der Arbeit entspricht.
 
-\textbf{3. Rekonstruktion der Last:} Das Feld \texttt{load\_in\_gw} ist in der verwendeten
+\textbf{3. Rekonstruktion der Last.} Das Feld \texttt{load\_in\_gw} ist in der verwendeten
 \texttt{totalpower}-Sicht für Deutschland durchgehend leer. Da die Last die Bezugsgröße jedes
-Anteilswertes ist, wird sie rekonstruiert:
+Anteilswertes ist, wird sie rechnerisch rekonstruiert:
 \[
   \mathrm{Last} = \mathrm{Solar} + \mathrm{Wind}_{\text{onshore}} + \mathrm{Wind}_{\text{offshore}}
                       + \mathrm{Residuallast}.
@@ -65,24 +65,24 @@ dargebotsabhängiger Einspeisung}. Sie ist eine Näherung, weil Biomasse, Wasser
 nicht abgezogen werden. Diese Träger zählen in der Quelle nicht zur Residuallastdefinition. Die
 Konsequenz wird in Schritt~5 sichtbar.
 
-\textbf{4. Abgeleitete Attribute:} Je Stunde entstehen die erneuerbare Summe (Solar, Wind on-/offshore,
+\textbf{4. Abgeleitete Attribute.} Je Stunde entstehen die erneuerbare Summe (Solar, Wind on-/offshore,
 Biomasse, Laufwasser, Speicherwasser, Geothermie), die fossile Summe (Braunkohle, Steinkohle, Öl,
 Kokereigas, Erdgas) und der Erneuerbarenanteil als $100 \cdot \mathrm{EE}/\mathrm{Last}$. Je
 Kalendertag folgen daraus Mittelwerte, das Lastmaximum, Solar- und Windanteil an der mittleren Last
 sowie die Zahl der Stunden mit negativem Preis. Die Tagesebene dient als primäre
-Analyseeinheit für parallele Koordinaten und Detailpanel: Während einzelne Extremstunden punktuelle
+Analyseeinheit für parallele Koordinaten und Detailpanel. Während einzelne Extremstunden punktuelle
 Ereignisse abbilden, charakterisiert erst ein geschlossenes Tagesprofil die zugrundeliegende Wetterlage.
 
-\textbf{5. Werte über 100\,\%:} In $385$ der $8\,690$ Stunden liegt der Erneuerbarenanteil über
+\textbf{5. Werte über 100\,\%.} In $385$ der $8\,690$ Stunden liegt der Erneuerbarenanteil über
 $100\,\%$, im Maximum bei $138{,}6\,\%$. Dies resultiert aus realer Überschusserzeugung, die in
 Nachbarnetze exportiert oder eingespeichert wird, sowie aus der Näherung aus Schritt~3. Diese
 Werte werden bewusst ungekappt beibehalten, um die von F2 adressierten Extremsituationen vollständig
-abzubilden. Die Farbskala der Heatmap reicht hierfür bis $120\,\%$ und sättigt
+abbilden zu können. Die Farbskala der Heatmap reicht hierfür bis $120\,\%$ und sättigt
 oberhalb davon (Abschnitt~\ref{sec:vis2}).
 
 Die Vorverarbeitung erfolgt in Python statt in Elm. Dies begründet sich durch den Abruf aus einer
 authentifizierten Datenbank, den die Webanwendung aus Sicherheitsgründen nicht selbst ausführen soll.
-Alles, was nach dem Laden geschieht, ist in Elm implementiert: Monatsfilterung, Monatsaggregation,
+Sämtliche Schritte nach dem Laden sind in Elm implementiert. Dies umfasst Monatsfilterung, Monatsaggregation,
 Achsenskalierung, Brush-Auswertung und Kennzahlen. Diese Schritte reagieren unmittelbar auf geänderte
 Rohdaten. Ein neuer Jahrgang in der JSON-Datei erfordert keine Codeänderung.
 
@@ -109,25 +109,24 @@ Spannweite Preis (Stunde) & $-135{,}45$ bis $936{,}28$\,EUR/MWh \\
 \end{tabular}
 \end{table}
 
-Dem Datensatz fehlen $94$ Stunden, die in der Quelle nicht enthalten sind: zwei zusammenhängende
-Ausfälle von je $47$ Stunden (23.05.\ 13:00 bis 25.05.\ 11:59 und 12.10.\ 13:00 bis 14.10.\ 11:59,
-jeweils UTC). Der 24.05.\ und der 13.10.\ fehlen dadurch vollständig, vier weitere Tage sind nur mit
-12 oder 13 Stunden besetzt und ihre Tagesmittel entsprechend schwächer gestützt. Die Lücken werden
-nicht interpoliert: In einer pixelorientierten Darstellung wären interpolierte Werte visuell nicht
-von Messwerten zu unterscheiden. Damit ginge genau die Eigenschaft verloren, die eine dichte
-Darstellung wertvoll macht, nämlich dass jede Zelle für eine Beobachtung steht. Stattdessen zeichnet
-die Heatmap zuerst ein vollständiges Raster neutraler grauer Zellen und legt die Datenzellen
-darüber. Wo Daten fehlen, bleibt Grau sichtbar und ist in der Legende als \enquote{keine Daten}
-beschriftet.
+Dem Datensatz fehlen $94$ Stunden, die in der Quelle nicht enthalten sind. Es handelt sich um zwei
+zusammenhängende Ausfälle von je $47$ Stunden (23.05.\ 13:00 bis 25.05.\ 11:59 und 12.10.\ 13:00 bis
+14.10.\ 11:59, jeweils UTC). Der 24.05.\ und der 13.10.\ fehlen dadurch vollständig, vier weitere Tage
+sind nur mit 12 oder 13 Stunden besetzt und ihre Tagesmittel entsprechend schwächer gestützt. Die Lücken
+werden nicht interpoliert. In einer pixelorientierten Darstellung wären interpolierte Werte visuell nicht
+von Messwerten zu unterscheiden. Damit ginge genau die Eigenschaft verloren, die eine dichte Darstellung
+wertvoll macht, nämlich dass jede Zelle für eine Beobachtung steht. Stattdessen zeichnet die Heatmap zuerst
+ein vollständiges Raster neutraler grauer Zellen und legt die Datenzellen darüber. Wo Daten fehlen, bleibt
+Grau sichtbar und ist in der Legende als \enquote{keine Daten} beschriftet.
 
-Für die Fragestellungen sind die Daten gut geeignet: Die Preisreihe ist lückenlos, die zeitliche
+Für die Fragestellungen sind die Daten gut geeignet. Die Preisreihe ist lückenlos, die zeitliche
 Auflösung liegt deutlich unter der kürzesten interessierenden Struktur (dem Tagesgang), und
-Erzeugung und Preis stammen aus demselben Marktgebiet. Drei Einschränkungen sind zu nennen: Erstens
+Erzeugung und Preis stammen aus demselben Marktgebiet. Drei Einschränkungen sind zu nennen. Erstens
 ist die Last rekonstruiert. Alle Anteilswerte sind Näherungen, deren systematische Richtung bekannt
 ist. Sie fallen tendenziell leicht zu hoch aus. Zweitens bleibt die Vorzeichenkonvention von
 \texttt{cross\_border\_electricity\_trading\_in\_gw} in der Quelle undokumentiert, weshalb der Parameter
 neutral als Nettohandelswert geführt wird. Die Daten stützen die Lesart \enquote{negativ =
-Export}: Am Tag mit dem höchsten Erneuerbarenanteil (4.2., $95{,}9\,\%$) beträgt er $-13{,}1$\,GW, in
+Export}. Am Tag mit dem höchsten Erneuerbarenanteil (4.2., $95{,}9\,\%$) beträgt er $-13{,}1$\,GW, in
 der Dunkelflautenstunde am 6.11.\ hingegen $+13{,}4$\,GW. Drittens bilden die Daten deskriptive
 statistische Koinzidenzen ab. Die Anwendung fungiert als visuelles Werkzeug zur explorativen
 Hypothesenbildung im Sinne von \cite{Keim2008}.

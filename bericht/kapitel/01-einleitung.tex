@@ -1,24 +1,21 @@
 \section{Einleitung}
 
-Im deutschen Stromsystem ist der Beitrag der erneuerbaren Energien 2024 der Normalfall geworden:
+Im deutschen Stromsystem ist der Beitrag der erneuerbaren Energien 2024 der Normalfall geworden.
 Im hier verwendeten Datensatz decken sie im Jahresmittel $55{,}1\,\%$ der Last. Dieser Mittelwert
 ist zugleich die am wenigsten aussagekräftige Zahl des Datensatzes, denn er entsteht aus Stunden
 zwischen $12{,}0\,\%$ und $138{,}6\,\%$, aus $441$ Stunden mit negativen Börsenpreisen und aus
 einzelnen Stunden über $900$\,EUR/MWh. Für das Verständnis des Gesamtsystems ist daher die zeitliche
 Verteilung der Werte ausschlaggebend.
 
-Darin liegt das Zielproblem dieses Projekts. Sechs Größen beschreiben den Systemzustand: Last,
-Solarerzeugung, Winderzeugung, Erneuerbarenanteil, Börsenpreis und grenzüberschreitender Handel.
-Jede von ihnen ist einzeln leicht verfügbar. Schwer zu beobachten ist ihr Zusammenspiel. Es
-entfaltet sich auf drei Zeitskalen gleichzeitig: im Tagesgang mit der Solarspitze am Mittag, im
-Wetterverlauf über Tage bis Wochen mit Windphasen und Dunkelflauten und im Jahresgang. Übliche
-Darstellungen erzwingen eine Wahl zwischen diesen Skalen: Eine Jahresübersicht mittelt den
-Tagesgang weg, eine Tagesansicht verliert die Saison. Die Frage \enquote{Sind negative Preise ein
-Solarphänomen?} braucht aber beide Skalen zugleich und zusätzlich einen Weg, ganze Tage miteinander
-zu vergleichen.
+Darin liegt das Zielproblem dieses Projekts. Auf physikalischer und marktlicher Ebene beschreiben sechs kontinuierliche Zeitreihen den Zustand des Gesamtsystems, namentlich Last, Solarerzeugung, Winderzeugung, Erneuerbarenanteil, Börsenpreis sowie grenzüberschreitender Handel. Für die multidimensionale Betrachtung ganzer Tage tritt als siebtes Attribut die Anzahl negativer Preisstunden hinzu. Jede dieser Größen ist einzeln leicht verfügbar. Schwer zu beobachten ist ihr Zusammenspiel. Dieses entfaltet sich auf drei Zeitskalen gleichzeitig. Dies betrifft den Tagesgang
+mit der solaren Mittagsspitze, das mehrtägige Wettergeschehen mit Windphasen und Dunkelflauten sowie
+den übergeordneten Jahresgang. Etablierte Darstellungen erzwingen zumeist eine Festlegung auf eine
+dieser Skalen. Während eine Jahresübersicht den Tagesgang einebnet, verliert eine isolierte Tagesansicht
+den saisonalen Kontext. Die Frage \enquote{Sind negative Preise ein Solarphänomen?} erfordert jedoch beide
+Skalen zugleich und zusätzlich einen Weg, ganze Tage miteinander zu vergleichen.
 
 Daraus ergeben sich vier Fragestellungen, die mit Techniken der Informationsvisualisierung
-beantwortet werden können und an denen diese Arbeit zu messen ist:
+beantwortet werden können und an denen diese Arbeit zu messen ist.
 
 \begin{itemize}
   \item[\textbf{F1}] Wie verteilt sich die erneuerbare Deckung über Jahreszeit und Tageszeit, und
@@ -32,35 +29,35 @@ beantwortet werden können und an denen diese Arbeit zu messen ist:
         zusammen, und wie typisch ist dieser Tag im Vergleich zu allen anderen?
 \end{itemize}
 
-Keine dieser Fragen ist mit einer Kennzahl oder einem einzelnen Diagramm zu beantworten: F1
-verlangt zwei Zeitskalen gleichzeitig, F2 das Auffinden seltener Ereignisse in $8\,690$ Werten, F3
-und F4 den Vergleich mehrerer Attribute mit verschiedenen Einheiten. Ein reales Anwendungsproblem,
-für das Visualisierungstechniken ausgewählt, kombiniert und begründet werden, entspricht dem, was
-Munzner eine \emph{Design Study} nennt \cite{Munzner2008}.
+Keine dieser Fragen lässt sich mit einer einzelnen Kennzahl oder einem isolierten Diagramm
+beantworten. So erfordert F1 zwei Zeitskalen gleichzeitig, F2 das Auffinden seltener Ereignisse in
+$8\,690$ Messwerten und F3 sowie F4 den Vergleich mehrerer Attribute mit unterschiedlichen physikalischen
+Einheiten. Ein reales Anwendungsproblem, für das Visualisierungstechniken ausgewählt, kombiniert und
+begründet werden, entspricht dem Konzept einer \emph{Design Study} nach Munzner \cite{Munzner2008}.
 
 \subsection{Anwendungshintergrund}
 
-Für die Einordnung der Fragen genügen vier Zusammenhänge des Anwendungsfeldes:
+Für die Einordnung der Fragestellungen sind vier Zusammenhänge des Anwendungsfeldes maßgeblich.
 
-\textbf{Dargebotsabhängige Erzeugung:} Solar- und Windanlagen speisen abhängig vom Wettergeschehen
+\textbf{Dargebotsabhängige Erzeugung.} Solar- und Windanlagen speisen abhängig vom Wettergeschehen
 ein, losgelöst vom aktuellen Strombedarf. Die Photovoltaik folgt einem deterministischen Tages- und
 Jahresgang mit dem Maximum um die Mittagszeit und deutlichem Sommerüberschuss. Die Windenergie ist
 wetterbestimmt, variiert über mehrtägige Wetterphasen und verzeichnet ein Winterhoch. Beide Profile
 ergänzen einander komplementär, was für die Auswahl der Visualisierungen richtungsweisend ist.
 
-\textbf{Residuallast und Dunkelflaute:} Der nach Abzug der erneuerbaren Einspeisung verbleibende Teil
+\textbf{Residuallast und Dunkelflaute.} Der nach Abzug der erneuerbaren Einspeisung verbleibende Teil
 der Last heißt Residuallast und muss von steuerbaren Kraftwerken, Speichern oder Importen gedeckt
 werden. Fallen Wind und Sonne über Stunden bis Tage gleichzeitig aus, während die Last hoch ist
 (\enquote{Dunkelflaute}), wird das gesamte konventionelle Reservoir gebraucht. Solche Lagen sind
 selten und für die Systemauslegung dennoch prägend.
 
-\textbf{Merit-Order und negative Preise:} Am Day-Ahead-Markt der Gebotszone DE-LU bestimmt das
+\textbf{Merit-Order und negative Preise.} Am Day-Ahead-Markt der Gebotszone DE-LU bestimmt das
 Grenzkraftwerk den einheitlichen Börsenpreis. Erneuerbare Anlagen speisen mit Grenzkosten nahe null
 ein und verschieben die Angebotskurve nach rechts. Ein hohes erneuerbares Angebot senkt entsprechend
 den Preis. Übersteigt das Angebot die Nachfrage bei unflexibler Abregelung, fallen die Preise unter
 null. Negative Börsenpreise bilden damit das reguläre Marktsignal für einen akuten Erzeugungsüberschuss.
 
-\textbf{Grenzüberschreitender Handel:} Überschüsse fließen in das europäische Verbundnetz ab,
+\textbf{Grenzüberschreitender Handel.} Überschüsse fließen in das europäische Verbundnetz ab,
 während Defizite durch Importe ausgeglichen werden. Der Nettohandelswert zeigt als dritter Baustein
 neben Erzeugung und Preis, ob ein Überschuss im Inland verbleibt oder abfließt.
 
@@ -70,55 +67,52 @@ selten an Daten geprüft. Genau diese Prüfung soll die Anwendung ermöglichen.
 
 \subsection{Zielgruppen}
 
-\textbf{Z1: Studierende und Lehrende energienaher Fächer} (primär). Sie bearbeiten Aufgaben wie
-\enquote{Belegen Sie an Daten, in welchen Situationen negative Preise auftreten} und suchen
-Beispieltage für Seminare und Abschlussarbeiten. Vorwissen: Merit-Order, Residuallast sowie die
-Einheiten GW und EUR/MWh sind bekannt, der Umgang mit Rohdaten und SQL dagegen oft nicht.
-Bedürfnis: reproduzierbare Beispiele und Gegenbeispiele mit konkreten Zahlen.
+\textbf{Z1 (Studierende und Lehrende energienaher Fächer, primär).} Als primäre Zielgruppe bearbeiten
+sie praxisnahe Aufgabenstellungen und suchen konkrete Beispieltage für Seminare oder Abschlussarbeiten.
+Fachbegriffe wie Merit-Order, Residuallast sowie die Einheiten GW und EUR/MWh sind ihnen geläufig,
+der Umgang mit Rohdaten oder relationalen Datenbanken hingegen selten. Ihr Informationsbedarf besteht in
+reproduzierbaren Fallbeispielen mit exakten Kennwerten.
 
-\textbf{Z2: Fachjournalismus, Energieagenturen, kommunale Versorger.} Sie prüfen und ordnen
-Aussagen ein, meist unter Zeitdruck und für ein Laienpublikum. Vorwissen: sicher im Umgang mit
-Kennzahlen, nicht mit Zeitreihenanalyse. Bedürfnis: schnelles Auffinden eines belastbaren
-Einzelfalls samt Kontext (\enquote{der teuerste Tag des Jahres war der 12.\ Dezember mit im Mittel
-$395{,}7$\,EUR/MWh}).
+\textbf{Z2 (Fachjournalismus, Energieagenturen und kommunale Versorger).} Diese Gruppe prüft und bewertet
+energiewirtschaftliche Aussagen, häufig unter Zeitdruck und für eine breite Öffentlichkeit. Sie beherrscht
+den Umgang mit statistischen Kennzahlen, besitzt jedoch wenig Erfahrung in komplexer Zeitreihenanalyse.
+Ihr Ziel liegt im schnellen Auffinden belastbarer Einzelfälle samt Kontext, etwa dem teuersten Tag des
+Jahres am 12.\ Dezember mit durchschnittlich $395{,}7$\,EUR/MWh.
 
-\textbf{Z3: Fachlich interessierte Prosumer} mit PV-Anlage, Speicher oder Wärmepumpe an einem
-dynamischen Tarif. Vorwissen: der eigene Tagesgang ist aus der Wechselrichter-App vertraut.
-Bedürfnis: Übertragung der eigenen Erfahrung auf das Gesamtsystem, also die Frage \enquote{ist die
-eigene Mittagsspitze ein Systemmuster?}.
+\textbf{Z3 (Fachlich interessierte Prosumer).} Betreiber privater Photovoltaikanlagen, Batteriespeicher
+oder Wärmepumpen mit dynamischen Stromtarifen kennen den eigenen Erzeugungsverlauf aus Monitoring-Apps.
+Ihr Interesse gilt dem Abgleich dieser persönlichen Beobachtungen mit dem makroökonomischen Gesamtsystem.
 
-Die drei Gruppen bringen etablierte Sehgewohnheiten mit, an die
-die Anwendung gezielt anschließt. Von \emph{Energy-Charts} \cite{EnergyCharts}
-und Agora ist die Konvention \enquote{Erneuerbare in Grün- und Blautönen} vertraut. Die Anwendung
-übernimmt Grün und Blau für die Erneuerbaren-Skala und reserviert ein warmes Rot für den Preis,
-damit beide Größen nicht verwechselt werden. Kalender- und Aktivitätsheatmaps sind als \enquote{eine
-Zelle = ein Zeitabschnitt, dunkler = mehr} allgemein bekannt. Darauf baut die Stunden-Heatmap auf.
-Parallele Koordinaten setzen wir dagegen nicht voraus. Sie sind die einzige Technik, die erklärt
-werden muss, weshalb über der Ansicht ein einzeiliger Hinweis steht und der Erstkontakt über Hover
-mit Tooltip erfolgt. Preise werden in EUR/MWh erwartet und nicht in ct/kWh, Zeitangaben in UTC wie
-in den Quelldaten. Alle Zahlen erscheinen mit deutschem Dezimalkomma.
+Die drei Gruppen bringen etablierte Sehgewohnheiten mit, an die die Anwendung gezielt anschließt. Von
+\emph{Energy-Charts} \cite{EnergyCharts} und Agora ist die Konvention \enquote{Erneuerbare in Grün- und Blautönen}
+vertraut. Die Anwendung übernimmt Grün und Blau für die Erneuerbaren-Skala und reserviert ein warmes Rot für
+den Preis, damit beide Größen nicht verwechselt werden. Kalender- und Aktivitätsheatmaps sind als
+\enquote{eine Zelle = ein Zeitabschnitt, dunkler = mehr} allgemein bekannt. Darauf baut die Stunden-Heatmap auf.
+Parallele Koordinaten setzen wir dagegen nicht voraus. Sie sind die einzige Technik, die erklärt werden muss,
+weshalb über der Ansicht ein einzeiliger Hinweis steht und der Erstkontakt über Hover mit Tooltip erfolgt.
+Preise werden in EUR/MWh erwartet und nicht in ct/kWh, Zeitangaben in UTC wie in den Quelldaten. Alle Zahlen
+erscheinen mit deutschem Dezimalkomma.
 
 \subsection{Überblick und Beiträge}
 
-Die Grundlage der Anwendung bilden die EnergyCharts-Daten \cite{EnergyCharts}
-für Deutschland 2024, abgerufen über den PostgREST-Spiegel der Universität Halle. Aus zwei
-Quelltabellen für Erzeugung und Preis entsteht ein Datensatz mit $8\,690$ Stundenwerten und $364$
-Tagesprofilen. Drei Techniken aus den vorgegebenen Bereichen sind eng mit den Analyseaufgaben
-verzahnt: eine Zeitreihen-Übersicht über die zwölf Monate als Einstieg und Filter (Bereich Scatterplot
-und Zeitreihen), eine pixelorientierte Stunden-Heatmap als Tag-Stunden-Matrix für alle $8\,690$
-Stundenwerte (Bereich Pixel- und Icon-Techniken) sowie parallele Koordinaten über sieben Tagesattribute
-(Bereich mehrdimensionale Darstellungen). Die drei Ansichten sind über einen gemeinsamen
-Interaktionszustand gekoppelt.
+Die Grundlage der Anwendung bilden die EnergyCharts-Daten \cite{EnergyCharts} für Deutschland 2024,
+abgerufen über den PostgREST-Spiegel der Universität Halle. Aus zwei Quelltabellen für Erzeugung und Preis
+entsteht ein Datensatz mit $8\,690$ Stundenwerten und $364$ Tagesprofilen. Drei Techniken aus den vorgegebenen
+Bereichen sind eng mit den Analyseaufgaben verzahnt. Eine Zeitreihen-Übersicht über die zwölf Monate dient als
+Einstieg und Filter (Bereich Scatterplot und Zeitreihen), eine pixelorientierte Stunden-Heatmap fungiert als
+Tag-Stunden-Matrix für alle $8\,690$ Stundenwerte (Bereich Pixel- und Icon-Techniken), und parallele
+Koordinaten über sieben Tagesattribute decken den Bereich mehrdimensionaler Darstellungen ab. Die drei
+Ansichten sind über einen gemeinsamen Interaktionszustand gekoppelt.
 
-Diese Arbeit leistet fünf konkrete Beiträge:
+Diese Arbeit leistet fünf wesentliche Beiträge.
 
 \begin{itemize}
   \item[\textbf{B1}] Eine reproduzierbare Datenaufbereitung (Kapitel~\ref{sec:daten}), die
         das in der Quelle unvollständige Lastfeld rechnerisch rekonstruiert und die $94$ fehlenden
         Stunden transparent als Datenlücke darstellt.
   \item[\textbf{B2}] Eine aus den Anwendungsaufgaben begründete Technikauswahl
-        (Abschnitt~\ref{sec:praesentation}): Jede Technik wird gegen drei echte Alternativen
-        abgewogen, die dasselbe mentale Modell aufbauen würden.
+        (Abschnitt~\ref{sec:praesentation}), bei der jede Technik gegen drei echte Alternativen
+        abgewogen wird, die dasselbe mentale Modell aufbauen würden.
   \item[\textbf{B3}] Eine durchgängige Kopplung der drei Ansichten
         (Abschnitt~\ref{sec:interaktion}) über Mehrfach-Monatsfilter, geteilten Hover-Zustand,
         Mehrfachauswahl von Tagen und UND-verknüpftes Achsen-Brushing.

@@ -1,6 +1,6 @@
 \section{Visualisierungen}
 
-Dieses Kapitel leitet die Anwendung her: zuerst die konkreten Aufgaben und die dafür nötigen
+Dieses Kapitel leitet die Gestaltung der Anwendung her. Es analysiert die konkreten Aufgaben und die dafür nötigen
 mentalen Modelle (\ref{sec:aufgaben}), daraus die Designanforderungen (\ref{sec:anforderungen}),
 dann die drei Visualisierungen mit ihren Kodierungen und den verworfenen Alternativen
 (\ref{sec:praesentation}) und schließlich die Interaktion, die sie zu einer Anwendung verbindet
@@ -8,7 +8,7 @@ dann die drei Visualisierungen mit ihren Kodierungen und den verworfenen Alterna
 
 \subsection{Analyse der Anwendungsaufgaben}\label{sec:aufgaben}
 
-Aus F1 bis F4 und den Bedürfnissen von Z1 bis Z3 ergeben sich sechs konkrete Handlungsaufgaben:
+Aus F1 bis F4 und den Bedürfnissen von Z1 bis Z3 ergeben sich sechs konkrete Handlungsaufgaben.
 
 \begin{itemize}
   \item[\textbf{A1}] \emph{Orientieren.} Einen Einstiegszeitraum wählen, ohne vorher zu wissen, was
@@ -18,14 +18,14 @@ Aus F1 bis F4 und den Bedürfnissen von Z1 bis Z3 ergeben sich sechs konkrete Ha
   \item[\textbf{A3}] \emph{Ausreißer lokalisieren.} Einzelne extreme Stunden in $8\,690$ Werten
         finden und ihren Zeitpunkt exakt ablesen. (F2)
   \item[\textbf{A4}] \emph{Ausdehnung prüfen.} Entscheiden, ob ein Extremwert eine Einzelstunde
-        oder ein anhaltendes Muster ist. (F2)
-  \item[\textbf{A5}] \emph{Tage vergleichen.} Mehrere Tage über alle relevanten Attribute
-        gleichzeitig gegenüberstellen und ihre Ähnlichkeit beurteilen. (F3, F4)
-  \item[\textbf{A6}] \emph{Gezielt auswählen.} Alle Tage finden, die zugleich mehrere
+        oder ein ganztägiges Muster ist. (F2)
+  \item[\textbf{A5}] \emph{Detailvergleich.} Konkrete Tage oder Stunden gegenüberstellen und alle
+        Attribute simultan ablesen. (F3, F4)
+  \item[\textbf{A6}] \emph{Hypothesen testen.} Tage isolieren, die eine beliebige Kombination von
         Wertbedingungen erfüllen. (F2, F4)
 \end{itemize}
 
-Die Bearbeitung dieser Aufgaben setzt voraus, dass Nutzende ein tragfähiges mentales Modell des Stromsystems aufbauen. Vier mentale Modelle sind hierbei wesentlich und werden jeweils durch spezifische Ansichten gestützt:
+Die Bearbeitung dieser Aufgaben setzt voraus, dass Nutzende ein tragfähiges mentales Modell des Stromsystems aufbauen. Vier mentale Modelle sind hierbei wesentlich und werden jeweils durch spezifische Ansichten gestützt.
 
 \begin{itemize}
   \item[\textbf{M1}] \textbf{Die Zeit als zweidimensionales Raster.} Um A2 und A4 zu lösen, müssen Tagesgang und Jahresgang als zwei unabhängige Dimensionen begriffen werden anstelle einer fortlaufenden eindimensionalen Zeitlinie. Erst das Verständnis gleichförmig wiederkehrender 24-Stunden-Zyklen ermöglicht die gezielte Frage nach tageszeitlichen Mustern. Eine Darstellung, die die Zeit in eine Tag-Stunden-Matrix faltet, vollzieht diese Strukturierung direkt im visuellen Raum.
@@ -83,26 +83,26 @@ Detailpanel und Tooltips & R8 & A3, A5 \\
 
 \subsection{Präsentation der Visualisierungen}\label{sec:praesentation}
 
-Die drei Techniken stammen aus verschiedenen Bereichen der Aufgabenstellung. Ausschlaggebend für die Auswahl ist ihre komplementäre Eignung: Jede Ansicht adressiert gezielt die Grenzen der jeweils anderen. Die Zeitreihe mittelt Werte monatlich und erfüllt daher R3 nicht, die Heatmap konzentriert sich auf eine Messgröße (Verzicht auf R5), und die parallelen Koordinaten besitzen keine explizite Zeitachse (R2). In ihrer Verknüpfung decken die Ansichten die geforderten Analyseebenen lückenlos ab. Bei jeder Technik werden Expressivität
+Die drei Techniken stammen aus verschiedenen Bereichen der Aufgabenstellung. Ausschlaggebend für die Auswahl ist ihre komplementäre Eignung, da jede Ansicht gezielt die Grenzen der jeweils anderen adressiert. Die Zeitreihe mittelt Werte monatlich und erfüllt daher R3 nicht, die Heatmap konzentriert sich auf eine Messgröße (Verzicht auf R5), und die parallelen Koordinaten besitzen keine explizite Zeitachse (R2). In ihrer Verknüpfung decken die Ansichten die geforderten Analyseebenen lückenlos ab. Bei jeder Technik werden Expressivität
 (zeigt sie genau die Daten?) und Effektivität (nutzt sie für die wichtigste Größe den
 wahrnehmungsstärksten Kanal?) im Sinne von \cite{Munzner2014,Ware2012} diskutiert.
 
 \subsubsection{Visualisierung Eins: Zeitreihen-Übersicht der Monate}\label{sec:vis1}
 
 Die Ansicht zeigt zwölf Monatswerte. Der mittlere Erneuerbarenanteil wird
-als Balkenhöhe kodiert (Kanal: Position auf gemeinsamer Achse bzw.\ Länge), der mittlere Preis als
+als Balkenhöhe kodiert (mittels des Kanals für Position und Länge auf gemeinsamer Basislinie), der mittlere Preis als
 Polylinie mit quadratischen Markern auf einer zweiten, rechts beschrifteten Achse in EUR/MWh.
 Vier gleich große Intervalle teilen beide Achsen, sodass die Beschriftungen der
 Preisachse genau auf den Gitterlinien der Anteilsachse liegen. Die Anteilsachse endet beim
 nächsten runden Wert oberhalb des höchsten Monatsbalkens. Farbe dient hierbei ausschließlich der
-visuellen Zuordnung der Größen: Grün kennzeichnet den Anteil, Rot den Preis, erläutert durch eine
-Legende. Klick auf Balken oder Marker schaltet den Monat im Filter an bzw.\ aus, Hover liefert die
+visuellen Zuordnung der Größen. Grün kennzeichnet den Anteil und Rot den Preis, was durch eine
+Legende erläutert wird. Klick auf Balken oder Marker schaltet den Monat im Filter an bzw.\ aus, Hover liefert die
 Monatswerte inklusive Solar- und Windanteil und Summe der negativen Preisstunden.
 
 Dass der Erneuerbarenanteil als Leitgröße auf dem genauesten Kanal (Position/Länge auf gemeinsamer
 Basislinie) liegt, ist bewusst gewählt, der Preis als Nebengröße wird auf einer
 Linie dargestellt, die den Verlauf betont statt des exakten Wertes. Die doppelte Achse ist eine bewusst
-eingegangene Schwäche: Der visuelle Abstand zwischen Balken und Linie hat keine Bedeutung, und die
+eingegangene Schwäche. Der visuelle Abstand zwischen Balken und Linie besitzt keine physikalische Bedeutung, und die
 scheinbare Korrelation hängt von der willkürlichen Skalierung der zweiten Achse ab. Sie ist
 vertretbar, da die Ansicht primär als Navigations- und Kontextebene für R1 dient. Für multivariate
 Zusammenhänge stehen Heatmap und parallele Koordinaten bereit. Um aus der doppelten Skalierung keine
@@ -120,13 +120,13 @@ Solar- und Windanteil sowie negativen Preisstunden.}
 \subsubsection{Visualisierung Zwei: Pixelorientierte Stunden-Heatmap}\label{sec:vis2}
 
 Die Heatmap ist die dichteste Ansicht und setzt R2, R3 und R4 um. Jede Stunde
-des Jahres ist eine Zelle: Die $x$-Achse läuft über die Tage des gefilterten Zeitraums, die
+des Jahres bildet eine Zelle ab. Die $x$-Achse läuft über die Tage des gefilterten Zeitraums, die
 $y$-Achse über die $24$ Tagesstunden (0\,h oben, 23\,h unten), die Füllfarbe kodiert den
 Erneuerbarenanteil. Ungefiltert sind das $366$ Spalten zu je $24$ Zellen. Die Zellbreite wird
 dynamisch als $\min(30,\,1500/\text{Tage})$ Pixel berechnet, sodass die Darstellung bei
 Monatsfilterung von einer Pixel- in eine Kacheldarstellung übergeht, ohne dass sich die Semantik
-ändert. Das ist eine Umsetzung des pixelorientierten Prinzips nach Keim \cite{Keim2000}: möglichst
-viele Datenobjekte gleichzeitig, ein Objekt pro Pixel, mit einer Anordnung, die der Semantik der
+ändert. Dies setzt das pixelorientierte Prinzip nach Keim \cite{Keim2000} um, wonach möglichst
+viele Datenobjekte gleichzeitig, ein Objekt pro Pixel, mit einer Anordnung dargestellt werden, die der Semantik der
 Daten folgt.
 
 Die Faltung der eindimensionalen Zeit in ein zweidimensionales Raster bildet das konzeptionelle Fundament
@@ -157,31 +157,29 @@ für Datenlücken) und den Stundenbeschriftungen 0\,h, 6\,h, 12\,h, 18\,h, 23\,h
 \subsubsection{Visualisierung Drei: Parallele Koordinaten der Tagesprofile}\label{sec:vis3}
 
 Jeder gefilterte Tag wird als eine Polylinie über sieben parallele, vertikale
-Achsen dargestellt: mittlere Last (GW), Solaranteil (\%), Windanteil (\%), Erneuerbarenanteil (\%), Nettohandel
+Achsen dargestellt. Diese umfassen mittlere Last (GW), Solaranteil (\%), Windanteil (\%), Erneuerbarenanteil (\%), Nettohandel
 (GW), mittlerer Preis (EUR/MWh) und Anzahl negativer Preisstunden. Jede Achse ist unabhängig auf
 Minimum und Maximum im sichtbaren Datenbestand skaliert. Beide Extremwerte stehen als Zahl an den
 Achsenenden. Die Linien sind mit niedriger Deckkraft gezeichnet, sodass sich häufige Verläufe durch
 Überlagerung von selbst verdichten. Hover hebt eine Linie rot hervor, Auswahl schwarz, vom Brushing
 ausgeschlossene Tage werden fast vollständig ausgeblendet. Ist ein Achsenfilter aktiv, werden die
-Treffer zusätzlich in kräftigem Grün gezeichnet: Ohne diese Hervorhebung bliebe die Treffermenge auf
+Treffer zusätzlich in kräftigem Grün gezeichnet. Ohne diese Hervorhebung bliebe die Treffermenge auf
 derselben niedrigen Deckkraft wie das ungefilterte Bündel, und der Filter wäre zwar wirksam, aber
 kaum sichtbar.
 
 Die Wahl fiel auf parallele Koordinaten \cite{Inselberg1990,Heinrich2013}, da sie das mentale Modell M4
-konkret stützen: Ein Tag wird zu einem zusammenhängenden Objekt, das als Ganzes verfolgt werden kann.
+konkret stützen. Ein Tag wird zu einem zusammenhängenden Objekt, das als Ganzes verfolgt werden kann.
 Die Ähnlichkeit zweier Tage wird dabei direkt als visuelle Ähnlichkeit der Linienverläufe wahrnehmbar.
 Der entscheidende Vorteil gegenüber Projektionsverfahren (wie PCA) liegt darin, dass die Achsen ihre
 Originaleinheiten behalten. Jeder abgelesene Wert bleibt eine physikalische Größe. Dies macht die
 Technik zur idealen Grundlage für wertbasierte Auswahloperationen (R6), da Bedingungen direkt auf den
 jeweiligen Achsen definiert werden können.
 
-Hinsichtlich Expressivität und Effektivität zeigt sich Folgendes: Expressiv sind parallele Koordinaten in
-diesem Szenario vollständig, da alle sieben Attribute jedes Tages ohne Informationsverlust abgebildet werden.
+Hinsichtlich Expressivität und Effektivität sind parallele Koordinaten in diesem Szenario vollständig expressiv, da alle sieben Attribute jedes Tages ohne Informationsverlust abgebildet werden.
 Die Effektivität ist konzeptbedingt teilweise eingeschränkt, da das Erkennen von Zusammenhängen stark von
-der Achsenreihenfolge abhängt: Nur benachbarte Achsen können unmittelbar auf Korrelation (als Bündelung
+der Achsenreihenfolge abhängt. Nur benachbarte Achsen können unmittelbar auf Korrelation (als Bündelung
 oder Kreuzung der Linien) geprüft werden. Daher folgt die Anordnung der Achsen der Kausalkette des
-Anwendungsgebiets: Last $\rightarrow$ Solar $\rightarrow$ Wind $\rightarrow$ Erneuerbare $\rightarrow$
-Nettohandel $\rightarrow$ Preis $\rightarrow$ negative Stunden. Dadurch liegen die für die Fragestellungen
+Anwendungsgebiets von Last über Solar, Wind, Erneuerbare und Nettohandel bis hin zu Preis und negativen Stunden. Dadurch liegen die für die Fragestellungen
 wichtigsten Attribute direkt nebeneinander. Die bei $364$ Linien unvermeidliche Überzeichnung wird durch
 eine reduzierte Deckkraft abgemildert, was zu einer visuell erfassbaren Dichteinformation führt und
 durch interaktives Brushing steuerbar bleibt.
@@ -189,7 +187,7 @@ durch interaktives Brushing steuerbar bleibt.
 Die diskutierten Alternativen zu den parallelen Koordinaten erwiesen sich als weniger geeignet. Eine Streudiagramm-Matrix (SPLOM) würde bei sieben Attributen 21 Einzeldiagramme erfordern und das ganzheitliche Erfassen eines Tagesprofils kognitiv überlasten. Dimensionsreduzierende Projektionsverfahren (wie PCA oder MDS) bilden Tage zwar überlagerungsfrei als Punktwolke ab, vernichten jedoch die physikalischen Einheiten der Achsen und verhindern wertbasierte Bereichsfilter (R6). Radarplots oder Stern-Glyphen wiederum zwingen zu einem seriellen Suchprozess über 364 Einzelobjekte. Parallele Koordinaten betten sämtliche Tage stattdessen in ein gemeinsames, direkt vergleichbares Koordinatensystem ein.
 
 \abb{parallele-koordinaten}{0.98}{Parallele Koordinaten der Tagesprofile mit aktivem Brush auf der
-Achse \enquote{Neg.\ Std.}: Die Treffer sind grün gezeichnet, alle übrigen Tage abgeblendet, die
+Achse \enquote{Neg.\ Std.}. Die Treffer sind grün gezeichnet, alle übrigen Tage abgeblendet, die
 Statuszeile nennt die Trefferzahl.}
 {Screenshot der parallelen Koordinaten über alle Tage, mit aufgezogenem Bereich in der oberen Hälfte
 der rechten Achse, grün hervorgehobenen Treffern, abgeblendeten übrigen Linien, Statuszeile
@@ -199,23 +197,23 @@ der rechten Achse, grün hervorgehobenen Treffern, abgeblendeten übrigen Linien
 
 Die drei Ansichten bilden ein zusammenhängendes Gesamtsystem. Der gesamte
 Interaktionszustand liegt in einem zentralen Elm-Model, aus dem alle Ansichten synchronisiert lesen.
-Konsistenz wird dadurch auf Architekturebene strukturell garantiert. Die Interaktion gliedert sich in vier Ebenen:
+Konsistenz wird dadurch auf Architekturebene strukturell garantiert. Die Interaktion gliedert sich in vier Ebenen.
 
 \begin{description}
-  \item[Ebene 1: Monatsfilter mit Mehrfachauswahl.] Monate lassen sich über eine
+  \item[Ebene 1 (Monatsfilter mit Mehrfachauswahl).] Monate lassen sich über eine
         Schaltflächenleiste oder durch Klick auf einen Balken der Zeitreihe an- und abwählen. Die Auswahl
         ist als Menge modelliert, sodass beliebige Kombinationen möglich sind (etwa Juni bis August
         oder Februar zusammen mit November für einen direkten Saisonvergleich). Sie bestimmt, welche
         Stunden in der Heatmap und welche Tage in den parallelen Koordinaten und Kennzahlenkarten erscheinen.
-        Zweck: A1 und Reduktion der Datenmenge für A2 bis A6.
-  \item[Ebene 2: Hover mit geteiltem Fokus und Tooltip.] Das Überfahren einer Heatmap-Zelle
+        Dies dient der Orientierung (A1) sowie der Datenmengenreduktion für A2 bis A6.
+  \item[Ebene 2 (Hover mit geteiltem Fokus und Tooltip).] Das Überfahren einer Heatmap-Zelle
         oder einer Linie schreibt den Tag als \texttt{hoveredDay} in das Model. Beide Ansichten lesen diesen
-        Zustand, sodass die Hervorhebung synchron erscheint: Die Zellen des Tages erhalten einen
+        Zustand, sodass die Hervorhebung synchron erscheint. Die Zellen des Tages erhalten einen
         dunklen Rahmen, die Linie wird rot hervorgehoben in den Vordergrund geholt, und das Detailpanel wechselt auf
-        diesen Tag. Ein Tooltip am Mauszeiger liefert parallel die exakten Messwerte. Zweck: R7
+        diesen Tag. Ein Tooltip am Mauszeiger liefert parallel die exakten Messwerte. Dies erfüllt R7
         und R8 ohne dauerhafte Zustandsänderung, sodass sich Hypothesen prüfen lassen, während die bestehende Auswahl
         erhalten bleibt.
-  \item[Ebene 3: Mehrfachauswahl von Tagen.] Ein Klick auf eine Zelle oder Linie nimmt den Tag in
+  \item[Ebene 3 (Mehrfachauswahl von Tagen).] Ein Klick auf eine Zelle oder Linie nimmt den Tag in
         eine Auswahlliste auf, ein erneuter Klick entfernt ihn. Ausgewählte Tage bleiben in beiden Ansichten
         dauerhaft schwarz hervorgehoben und erscheinen im Detailpanel als Liste mit EE-Anteil und Preis.
         Für den zuletzt berührten Tag zeigt das Panel sechs Kennzahlen und ein Stundenprofil als
@@ -228,8 +226,8 @@ Konsistenz wird dadurch auf Architekturebene strukturell garantiert. Die Interak
         Darunter stehen die Stundenprofile der ausgewählten Tage untereinander, was den direkten visuellen
         Abgleich der Tagesformen ermöglicht (etwa ausgeprägter Solarbogen gegenüber flachem Windband).
         Beide Darstellungen sind chronologisch nach Datum geordnet, damit ein Vergleich unabhängig von der
-        Klickreihenfolge stabil bleibt. Zweck: A5, der vergleichende Abgleich mehrerer Tage.
-  \item[Ebene 4: Achsen-Brushing.] Auf jeder der sieben Achsen lässt sich mit gedrückter
+        Klickreihenfolge stabil bleibt. Dies unterstützt den vergleichenden Abgleich mehrerer Tage (A5).
+  \item[Ebene 4 (Achsen-Brushing).] Auf jeder der sieben Achsen lässt sich mit gedrückter
         Maustaste ein Wertebereich aufziehen \cite{Becker1987}. Tage außerhalb werden abgeblendet und von
         der Mausinteraktion ausgenommen. Brushes auf mehreren Achsen werden logisch UND-verknüpft. Eine
         Statuszeile nennt laufend die Trefferzahl, während Klick-Gesten das selektive oder vollständige
