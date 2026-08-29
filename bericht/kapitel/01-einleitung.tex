@@ -26,7 +26,7 @@ beantwortet werden können und an denen diese Arbeit zu messen ist:
   \item[\textbf{F2}] Wann treten Extremzustände auf? Gemeint sind hohe Deckung mit negativen
         Preisen auf der einen Seite und Dunkelflauten mit hohen Preisen auf der anderen. Sind das
         Einzelstunden oder Tagesmuster?
-  \item[\textbf{F3}] Welche Rolle spielen Solar und Wind dabei jeweils? Sind sie austauschbar oder
+  \item[\textbf{F3}] Wie tragen Wind- und Solarenergie jeweils dazu bei? Sind sie austauschbar oder
         tragen sie zu verschiedenen Zeiten und mit verschiedenen Folgen bei?
   \item[\textbf{F4}] Wie hängen Erneuerbarenanteil, Preis und Nettohandel an einem konkreten Tag
         zusammen, und wie typisch ist dieser Tag im Vergleich zu allen anderen?
@@ -89,7 +89,7 @@ dynamischen Tarif. Vorwissen: der eigene Tagesgang ist aus der Wechselrichter-Ap
 Bedürfnis: Übertragung der eigenen Erfahrung auf das Gesamtsystem, also die Frage \enquote{ist die
 eigene Mittagsspitze ein Systemmuster?}.
 
-\paragraph{Vorhandenes visuelles Vorwissen.} Alle drei Gruppen bringen Sehgewohnheiten mit, an die
+Die drei Gruppen bringen etablierte Sehgewohnheiten mit, an die
 die Anwendung anschließt, statt gegen sie zu arbeiten. Von \emph{Energy-Charts} \cite{EnergyCharts}
 und Agora ist die Konvention \enquote{Erneuerbare in Grün- und Blautönen} vertraut. Die Anwendung
 übernimmt Grün und Blau für die Erneuerbaren-Skala und reserviert ein warmes Rot für den Preis,
@@ -102,18 +102,18 @@ in den Quelldaten; alle Zahlen erscheinen mit deutschem Dezimalkomma.
 
 \subsection{Überblick und Beiträge}
 
-\paragraph{Daten und Visualisierungen.} Grundlage sind die EnergyCharts-Daten \cite{EnergyCharts}
+Die Grundlage der Anwendung bilden die EnergyCharts-Daten \cite{EnergyCharts}
 für Deutschland 2024, abgerufen über den PostgREST-Spiegel der Universität Halle. Aus zwei
 Quelltabellen für Erzeugung und Preis entsteht ein Datensatz mit $8\,690$ Stundenwerten und $364$
-Tagesprofilen. Drei Techniken aus drei der vorgegebenen Bereiche werden nicht nebeneinandergestellt,
-sondern aus den Aufgaben abgeleitet und verschränkt: eine Zeitreihen-Übersicht über die zwölf Monate
+Tagesprofilen. Drei Techniken aus drei der vorgegebenen Bereiche werden nicht bloß nebeneinandergestellt,
+sondern eng mit den Analyseaufgaben verzahnt: eine Zeitreihen-Übersicht über die zwölf Monate
 als Einstieg und Filter aus dem Bereich Scatterplot und Zeitreihen, eine pixelorientierte
 Stunden-Heatmap als Tag\,$\times$\,Stunde-Raster für alle $8\,690$ Stundenwerte aus dem Bereich der
 Icon- und Pixel-orientierten Techniken sowie parallele Koordinaten über sieben Tagesattribute aus
-dem Bereich der mehrdimensionalen Darstellungen. Alle drei teilen sich einen zentralen
-Interaktionszustand.
+dem Bereich der mehrdimensionalen Darstellungen. Die drei Ansichten sind über einen gemeinsamen
+Interaktionszustand gekoppelt.
 
-\paragraph{Beiträge.} Der Bericht belegt fünf Beiträge:
+Diese Arbeit leistet fünf konkrete Beiträge:
 
 \begin{itemize}
   \item[\textbf{B1}] \emph{Eine reproduzierbare Datenaufbereitung} (Kapitel~\ref{sec:daten}), die
