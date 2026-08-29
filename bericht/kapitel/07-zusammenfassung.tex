@@ -1,0 +1,20 @@
+\section{Zusammenfassung und Ausblick}\label{sec:ausblick}
+
+\subsection*{Zusammenfassung und Mehrwert}
+
+Die vorliegende Arbeit stellt eine interaktive Visual-Analytics-Anwendung in Elm vor, die $8\,690$ Stundenwerte und 364 Tagesprofile des deutschen Stromsystems aus dem Jahr 2024 erschließt. Der methodische Aufbau orientiert sich an sechs konkreten Anwendungsaufgaben und vier mentalen Modellen: Die aggregierte Zeitreihenansicht dient der übergeordneten Orientierung, die stundenfeine Heatmap visualisiert tages- und jahreszeitliche Periodizitäten, und die parallelen Koordinaten erlauben den simultanen Vergleich aller sieben Tagesattribute. Durch die Kopplung der Ansichten über einen zentralen Zustand entsteht eine zusammenhängende Analysemöglichkeit, bei der Interaktionen in einer Komponente unmittelbar auf die übrigen rückwirken.
+
+Der praktische Nutzen für die Zielgruppen liegt in der Verifikation energiewirtschaftlicher Thesen anhand empirischer Daten. Dies verdeutlichen drei zentrale Ergebnisse:
+Erstens belegen die Daten, dass monatliche Mittelwerte die Schwankungsbreite der erneuerbaren Deckung verdecken. Während die Monatsdurchschnitte über das Jahr lediglich zwischen $44{,}4\,\%$ und $60{,}8\,\%$ variieren, reicht die stündliche Spanne von $12{,}0\,\%$ bis $138{,}6\,\%$.
+Zweitens traten $69{,}6\,\%$ aller negativen Preisstunden im Zeitfenster zwischen 10 und 15 Uhr auf, womit negative Börsenpreise eindeutig als spezifische Folge solarer Mittagsspitzen identifiziert werden.
+Drittens markiert ein Wintertag (der 4.\ Februar mit $95{,}9\,\%$) den Jahreshöchstwert der Deckung, an dem der Solaranteil auf demselben niedrigen Niveau lag wie am Tag mit der geringsten Jahresdeckung ($15{,}6\,\%$ am 6.\ November). Die Differenz wird vollständig durch die Windeinspeisung getrieben. Alle Befunde lassen sich mit wenigen Interaktionsschritten reproduzieren und über die gekoppelten Ansichten nachvollziehen.
+
+Ebenso wichtig für eine fundierte Interpretation sind die methodischen Grenzen: Die Anwendung konzentriert sich auf deskriptive statistische Koinzidenzen. Zudem basiert die Residuallast auf einer rechnerischen Rekonstruktion, und verbleibende Datenlücken der Primärquelle werden transparent als Leerstellen dargestellt.
+
+\subsection*{Ausblick und Erweiterungsmöglichkeiten}
+
+Für die Weiterentwicklung des Systems bieten sich Ansatzpunkte auf grafischer und datenseitiger Ebene:
+
+Auf Ebene der Visualisierungskomponenten böte eine umschaltbare Farbskala in der Heatmap einen deutlichen Mehrwert. Würde dieselbe Tag-Stunden-Matrix wahlweise nach Börsenpreis oder grenzüberschreitendem Nettohandel eingefärbt, ließen sich Zusammenhänge zwischen Preisspitzen und Deckungslücken direkt räumlich vergleichen. Hierfür wäre eine divergierende Farbskala mit neutralem Nullpunkt erforderlich. Bei den parallelen Koordinaten würde eine dynamische Umordnung der Achsen die Erkennbarkeit korrelativer Muster zwischen nicht benachbarten Dimensionen verbessern. Für die Monatsübersicht wiederum böte sich die Integration kompakter Boxplots an, um die breite Stundenstreuung innerhalb der Monate bereits in der Übersichtsebene sichtbar zu machen.
+
+Hinsichtlich der Datenbasis wäre eine Anreicherung mit meteorologischen Parametern des Deutschen Wetterdienstes sinnvoll, etwa Globalstrahlung, Windgeschwindigkeit und Umgebungstemperatur. Dies würde die Analysekette von den physikalischen Einflussgrößen über die Einspeisung bis hin zur Preisbildung schließen. Eine zusätzliche Aufschlüsselung der Stromflüsse nach Nachbarländern könnte über eine geografische Flusskarte visualisiert werden. Langfristig ermöglicht die Ausweitung auf mehrjährige Datenreihen die Beobachtung struktureller Veränderungen im Strommarkt, beispielsweise eine Ausweitung des Zeitfensters negativer Preise durch den weiteren Zubau an Photovoltaikanlagen. Technisch empfiehlt sich bei mehrjährigen Datensätzen die Umstellung der Heatmap von SVG auf HTML5-Canvas, um eine gleichbleibend hohe Interaktionsgeschwindigkeit zu gewährleisten.

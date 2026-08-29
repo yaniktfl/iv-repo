@@ -24,8 +24,8 @@ Der Zugriff auf die Quelle erfolgt einmalig über das Skript
 seitenweiser Abruf über \texttt{/rpc/user\_table\_get} ($500$ Zeilen je Anfrage). Zwei
 Besonderheiten der Schnittstelle waren wesentlich und sind im Skript berücksichtigt: Numerische
 Bereichsbedingungen (Zeitstempel) funktionieren zuverlässig über das Feld \texttt{where\_} mit den
-Operatoren \texttt{>=} und \texttt{<}; Textgleichheit (\texttt{country\_id}, \texttt{market\_id})
-dagegen über das Feld \texttt{filters} als Objekt, z.\,B.\ \texttt{\{"market\_id": "DE-LU"\}}.
+Operatoren \texttt{>=} und \texttt{<}, während Textgleichheit (\texttt{country\_id}, \texttt{market\_id})
+über das Feld \texttt{filters} als Objekt übergeben wird, z.\,B.\ \texttt{\{"market\_id": "DE-LU"\}}.
 
 Ergebnis ist die Datei \texttt{data/energycharts\_de\_2024.json} ($3{,}4$\,MB, UTF-8). Sie wird von
 der Anwendung zur Laufzeit per HTTP nachgeladen: \texttt{index.html} führt ein \texttt{fetch()} auf
@@ -33,31 +33,31 @@ denselben Ursprung aus und übergibt das Ergebnis als Flag an \texttt{Elm.Main.i
 setzt also keine lokal gespeicherten Daten voraus und funktioniert unverändert, sobald HTML,
 JavaScript und JSON gemeinsam ausgeliefert werden (etwa über GitLab-Pages).
 
-Die Trennung von Abholen und Ausliefern hat drei Gründe: Zugangsdaten dürfen nicht in eine
-clientseitige Anwendung gelangen; die Abgabe wäre sonst von Tokengültigkeit und
-Serververfügbarkeit abhängig; und die Rohdaten sind mit über $35\,000$ Viertelstundenzeilen und
-mehreren Dutzend Spalten für eine interaktive Darstellung zu breit. Der Preis dafür ist der
+Die Trennung von Abholen und Ausliefern hat drei Gründe: Erstens dürfen Zugangsdaten nicht in eine
+clientseitige Anwendung gelangen. Zweitens wäre die Abgabe sonst von Tokengültigkeit und
+Serververfügbarkeit abhängig. Drittens sind die Rohdaten mit über $35\,000$ Viertelstundenzeilen und
+mehreren Dutzend Spalten für eine direkte interaktive Darstellung zu umfangreich. Der Preis dafür ist der
 Verzicht auf eine Live-Aktualisierung, den Abschnitt~\ref{sec:ausblick} diskutiert.
 
 \subsubsection*{Datenvorverarbeitung}
 
-\emph{1. Normierung der Einheiten.} Die Quellspalten tragen den Suffix \texttt{\_in\_gw}, führen die
+\textbf{1. Normierung der Einheiten:} Die Quellspalten tragen den Suffix \texttt{\_in\_gw}, führen die
 deutschen Werte aber in MW-Skala (Solar-Mittagswerte um $43\,000$). Das Skript teilt daher durch
-$1000$. Ohne diesen Schritt wären alle Achsen um drei Größenordnungen falsch beschriftet; der
+$1000$. Ohne diesen Schritt wären alle Achsen um drei Größenordnungen falsch beschriftet. Der
 Fehler fiel erst beim Vergleich mit bekannten Größenordnungen des deutschen Systems auf.
 
-\emph{2. Aggregation auf Stunden.} Aus vier Viertelstundenwerten wird der arithmetische Mittelwert
+\textbf{2. Aggregation auf Stunden:} Aus vier Viertelstundenwerten wird der arithmetische Mittelwert
 gebildet. Der Börsenpreis ist im betrachteten Jahr ein Stundenprodukt, die Erzeugung liegt in
 Viertelstunden vor. Die Stunde ist damit die feinste Auflösung, in der beide Größen gemeinsam
 definiert sind. Eine Kopplung auf Viertelstundenebene würde den Preiswert dreimal künstlich
 wiederholen und Scheingenauigkeit erzeugen. Der Mittelwert ist hier der richtige Aggregator, weil
 Leistung über die Stunde integriert der Arbeit entspricht.
 
-\emph{3. Rekonstruktion der Last.} Das Feld \texttt{load\_in\_gw} ist in der verwendeten
+\textbf{3. Rekonstruktion der Last:} Das Feld \texttt{load\_in\_gw} ist in der verwendeten
 \texttt{totalpower}-Sicht für Deutschland durchgehend leer. Da die Last die Bezugsgröße jedes
 Anteilswertes ist, wird sie rekonstruiert:
 \[
-  \mathrm{Last} \;=\; \mathrm{Solar} + \mathrm{Wind}_{\text{onshore}} + \mathrm{Wind}_{\text{offshore}}
+  \mathrm{Last} = \mathrm{Solar} + \mathrm{Wind}_{\text{onshore}} + \mathrm{Wind}_{\text{offshore}}
                       + \mathrm{Residuallast}.
 \]
 Die Identität folgt aus der Definition der Residuallast als \enquote{Last abzüglich
@@ -65,27 +65,26 @@ dargebotsabhängiger Einspeisung}. Sie ist eine Näherung, weil Biomasse, Wasser
 nicht abgezogen werden. Diese Träger zählen in der Quelle nicht zur Residuallastdefinition. Die
 Konsequenz wird in Schritt~5 sichtbar.
 
-\emph{4. Abgeleitete Attribute.} Je Stunde entstehen die erneuerbare Summe (Solar, Wind on-/offshore,
+\textbf{4. Abgeleitete Attribute:} Je Stunde entstehen die erneuerbare Summe (Solar, Wind on-/offshore,
 Biomasse, Laufwasser, Speicherwasser, Geothermie), die fossile Summe (Braunkohle, Steinkohle, Öl,
 Kokereigas, Erdgas) und der Erneuerbarenanteil als $100 \cdot \mathrm{EE}/\mathrm{Last}$. Je
 Kalendertag folgen daraus Mittelwerte, das Lastmaximum, Solar- und Windanteil an der mittleren Last
-sowie die Zahl der Stunden mit negativem Preis. Die Tagesebene ist kein Komfort, sondern die
-Analyseeinheit für parallele Koordinaten und Detailpanel: Eine einzelne extreme Stunde sagt wenig,
-ein Tagesprofil charakterisiert eine Wetterlage.
+sowie die Zahl der Stunden mit negativem Preis. Die Tagesebene dient als primäre
+Analyseeinheit für parallele Koordinaten und Detailpanel: Während einzelne Extremstunden punktuelle
+Ereignisse abbilden, charakterisiert erst ein geschlossenes Tagesprofil die zugrundeliegende Wetterlage.
 
-\emph{5. Werte über 100\,\%.} In $385$ der $8\,690$ Stunden liegt der Erneuerbarenanteil über
-$100\,\%$, im Maximum bei $138{,}6\,\%$. Das ist kein Fehler, sondern Folge von
-Überschusserzeugung, die exportiert oder eingespeichert wird, und der Näherung aus Schritt~3. Diese
-Werte werden nicht auf $100\,\%$ gekappt. Kappen würde genau die Extremsituationen unsichtbar
-machen, nach denen F2 sucht. Stattdessen läuft die Farbskala der Heatmap bis $120\,\%$ und sättigt
-darüber (Abschnitt~\ref{sec:vis2}).
+\textbf{5. Werte über 100\,\%:} In $385$ der $8\,690$ Stunden liegt der Erneuerbarenanteil über
+$100\,\%$, im Maximum bei $138{,}6\,\%$. Dies resultiert aus realer Überschusserzeugung, die in
+Nachbarnetze exportiert oder eingespeichert wird, sowie aus der Näherung aus Schritt~3. Diese
+Werte werden bewusst ungekappt beibehalten, um die von F2 adressierten Extremsituationen vollständig
+abzubilden. Die Farbskala der Heatmap reicht hierfür bis $120\,\%$ und sättigt
+oberhalb davon (Abschnitt~\ref{sec:vis2}).
 
-Die Vorverarbeitung liegt in Python und nicht in Elm. Das ist eine bewusste Abweichung von der
-Empfehlung der Aufgabenstellung. Sie gehört zum Abruf aus einer authentifizierten Datenbank, den
-die Anwendung aus Sicherheitsgründen nicht selbst ausführen soll. Alles, was nach dem Laden
-geschieht, ist in Elm implementiert: Monatsfilterung, Monatsaggregation, Achsenskalierung,
-Brush-Auswertung und Kennzahlen. Diese Schritte reagieren unmittelbar auf geänderte Rohdaten; ein
-neuer Jahrgang in der JSON-Datei erfordert keine Codeänderung.
+Die Vorverarbeitung erfolgt in Python statt in Elm. Dies begründet sich durch den Abruf aus einer
+authentifizierten Datenbank, den die Webanwendung aus Sicherheitsgründen nicht selbst ausführen soll.
+Alles, was nach dem Laden geschieht, ist in Elm implementiert: Monatsfilterung, Monatsaggregation,
+Achsenskalierung, Brush-Auswertung und Kennzahlen. Diese Schritte reagieren unmittelbar auf geänderte
+Rohdaten. Ein neuer Jahrgang in der JSON-Datei erfordert keine Codeänderung.
 
 \subsubsection*{Umfang, Lücken und kritische Eignung}
 
@@ -118,17 +117,17 @@ nicht interpoliert: In einer pixelorientierten Darstellung wären interpolierte 
 von Messwerten zu unterscheiden. Damit ginge genau die Eigenschaft verloren, die eine dichte
 Darstellung wertvoll macht, nämlich dass jede Zelle für eine Beobachtung steht. Stattdessen zeichnet
 die Heatmap zuerst ein vollständiges Raster neutraler grauer Zellen und legt die Datenzellen
-darüber; wo Daten fehlen, bleibt Grau sichtbar und ist in der Legende als \enquote{keine Daten}
+darüber. Wo Daten fehlen, bleibt Grau sichtbar und ist in der Legende als \enquote{keine Daten}
 beschriftet.
 
 Für die Fragestellungen sind die Daten gut geeignet: Die Preisreihe ist lückenlos, die zeitliche
 Auflösung liegt deutlich unter der kürzesten interessierenden Struktur (dem Tagesgang), und
-Erzeugung und Preis stammen aus demselben Marktgebiet. Drei Einschränkungen sind zu nennen. Erstens
-ist die Last rekonstruiert; alle Anteilswerte sind Näherungen, deren systematische Richtung bekannt
-ist. Sie fallen tendenziell zu hoch aus. Zweitens ist die Vorzeichenkonvention von
-\texttt{cross\_border\_electricity\_trading\_in\_gw} in der Quelle nicht dokumentiert; der Wert wird
-deshalb neutral als Nettohandelswert geführt. Die Daten stützen die Lesart \enquote{negativ =
+Erzeugung und Preis stammen aus demselben Marktgebiet. Drei Einschränkungen sind zu nennen: Erstens
+ist die Last rekonstruiert. Alle Anteilswerte sind Näherungen, deren systematische Richtung bekannt
+ist. Sie fallen tendenziell leicht zu hoch aus. Zweitens bleibt die Vorzeichenkonvention von
+\texttt{cross\_border\_electricity\_trading\_in\_gw} in der Quelle undokumentiert, weshalb der Parameter
+neutral als Nettohandelswert geführt wird. Die Daten stützen die Lesart \enquote{negativ =
 Export}: Am Tag mit dem höchsten Erneuerbarenanteil (4.2., $95{,}9\,\%$) beträgt er $-13{,}1$\,GW, in
-der Dunkelflautenstunde am 6.11.\ dagegen $+13{,}4$\,GW. Drittens zeigen die Daten Koinzidenz, nicht
-Kausalität; die Anwendung ist ein Werkzeug zur Hypothesenbildung im Sinne von \cite{Keim2008}, kein
-Erklärungsmodell.
+der Dunkelflautenstunde am 6.11.\ hingegen $+13{,}4$\,GW. Drittens bilden die Daten deskriptive
+statistische Koinzidenzen ab. Die Anwendung fungiert als visuelles Werkzeug zur explorativen
+Hypothesenbildung im Sinne von \cite{Keim2008}.

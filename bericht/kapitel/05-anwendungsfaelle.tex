@@ -1,0 +1,82 @@
+\section{Anwendungsfälle}\label{sec:anwendungsfaelle}
+
+\subsection{Anwendung Visualisierung Eins: Grenzen aggregierter Monatsmittel}\label{sec:anwendung1}
+
+Die Monatsübersicht zeigt auf den ersten Blick den erwarteten saisonalen Verlauf: Die durchschnittlichen Börsenpreise erreichen im Winterhalbjahr ihre Höchststände (November mit $114{,}0$ und Dezember mit $108{,}2$\,EUR/MWh) und fallen im Frühjahr auf ein Minimum (April mit $62{,}4$\,EUR/MWh). Der Erneuerbarenanteil verhält sich dazu tendenziell gegenläufig. Bemerkenswert ist dabei vor allem die geringe Schwankungsbreite der monatlichen Durchschnittswerte: Sie verharren über das gesamte Jahr hinweg in einem engen Intervall zwischen $44{,}4\,\%$ im November und $60{,}8\,\%$ im April, was einer Differenz von lediglich 16 Prozentpunkten entspricht. Die zugrunde liegenden Stundenwerte streuen hingegen zwischen $12{,}0\,\%$ und $138{,}6\,\%$. Die wesentliche Dynamik des Systems findet folglich innerhalb der einzelnen Monate statt und wird durch reine Monatsmittelwerte verdeckt.
+
+\begin{table}[H]
+\centering\small
+\caption{Monatswerte 2024, wie sie die Tooltips der Zeitreihen-Übersicht ausgeben}\label{tab:monate}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Monat & Tage & Ø EE-Anteil & Ø Solaranteil & Ø Windanteil & Ø Preis & Neg.\ Std. \\
+      &      & (\%)        & (\%)          & (\%)         & (EUR/MWh) & \\
+\midrule
+Januar    & 31 & 56{,}5 & 4{,}6  & 39{,}6 & 76{,}6  & 16 \\
+Februar   & 29 & 58{,}5 & 7{,}2  & 38{,}8 & 61{,}4  & 4 \\
+März      & 31 & 54{,}7 & 13{,}6 & 28{,}4 & 64{,}7  & 12 \\
+April     & 30 & 60{,}8 & 19{,}0 & 29{,}3 & 62{,}4  & 50 \\
+Mai       & 30 & 59{,}7 & 26{,}2 & 20{,}0 & 65{,}9  & 78 \\
+Juni      & 30 & 58{,}2 & 26{,}3 & 19{,}4 & 72{,}9  & 64 \\
+Juli      & 31 & 57{,}2 & 26{,}8 & 18{,}1 & 67{,}7  & 81 \\
+August    & 31 & 53{,}7 & 25{,}6 & 16{,}7 & 82{,}0  & 68 \\
+September & 30 & 56{,}9 & 19{,}2 & 25{,}8 & 78{,}1  & 40 \\
+Oktober   & 30 & 47{,}7 & 11{,}0 & 23{,}7 & 89{,}7  & 9 \\
+November  & 30 & 44{,}4 & 5{,}4  & 27{,}7 & 114{,}0 & 11 \\
+Dezember  & 31 & 52{,}5 & 4{,}2  & 36{,}1 & 108{,}2 & 8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Beim Vergleich der einzelnen Spalten in Tabelle~\ref{tab:monate} fällt zudem auf, dass die Häufigkeit negativer Börsenpreise vor allem an die Photovoltaik gekoppelt ist und weniger der gesamten Erneuerbarenquote folgt. Während Februar und April mit $58{,}5\,\%$ und $60{,}8\,\%$ einen fast identischen Gesamterwerbsanteil aufweisen, verzeichnen sie 4 gegenüber 50 negativen Preisstunden bei Solaranteilen von $7{,}2\,\%$ gegenüber $19{,}0\,\%$. Der Januar verzeichnet trotz des Jahreshöchstwerts beim Windanteil ($39{,}6\,\%$) lediglich 16 negative Stunden. Ursächlich hierfür ist das Erzeugungsprofil: Windenergie speist kontinuierlicher über Tag und Nacht ein, während Solaranlagen ihre Leistung auf wenige Mittagsstunden bündeln und dort punktuell erhebliche Überdeckungen verursachen.
+
+Für die Zielgruppen liefert dieser Befund wesentliche Erkenntnisse. Fachleute und politische Akteure (Z1 und Z2) erhalten ein klares Argument gegen die pauschale Annahme, ein hoher Gesamtanteil erneuerbarer Energien führe automatisch zu Preisverfall oder Marktverzerrungen. Für Betreiber flexibler Verbraucher (Z3) folgt daraus, dass dynamische Stromtarife im Frühjahr und Sommer signifikant mehr Niedrigpreisfenster bieten als in windstarken Wintermonaten. Methodisch unterstreicht die Beobachtung die Notwendigkeit nachgelagerter Sichten: Die Monatsübersicht identifiziert die Diskrepanz, deren Klärung jedoch eine stundenfeine Auflösung erfordert.
+
+Die tabellarische Darstellung der zwölf Monatswerte erlaubt zwar das exakte Nachschlagen einzelner Zahlen, erfordert jedoch ein gezieltes Vergleichen der Wertepaare. Im Zeitreihendiagramm hingegen sticht die Gleichförmigkeit der Balkenhöhen bei gleichzeitig stark variierender Preislinie unmittelbar visuell hervor. Bei zwölf Beobachtungen bleibt der Mehraufwand einer Tabelle noch überschaubar. Der Nutzen der grafischen Abstraktion steigt jedoch mit zunehmender Anzahl an Perioden. Dies bestätigt die Rolle der Zeitreihe als übergeordnete Orientierungs- und Navigationsebene.
+
+\subsection{Anwendung Visualisierung Zwei: Zeitliche Konzentration negativer Marktpreise}\label{sec:anwendung2}
+
+In der Jahres-Heatmap treten zwei orthogonale Musterstrukturen hervor: Von März bis September erstreckt sich ein horizontales helles Band über die Mittagsstunden von etwa 9 bis 16 Uhr, das sich im Hochsommer ausdehnt und zum Herbst hin verengt. Dieses Band repräsentiert den deterministischen Sonnenverlauf. Quer dazu verlaufen schmalere, vertikale Streifen über alle 24 Stunden eines Tages, die über das gesamte Jahr verteilt sind und im Winter gehäuft auftreten. Sie spiegeln mehrtägige Windfronten wider. Beide Phänomene lassen sich visuell ohne rechnerische Vorverarbeitung direkt anhand ihrer Ausrichtung im Zeitraster unterscheiden.
+
+Ein markanter Einzelfall lässt sich an der Zelle mit dem höchsten Erneuerbarenanteil des Jahres ablesen: Am 1.\ Mai 2024 um 12:00 Uhr erreichte der Anteil $138{,}6\,\%$ bei einem Börsenpreis von $-120{,}07$\,EUR/MWh. Zu dieser Stunde stand einer Gesamtlast von $43{,}0$\,GW eine solare Einspeisung von $43{,}5$\,GW, eine Winderzeugung von $9{,}8$\,GW sowie ein Nettoexport von $-12{,}1$\,GW gegenüber. Die Solarleistung allein übertraf somit den inländischen Bedarf. Ein Klick auf diese Zelle ruft das Profil des gesamten Tages im Detailpanel auf (Abbildung~\ref{fig:anwendungsfall-mai}). Hierbei wird ersichtlich, dass es sich nicht um eine isolierte Extremstunde handelt: Der 1.\ Mai verzeichnete insgesamt 8 negative Preisstunden bei einer durchschnittlichen Tagesdeckung von $94{,}8\,\%$.
+
+\abb{anwendungsfall-mai}{0.98}{Anwendungsfall zur Heatmap: Monatsfilter Mai, Tooltip auf der hellsten Zelle des Jahres (1.\ Mai, 12:00\,Uhr, $138{,}6\,\%$, $-120{,}07$\,EUR/MWh). Die grauen Spalten am 23.--25.\ Mai zeigen die Datenlücke der Quelle.}
+{Screenshot der Heatmap mit Monatsfilter Mai und geöffnetem Tooltip über der Mittagszelle des 1.\ Mai, rechts im Bild die grauen Zellen der Datenlücke vom 23.\ bis 25.\ Mai.}
+
+Eine systematische Auszählung aller 441 negativen Preisstunden im Jahresverlauf bestätigt das visuelle Bild: $69{,}6\,\%$ dieser Stunden fallen in das Zeitfenster zwischen 10 und 15 Uhr, mit einer deutlichen Spitze von 74 Stunden um 12 Uhr mittags. In den gesamten Nachtstunden von 0 bis 6 Uhr traten in Summe lediglich 53 negative Stunden auf. Negative Börsenpreise erweisen sich damit primär als Phänomen solarer Mittagsspitzen.
+
+Diese Differenzierung besitzt für energieintensive Betriebe und Speicherbetreiber (Z3) hohe praktische Relevanz, da die Verlagerung von Lasten in das Mittagsfenster verlässlichere Einsparpotenziale bietet als der spekulative Betrieb in windstarken Nächten. Für energiewirtschaftliche Analysen (Z1) liefert die Heatmap den Beleg für die Auswirkung des Merit-Order-Effekts bei gleichzeitiger Einspeisung.
+
+Ein alternatives Histogramm über die Tagesstunden könnte die zeitliche Häufung zwar quantitativ präziser darstellen, setzt jedoch die Vorab-Hypothese voraus, dass die Tageszeit die entscheidende Variable ist. Der Vorteil der zweidimensionalen Heatmap liegt im explorativen Entdecken: Die horizontale Struktur wird sichtbar, ohne dass gezielt danach gesucht werden musste. Eine klassische Kalenderansicht nach van Wijk und van Selow \cite{vanWijk1999} hätte den 1.\ Mai zwar als auffälligen Tag hervorgehoben, den stundenweisen Verlauf jedoch verschleiert. Ein fortlaufendes Liniendiagramm über alle $8\,690$ Stunden wiederum würde aufgrund starker Überzeichnung die Periodizität der Mittagsstunden verdecken.
+
+\subsection{Anwendung Visualisierung Drei: Identifikation gegensätzlicher Systemzustände}\label{sec:anwendung3}
+
+Werden in der Anwendung der 4.\ Februar und der 6.\ November ausgewählt, zeichnen die parallelen Koordinaten zwei Linienprofile, die auf der Achse des Erneuerbarenanteils die extremen Ränder des Jahres markieren und über alle übrigen Achsen gegenläufig verlaufen (Tabelle~\ref{tab:gegensatz} und Abbildung~\ref{fig:anwendungsfall-vergleich}).
+
+\begin{table}[H]
+\centering\small
+\caption{Zwei Gegenprofile, wie sie Detailpanel und Tooltips ausgeben}\label{tab:gegensatz}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Tagesattribut & 4.\ Februar 2024 & 6.\ November 2024 \\
+\midrule
+Ø EE-Anteil & $95{,}9\,\%$ & $15{,}6\,\%$ \\
+Ø Solaranteil & $3{,}7\,\%$ & $3{,}6\,\%$ \\
+Ø Windanteil & $78{,}9\,\%$ & $0{,}4\,\%$ \\
+Ø Last & $54{,}6$\,GW & $63{,}0$\,GW \\
+Ø Nettohandel & $-13{,}1$\,GW & $+12{,}4$\,GW \\
+Ø Preis & $13{,}31$\,EUR/MWh & $231{,}22$\,EUR/MWh \\
+Negative Preisstunden & $0$ & $0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+An beiden Tagen liegt der durchschnittliche Solaranteil bei nahezu identischen $3{,}7\,\%$ beziehungsweise $3{,}6\,\%$. Die Differenz von rund 80 Prozentpunkten bei der erneuerbaren Deckung ist somit vollständig auf die Windenergie zurückzuführen ($78{,}9\,\%$ gegenüber $0{,}4\,\%$). In den parallelen Koordinaten kreuzen sich die beiden Polygonzüge auf der Solarachse in einem gemeinsamen Punkt, während sie auf der benachbarten Windachse maximal divergieren. Dies widerlegt die Annahme, hohe Anteile erneuerbarer Energien seien auf die Sommermonate beschränkt: Hohe Deckungsgrade werden im deutschen Stromsystem über zwei unterschiedliche Pfade erreicht, die saisonal entgegengesetzt liegen.
+
+\abb{anwendungsfall-vergleich}{0.98}{Anwendungsfall zu den parallelen Koordinaten: 4.\ Februar und 6.\ November gleichzeitig ausgewählt und in beiden Ansichten markiert, das Detailpanel stellt sie im Vergleichsblock gegenüber.}
+{Screenshot ohne Monatsfilter mit zwei angeklickten Tagesspalten in der Heatmap, den zugehörigen schwarzen Linien in den parallelen Koordinaten und dem Detailpanel rechts, das beide Tage als Chips auflistet und darunter alle sieben Tagesattribute sowie beide Stundenprofile gegenüberstellt.}
+
+Die interaktive Filterung mittels Brushing ermöglicht das Auffinden weiterer Systemmuster. Wird beispielsweise auf der Achse der negativen Preisstunden der obere Wertebereich selektiert, isoliert die Anwendung wenige Tage mit extremer Häufung. An der Spitze steht der 7.\ Juli 2024 mit 16 negativen Preisstunden bei einem Erneuerbarenanteil von $74{,}5\,\%$ ($32{,}5\,\%$ Solar- und $25{,}4\,\%$ Windanteil). Die verbleibenden Linienbündel weisen ein einheitliches Muster auf: Sie erreichen auf der Solarachse ausnahmslos hohe Werte, streuen auf der Gesamtachse jedoch über einen weiten Bereich. Dies bestätigt die Erkenntnis aus der Heatmap in einer unabhängigen Darstellung.
+
+In tabellarischer Form ließe sich der direkte Vergleich zweier bekannter Tage zwar numerisch exakt durchführen, die parallelen Koordinaten bieten jedoch zwei wesentliche Mehrwerte: Sie verorten die beiden Tage unmittelbar im Kontext der Gesamtdarstellung als Randpunkte der Verteilung, und sie erlauben das Auffinden relevanter Tage ohne vorherige Kenntnis konkreter Datumsangaben. Eine manuelle Filterung in einer Tabelle über 364 Zeilen und sieben Spalten wäre zwar rechnerisch möglich, böte jedoch keine Rückmeldung über die relative Lage der Treffermenge im multiattributiven Raum. Eine lineare Dimensionsreduktion wie die Hauptkomponentenanalyse (PCA) würde die extremen Tage zwar ebenfalls als distanzierte Punkte abbilden, ließe jedoch keine unmittelbare Rückführung auf die treibende physikalische Einzeldimension zu.
+

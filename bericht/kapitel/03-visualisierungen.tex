@@ -8,8 +8,7 @@ dann die drei Visualisierungen mit ihren Kodierungen und den verworfenen Alterna
 
 \subsection{Analyse der Anwendungsaufgaben}\label{sec:aufgaben}
 
-Aus F1 bis F4 und den Bedürfnissen von Z1 bis Z3 ergeben sich sechs Aufgaben, bewusst als
-Handlungen und nicht als Diagrammwünsche formuliert:
+Aus F1 bis F4 und den Bedürfnissen von Z1 bis Z3 ergeben sich sechs konkrete Handlungsaufgaben:
 
 \begin{itemize}
   \item[\textbf{A1}] \emph{Orientieren.} Einen Einstiegszeitraum wählen, ohne vorher zu wissen, was
@@ -26,34 +25,14 @@ Handlungen und nicht als Diagrammwünsche formuliert:
         Wertbedingungen erfüllen. (F2, F4)
 \end{itemize}
 
-\paragraph{Welche mentalen Modelle helfen dabei?} Die Aufgaben setzen voraus, dass die Nutzenden im
-Kopf eine tragfähige Vorstellung des Systems aufbauen. Vier Modelle sind relevant, und jedes wird
-durch eine der Ansichten gestützt.
+Die Bearbeitung dieser Aufgaben setzt voraus, dass Nutzende ein tragfähiges mentales Modell des Stromsystems aufbauen. Vier mentale Modelle sind hierbei wesentlich und werden jeweils durch spezifische Ansichten gestützt:
 
-\emph{M1: Die Zeit als zweidimensionales Raster.} Um A2 zu lösen, muss man Tagesgang und Jahresgang
-als zwei unabhängige Achsen denken können und nicht als eine lange Linie. Erst wenn \enquote{jeder
-Tag hat dieselben 24 Stunden} im Kopf steht, wird die Frage \enquote{tritt das immer zur selben
-Tageszeit auf?} überhaupt stellbar. Für A2 und A4 ist das Modell notwendig: Ohne es bleibt eine
-Häufung von Extremwerten eine unstrukturierte Menge von Zeitpunkten. Eine Darstellung, die die Zeit
-in ein Tag\,$\times$\,Stunde-Raster faltet, vollzieht die Faltung bereits im Bild, statt sie dem
-Betrachter aufzubürden.
-
-\emph{M2: Die Deckungsbilanz.} Für A3 und A5 muss klar sein, dass der Erneuerbarenanteil ein
-Verhältnis ist. Er kann steigen, weil die Erzeugung steigt oder weil die Last fällt. Ohne dieses
-Modell werden Werte über $100\,\%$ als Fehler gelesen. Es entsteht, wenn Last, Solar, Wind und
-Anteil gleichzeitig auf eigenen Achsen sichtbar sind.
-
-\emph{M3: Der Preis als Folge der Knappheit.} A3 und A5 erfordern die Vorstellung, dass der Preis
-kein weiteres Wettermerkmal ist, sondern aus der Deckungslücke folgt. Ob das zutrifft, ist selbst
-eine empirische Frage. Die Anwendung muss den Zusammenhang deshalb sichtbar machen, statt ihn zu
-unterstellen, und stellt Preis und Anteil gemeinsam dar, ohne sie zu verrechnen.
-
-\emph{M4: Der Tag als Punkt in einem Merkmalsraum.} A5 und A6 sind ohne dieses Modell nicht lösbar:
-\enquote{Ähnlichkeit zweier Tage} ist nur definiert, wenn ein Tag als Wertebündel gedacht wird und
-Ähnlichkeit als Nähe in diesem Raum. Es ist das anspruchsvollste Modell und den Zielgruppen als
-einziges unvertraut. Es braucht daher die stärkste visuelle Unterstützung: eine Darstellung, in der
-ein Tag ein als Ganzes wahrnehmbares Objekt ist und die Achsen ihre ursprünglichen Einheiten
-behalten.
+\begin{itemize}
+  \item[\textbf{M1}] \textbf{Die Zeit als zweidimensionales Raster.} Um A2 und A4 zu lösen, müssen Tagesgang und Jahresgang als zwei unabhängige Dimensionen begriffen werden anstelle einer fortlaufenden eindimensionalen Zeitlinie. Erst das Verständnis gleichförmig wiederkehrender 24-Stunden-Zyklen ermöglicht die gezielte Frage nach tageszeitlichen Mustern. Eine Darstellung, die die Zeit in eine Tag-Stunden-Matrix faltet, vollzieht diese Strukturierung direkt im visuellen Raum.
+  \item[\textbf{M2}] \textbf{Die Deckungsbilanz.} Für A3 und A5 muss verständlich sein, dass der Erneuerbarenanteil eine relative Verhältnisgröße darstellt. Dieser Anteil kann sowohl durch höhere Einspeisung als auch durch sinkende Netzlast steigen. Die simultane Darstellung von Last, Solar, Wind und Anteil auf getrennten Achsen verhindert, dass Werte über $100\,\%$ fälschlich als Messfehler interpretiert werden.
+  \item[\textbf{M3}] \textbf{Der Marktpreis als Knappheitsindikator.} Die Aufgaben A3 und A5 erfordern die Einsicht, dass der Börsenpreis das ökonomische Abbild der jeweiligen Deckungslücke darstellt. Die Visualisierung stellt Preis und Einspeisung nebeneinander dar, um diesen marktbezogenen Zusammenhang explorativ überprüfbar zu machen.
+  \item[\textbf{M4}] \textbf{Der Tag als Punkt im Merkmalsraum.} Die Aufgaben A5 und A6 setzen voraus, einen Kalendertag als multidimensionales Wertebündel aufzufassen, wobei Ähnlichkeit als räumliche Nähe im Merkmalsraum verstanden wird. Als anspruchsvollstes Modell erfordert es die Unterstützung durch parallele Koordinaten, in denen ein Tag als ganzheitlicher Linienzug über alle Dimensionen hinweg erhalten bleibt.
+\end{itemize}
 
 Die Reihenfolge A1 $\rightarrow$ A2/A3 $\rightarrow$ A4/A5 $\rightarrow$ A6 entspricht dem Ablauf
 \enquote{overview first, zoom and filter, details on demand} \cite{Shneiderman1996}.
@@ -77,13 +56,13 @@ Die Reihenfolge A1 $\rightarrow$ A2/A3 $\rightarrow$ A4/A5 $\rightarrow$ A6 ents
   \item[\textbf{R6}] \emph{Wertbasierte Auswahl.} Wertebereiche auf mehreren Attributen müssen
         kombinierbar und die Treffermenge sichtbar sein. (A6)
   \item[\textbf{R7}] \emph{Kopplung.} Jede Beobachtung muss in mindestens einer anderen Ansicht
-        überprüfbar sein; eine Auswahl darf nicht auf eine Ansicht beschränkt bleiben
+        überprüfbar sein. Eine Auswahl darf nicht auf eine Ansicht beschränkt bleiben
         \cite{Roberts2007}.
   \item[\textbf{R8}] \emph{Genaue Werte auf Abruf.} Da aus einer Farbe kein Zahlenwert ablesbar
         ist, muss jede Markierung ihre Werte auf Anfrage exakt ausgeben. (A3, A5)
   \item[\textbf{R9}] \emph{Ehrliche Kodierung.} Fehlende Daten dürfen nicht wie Nullwerte
-        aussehen; Farbskalen müssen wahrnehmungsgerecht geordnet sein
-        \cite{Borland2007,Harrower2003}; die wichtigste Größe gehört auf den genauesten Kanal
+        aussehen. Farbskalen müssen wahrnehmungsgerecht geordnet sein
+        \cite{Borland2007,Harrower2003}, und die wichtigste Größe gehört auf den genauesten Kanal
         \cite{Ware2012,Munzner2014}.
 \end{itemize}
 
@@ -104,11 +83,7 @@ Detailpanel und Tooltips & R8 & A3, A5 \\
 
 \subsection{Präsentation der Visualisierungen}\label{sec:praesentation}
 
-Die drei Techniken stammen aus drei verschiedenen der vorgegebenen Bereiche. Entscheidend ist aber
-nicht diese formale Erfüllung, sondern dass jede diejenige Anforderung erfüllt, an der die beiden
-anderen scheitern: Die Zeitreihe kann R3 nicht erfüllen, weil sie mittelt, die Heatmap nicht R5,
-weil sie eine Größe zeigt, und die parallelen Koordinaten nicht R2, weil sie keine Zeitachse kennen.
-Die Ansichten sind komplementär und nicht austauschbar. Bei jeder Technik werden Expressivität
+Die drei Techniken stammen aus verschiedenen Bereichen der Aufgabenstellung. Ausschlaggebend für die Auswahl ist ihre komplementäre Eignung: Jede Ansicht adressiert gezielt die Grenzen der jeweils anderen. Die Zeitreihe mittelt Werte monatlich und erfüllt daher R3 nicht, die Heatmap konzentriert sich auf eine Messgröße (Verzicht auf R5), und die parallelen Koordinaten besitzen keine explizite Zeitachse (R2). In ihrer Verknüpfung decken die Ansichten die geforderten Analyseebenen lückenlos ab. Bei jeder Technik werden Expressivität
 (zeigt sie genau die Daten?) und Effektivität (nutzt sie für die wichtigste Größe den
 wahrnehmungsstärksten Kanal?) im Sinne von \cite{Munzner2014,Ware2012} diskutiert.
 
@@ -118,9 +93,9 @@ Die Ansicht zeigt zwölf Monatswerte. Der mittlere Erneuerbarenanteil wird
 als Balkenhöhe kodiert (Kanal: Position auf gemeinsamer Achse bzw.\ Länge), der mittlere Preis als
 Polylinie mit quadratischen Markern auf einer zweiten, rechts beschrifteten Achse in EUR/MWh.
 Vier gleich große Intervalle teilen beide Achsen, sodass die Beschriftungen der
-Preisachse genau auf den Gitterlinien der Anteilsachse liegen; die Anteilsachse endet beim
-nächsten runden Wert oberhalb des höchsten Monatsbalkens. Farbe trägt keine Datenbedeutung,
-sondern nur die Zuordnung zur Größe: Grün für den Anteil, Rot für den Preis, erklärt durch eine
+Preisachse genau auf den Gitterlinien der Anteilsachse liegen. Die Anteilsachse endet beim
+nächsten runden Wert oberhalb des höchsten Monatsbalkens. Farbe dient hierbei ausschließlich der
+visuellen Zuordnung der Größen: Grün kennzeichnet den Anteil, Rot den Preis, erläutert durch eine
 Legende. Klick auf Balken oder Marker schaltet den Monat im Filter an bzw.\ aus, Hover liefert die
 Monatswerte inklusive Solar- und Windanteil und Summe der negativen Preisstunden.
 
@@ -129,17 +104,17 @@ Basislinie) liegt, ist bewusst gewählt, der Preis als Nebengröße wird auf ein
 Linie dargestellt, die den Verlauf betont statt des exakten Wertes. Die doppelte Achse ist eine bewusst
 eingegangene Schwäche: Der visuelle Abstand zwischen Balken und Linie hat keine Bedeutung, und die
 scheinbare Korrelation hängt von der willkürlichen Skalierung der zweiten Achse ab. Sie ist
-vertretbar, weil die Ansicht nicht zum Ablesen von Zusammenhängen dient, sondern als Navigations-
-und Kontextebene für R1. Für Zusammenhänge sind Heatmap und parallele Koordinaten zuständig. Um aus
-der Schwäche keine Fehlaussage werden zu lassen, ist die Preisachse explizit beschriftet und die
-Interpretation im Bericht auf qualitative Aussagen beschränkt.
+vertretbar, da die Ansicht primär als Navigations- und Kontextebene für R1 dient. Für multivariate
+Zusammenhänge stehen Heatmap und parallele Koordinaten bereit. Um aus der doppelten Skalierung keine
+Fehlaussage entstehen zu lassen, ist die Preisachse explizit beschriftet und die Interpretation im
+Bericht auf qualitative Verläufe beschränkt.
 
 Als Alternativen zur gewählten Darstellung wurden verschiedene Optionen abgewogen. Eine vollständige
 Stundenzeitreihe als Liniendiagramm wäre zwar expressiver und erfüllte R3. Bei $8\,690$ Punkten auf
-einer Bildschirmbreite fallen jedoch rund zwölf Werte auf ein Pixel; Überzeichnung macht Extremwerte
-ununterscheidbar von Rauschen, und der Tagesgang erscheint als geschlossenes Band. Für A1 ist sie unbrauchbar.
-Ersatzlos gestrichen wird sie deshalb nicht, sondern durch die Heatmap ersetzt, die dasselbe Datenvolumen
-ohne Überzeichnung zeigt.
+einer Bildschirmbreite fallen jedoch rund zwölf Werte auf ein Pixel. Überzeichnung macht Extremwerte
+ununterscheidbar von Rauschen, und der Tagesgang erscheint als geschlossenes Band. Für die
+Orientierungsaufgabe A1 erweist sie sich als ungeeignet. Stattdessen übernimmt die Heatmap die
+Darstellung desselben Datenvolumens ohne visuelle Überdeckung.
 
 Auch ein \emph{Horizon Graph} löst dieses Auflösungsproblem: Durch Falten und Einfärben des
 Wertebereichs erreicht er bei gleicher Höhe eine mehrfach höhere Datendichte und ist für lange
@@ -147,13 +122,10 @@ Zeitreihen Stand der Technik \cite{Aigner2011}. Er wurde jedoch verworfen, weil 
 muss (Bänder, Vorzeichenfaltung) und er damit R1 verletzt, also den einfachen Einstieg ohne Vorwissen für
 Z2 und Z3. Für ein reines Expertenpublikum wäre er die bessere Wahl.
 
-Schließlich wurden auch ein \emph{Cycle Plot} oder monatliche Boxplots erwogen. Sie zeigten die
-innermonatliche Streuung, die der Mittelwertbalken unterschlägt. Das ist ein realer Nachteil des gewählten
-Designs und wird in Abschnitt~\ref{sec:anwendung1} sogar Gegenstand eines Anwendungsfalls. Diese wurden
-jedoch verworfen, weil die Ansicht zugleich als Schaltfläche dient: Ein Balken bietet eine große,
-eindeutige Klickfläche für den Monatsfilter, eine Box mit Whiskern hingegen nicht. Die verloren gegangene
-Streuungsinformation ist in der Heatmap vollständig vorhanden, während die Klickbarkeit nicht adäquat
-ersetzbar wäre.
+Schließlich wurden auch ein \emph{Cycle Plot} oder monatliche Boxplots erwogen. Sie würden die
+innermonatliche Streuung visualisieren, die der Mittelwertbalken aggregiert. Ein kompakter Balken
+bietet jedoch eine verlässliche und großflächige Interaktionsfläche für den Monatsfilter. Die detaillierte
+Streuungsinformation wird stattdessen in der nachgelagerten Heatmap lückenlos dargestellt.
 
 \abb{zeitreihe}{0.92}{Zeitreihen-Übersicht: Balken zeigen den mittleren Erneuerbarenanteil je Monat,
 die rote Linie den mittleren Preis auf der rechten Achse. Der Tooltip nennt die exakten Monatswerte.}
@@ -166,7 +138,7 @@ Solar- und Windanteil sowie negativen Preisstunden.}
 Die Heatmap ist die dichteste Ansicht und setzt R2, R3 und R4 um. Jede Stunde
 des Jahres ist eine Zelle: Die $x$-Achse läuft über die Tage des gefilterten Zeitraums, die
 $y$-Achse über die $24$ Tagesstunden (0\,h oben, 23\,h unten), die Füllfarbe kodiert den
-Erneuerbarenanteil. Ungefiltert sind das $366$ Spalten zu je $24$ Zellen; die Zellbreite wird
+Erneuerbarenanteil. Ungefiltert sind das $366$ Spalten zu je $24$ Zellen. Die Zellbreite wird
 dynamisch als $\min(30,\,1500/\text{Tage})$ Pixel berechnet, sodass die Darstellung bei
 Monatsfilterung von einer Pixel- in eine Kacheldarstellung übergeht, ohne dass sich die Semantik
 ändert. Das ist eine Umsetzung des pixelorientierten Prinzips nach Keim \cite{Keim2000}: möglichst
@@ -219,7 +191,7 @@ für Datenlücken) und den Stundenbeschriftungen 0\,h, 6\,h, 12\,h, 18\,h, 23\,h
 Jeder gefilterte Tag wird als eine Polylinie über sieben parallele, vertikale
 Achsen dargestellt: mittlere Last (GW), Solaranteil (\%), Windanteil (\%), Erneuerbarenanteil (\%), Nettohandel
 (GW), mittlerer Preis (EUR/MWh) und Anzahl negativer Preisstunden. Jede Achse ist unabhängig auf
-Minimum und Maximum im sichtbaren Datenbestand skaliert; beide Extremwerte stehen als Zahl an den
+Minimum und Maximum im sichtbaren Datenbestand skaliert. Beide Extremwerte stehen als Zahl an den
 Achsenenden. Die Linien sind mit niedriger Deckkraft gezeichnet, sodass sich häufige Verläufe durch
 Überlagerung von selbst verdichten. Hover hebt eine Linie rot hervor, Auswahl schwarz, vom Brushing
 ausgeschlossene Tage werden fast vollständig ausgeblendet. Ist ein Achsenfilter aktiv, werden die
@@ -270,54 +242,50 @@ der rechten Achse, grün hervorgehobenen Treffern, abgeblendeten übrigen Linien
 
 \subsection{Interaktion}\label{sec:interaktion}
 
-Die drei Ansichten sind keine drei Diagramme, sondern eine Anwendung. Der gesamte
-Interaktionszustand liegt in einem einzigen Elm-Model, aus dem alle Ansichten lesen; Konsistenz ist
-dadurch nicht Konvention, sondern strukturell erzwungen. Die Interaktion ist in vier Ebenen gegliedert:
+Die drei Ansichten bilden ein zusammenhängendes Gesamtsystem. Der gesamte
+Interaktionszustand liegt in einem zentralen Elm-Model, aus dem alle Ansichten synchronisiert lesen.
+Konsistenz wird dadurch auf Architekturebene strukturell garantiert. Die Interaktion gliedert sich in vier Ebenen:
 
 \begin{description}
   \item[Ebene 1: Monatsfilter mit Mehrfachauswahl.] Monate lassen sich über eine
-        Schaltflächenleiste oder durch Klick auf einen Balken der Zeitreihe an- und abwählen; die Auswahl
-        ist eine menge, sodass beliebige Kombinationen möglich sind (Juni bis August, oder Februar zusammen
-        mit November für einen Gegensatzvergleich). Sie bestimmt, welche Stunden in der Heatmap und welche
-        Tage in den parallelen Koordinaten und den Kennzahlenkarten erscheinen. \emph{Zweck:} A1 und
-        Reduktion der Datenmenge für A2 bis A6.
+        Schaltflächenleiste oder durch Klick auf einen Balken der Zeitreihe an- und abwählen. Die Auswahl
+        ist als Menge modelliert, sodass beliebige Kombinationen möglich sind (etwa Juni bis August
+        oder Februar zusammen mit November für einen direkten Saisonvergleich). Sie bestimmt, welche
+        Stunden in der Heatmap und welche Tage in den parallelen Koordinaten und Kennzahlenkarten erscheinen.
+        Zweck: A1 und Reduktion der Datenmenge für A2 bis A6.
   \item[Ebene 2: Hover mit geteiltem Fokus und Tooltip.] Das Überfahren einer Heatmap-Zelle
         oder einer Linie schreibt den Tag als \texttt{hoveredDay} in das Model. Beide Ansichten lesen diesen
-        Zustand, sodass die Hervorhebung immer gleichzeitig erscheint: Die Zellen des Tages erhalten einen
-        dunklen Rahmen, die Linie wird rot und in den Vordergrund gehoben, und das Detailpanel wechselt auf
-        diesen Tag. Zusätzlich erscheint am Mauszeiger ein Tooltip mit den exakten Werten. \emph{Zweck:} R7
-        und R8 ohne Zustandsänderung. Eine Vermutung lässt sich prüfen, ohne die bestehende Auswahl zu
-        verlieren.
-  \item[Ebene 3: Mehrfachauswahl von Tagen.] Ein Klick auf Zelle oder Linie nimmt den Tag in
-        eine Liste auf, ein erneuter Klick entfernt ihn. Ausgewählte Tage bleiben in beiden Ansichten
-        dauerhaft schwarz hervorgehoben und erscheinen im Detailpanel als einzeln abwählbare Liste mit
-        EE-Anteil und Preis. Für den zuletzt berührten Tag zeigt das Panel sechs Kennzahlen und ein
-        Stundenprofil als kleines Balkendiagramm. Dessen Bezugslinien bei $50$ und $100\,\%$ und die
-        Stundenmarken alle sechs Stunden machen aus der reinen Verlaufsform eine ablesbare Größe. Die
-        $100$er-Linie ist dabei die inhaltlich wichtige, weil die Einspeisung oberhalb davon die Last
-        übersteigt.
+        Zustand, sodass die Hervorhebung synchron erscheint: Die Zellen des Tages erhalten einen
+        dunklen Rahmen, die Linie wird rot hervorgehoben in den Vordergrund geholt, und das Detailpanel wechselt auf
+        diesen Tag. Ein Tooltip am Mauszeiger liefert parallel die exakten Messwerte. Zweck: R7
+        und R8 ohne dauerhafte Zustandsänderung, sodass sich Hypothesen prüfen lassen, während die bestehende Auswahl
+        erhalten bleibt.
+  \item[Ebene 3: Mehrfachauswahl von Tagen.] Ein Klick auf eine Zelle oder Linie nimmt den Tag in
+        eine Auswahlliste auf, ein erneuter Klick entfernt ihn. Ausgewählte Tage bleiben in beiden Ansichten
+        dauerhaft schwarz hervorgehoben und erscheinen im Detailpanel als Liste mit EE-Anteil und Preis.
+        Für den zuletzt berührten Tag zeigt das Panel sechs Kennzahlen und ein Stundenprofil als
+        Balkendiagramm. Dessen Bezugslinien bei $50$ und $100\,\%$ sowie Stundenmarken alle sechs Stunden
+        erleichtern das quantitative Ablesen. Die $100\,\%$-Linie markiert den Schwellenwert, ab dem die
+        erneuerbare Erzeugung den inländischen Bedarf übersteigt.
 
-        Ab zwei ausgewählten Tagen tritt ein Vergleichsblock hinzu. Er besteht aus einer Tabelle mit allen
-        sieben Tagesattributen nebeneinander, einschließlich der Zahl negativer Preisstunden, die in der
-        Einzelansicht fehlt. Darunter stehen die Stundenprofile der ausgewählten Tage untereinander, sodass
-        sich die Tagesformen direkt gegenüberstehen (Solarbogen gegen flaches Windband). Beide sind nach
-        Datum sortiert und nicht nach Klickreihenfolge, damit derselbe Vergleich unabhängig von der
-        Bedienreihenfolge dasselbe Bild ergibt. \emph{Zweck:} A5, also der direkte Vergleich mehrerer Tage,
-        der mit einer Einfachauswahl nicht möglich ist.
+        Ab zwei ausgewählten Tagen schaltet das Panel einen Vergleichsblock hinzu. Dieser stellt in einer
+        Tabelle alle sieben Tagesattribute gegenüber, einschließlich der Zahl negativer Preisstunden.
+        Darunter stehen die Stundenprofile der ausgewählten Tage untereinander, was den direkten visuellen
+        Abgleich der Tagesformen ermöglicht (etwa ausgeprägter Solarbogen gegenüber flachem Windband).
+        Beide Darstellungen sind chronologisch nach Datum geordnet, damit ein Vergleich unabhängig von der
+        Klickreihenfolge stabil bleibt. Zweck: A5, der vergleichende Abgleich mehrerer Tage.
   \item[Ebene 4: Achsen-Brushing.] Auf jeder der sieben Achsen lässt sich mit gedrückter
         Maustaste ein Wertebereich aufziehen \cite{Becker1987}. Tage außerhalb werden abgeblendet und von
-        der Mausinteraktion ausgenommen. Brushes auf mehreren Achsen werden UND-verknüpft, sodass sich
-        zusammengesetzte Bedingungen formulieren lassen; eine Statuszeile nennt laufend die Trefferzahl, ein
-        Klick auf eine Achse löscht deren Filter, eine Schaltfläche alle.
+        der Mausinteraktion ausgenommen. Brushes auf mehreren Achsen werden logisch UND-verknüpft. Eine
+        Statuszeile nennt laufend die Trefferzahl, während Klick-Gesten das selektive oder vollständige
+        Zurücksetzen erlauben.
 \end{description}
 
-Der Brush-Zustand wird dabei nicht in der Ansicht ausgewertet, sondern in \texttt{Main}. Von dort
-speisen sich auch die Kennzahlenkarten, die sich damit auf die Treffermenge beziehen, und die
-Heatmap, in der die Nichttreffer zurücktreten. Entscheidend ist, dass die Heatmap dafür abblendet
-und nicht filtert. Alle Tage bleiben als Spalten stehen und die Zeitachse damit lückenlos.
-Abgeblendete Tage sind von den grauen Zellen echter Datenlücken (R9) klar unterscheidbar. Ohne diese
-Rückwirkung bliebe die stärkste Filteroperation der Anwendung auf eine einzige Ansicht beschränkt
-und R7 wäre an dieser Stelle verletzt. \emph{Zweck:} R6, R7 und A6.
+Die Auswertung des Brush-Zustands erfolgt zentral im \texttt{Main}-Modul. Von dort speisen sich die
+Kennzahlenkarten der Treffermenge sowie die Heatmap, in der nicht ausgewählte Tage visuell abgedunkelt
+werden. Durch dieses Abblenden bleiben sämtliche Tage als Spalten im Raster erhalten und die zeitliche
+Kontinuität lückenlos gewahrt. Abgeblendete Tage unterscheiden sich dabei eindeutig von den grauen Zellen
+echter Datenlücken (R9). Auf diese Weise wirkt die Filterung konsistent auf alle Ansichten zurück (R6, R7, A6).
 
 \begin{table}[H]
 \centering\small
@@ -355,8 +323,8 @@ wirksamste Einzelverbesserung der parallelen Koordinaten \cite{Heinrich2013}, da
 Korrelation prüfbar sind. Dies wurde jedoch zurückgestellt, weil die fachlich begründete feste
 Reihenfolge die wichtigen Paare bereits benachbart macht und das Ziehen von Achsen mit dem Aufziehen
 von Filtern (Brushes) um dieselbe Interaktionsgeste konkurrieren würde. Auch ein \emph{Umschalten der Heatmap-Metrik}
-auf den Preis wurde verworfen; dieses bräuchte wegen dessen zweiseitiger Skala (negativ bis $936$\,EUR/MWh) eine
-divergierende Farbskala mit Nullpunkt. Zwei wechselnde Farbsemantiken in derselben Visualisierungsfläche stellen jedoch
+auf den Preis wurde verworfen, da dieses wegen dessen zweiseitiger Skala (negativ bis $936$\,EUR/MWh) eine
+divergierende Farbskala mit Nullpunkt erfordern würde. Zwei wechselnde Farbsemantiken in derselben Visualisierungsfläche stellen jedoch
 eine bekannte visuelle Fehlerquelle dar (siehe Abschnitt~\ref{sec:ausblick}). Ein \emph{Zeitraum-Brush in der Zeitreihe}
 wäre zwar flexibler, doch der Kalendermonat ist hier die natürliche Navigationseinheit, ein einzelner Klick einfacher
 als ein gezogener Bereich, und für tagesgenaues Eingrenzen steht ohnehin die detaillierte Heatmap bereit.

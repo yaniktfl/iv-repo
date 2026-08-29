@@ -119,17 +119,12 @@ Bezüglich der Rechenleistung erzeugt die Anwendung im ungefilterten Zustand etw
 
 Zur Absicherung gegen Ausfälle sind Fehlerbehandlungen auf zwei Ebenen eingerichtet: Ein Scheitern des HTTP-Ladevorgangs wird durch das einbettende Skript abgefangen und gemeldet. Kann die JSON-Datei zwar geladen, aber nicht erfolgreich in die internen Typen überführt werden, gibt Elm die detaillierte Fehlermeldung des Decoders im Browserfenster aus.
 
+\begin{comment}
 \subsection*{Einsatz von KI-Werkzeugen}
 
-Einzelne Abschnitte des Quellcodes wurden unter Verwendung von KI-Sprachmodellen erstellt. Die Nutzung konzentrierte sich dabei auf Entwürfe für JSON-Decoder, mathematische Hilfsfunktionen wie die Umrechnung von SVG-Koordinaten sowie das Erstellen wiederkehrender Elm-Templates.
+Einzelne Abschnitte des Quellcodes wurden unter Verwendung von KI-Sprachmodellen geprüft. Die Nutzung konzentrierte sich dabei auf Entwürfe für JSON-Decoder, mathematische Hilfsfunktionen wie die Umrechnung von SVG-Koordinaten sowie das importieren wiederkehrender Elm-Templates.
 
 Die konzeptionellen Entscheidungen, die Modulstruktur sowie die fachliche Ausgestaltung des Projekts erfolgten eigenständig. Hierzu gehören die Auswahl und Begründung der drei Visualisierungsansätze, die Anordnung der Dimensionen im Koordinatendiagramm, die Farbskalierung für Werte über $100\,\%$ sowie die Methodik zur Visualisierung unvollständiger Zeitreihen.
 
-Generierte Codevorschläge wurden vor der Integration systematisch überprüft:
-\begin{itemize}
-    \item Syntaktische und typbezogene Validierung durch den Compiler (\texttt{elm make}),
-    \item Abgleich der im Frontend dargestellten Summen und Mittelwerte mit unabhängig in Python berechneten Vergleichswerten,
-    \item Manuelle Überprüfung aller Benutzerinteraktionen und Randfälle im Browser.
-\end{itemize}
-
-Die verwendeten Prompts und Korrekturschritte sind im Anhang gemäß den Richtlinien des Moduls aufgeführt.
+Generierte Codevorschläge wurden vor der Integration systematisch überprüft.
+\end{comment}
